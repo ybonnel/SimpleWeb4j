@@ -18,6 +18,7 @@ package fr.ybonnel;
 
 
 import fr.ybonnel.exception.HttpErrorException;
+import fr.ybonnel.handlers.Response;
 import fr.ybonnel.handlers.Route;
 import fr.ybonnel.handlers.RouteParameters;
 import fr.ybonnel.util.SimpleWebTestUtil;
@@ -28,7 +29,7 @@ import org.junit.Test;
 import java.util.Random;
 
 import static fr.ybonnel.SimpleWeb.*;
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 public class GenericIntegrationTest {
 
@@ -45,26 +46,33 @@ public class GenericIntegrationTest {
 
         get(new Route<Void, String>("/resource", Void.class, String.class) {
             @Override
-            public String handle(Void param, RouteParameters routeParams) {
-                return "Hello World";
+            public Response<String> handle(Void param, RouteParameters routeParams) {
+                return new Response<>("Hello World");
             }
         });
 
         get(new Route<Void, String>("/resource/:name", Void.class, String.class) {
             @Override
-            public String handle(Void param, RouteParameters routeParams) throws HttpErrorException {
+            public Response<String> handle(Void param, RouteParameters routeParams) throws HttpErrorException {
                 if (routeParams.getParam("name").equals("notfound")) {
                     throw new HttpErrorException(404, "notfound not found");
                 }
-                return "Hello " + routeParams.getParam("name");
+                return new Response<>("Hello " + routeParams.getParam("name"));
             }
         });
 
         post(new Route<String, String>("/resource", String.class, String.class) {
 
             @Override
-            public String handle(String param, RouteParameters routeParams) throws HttpErrorException {
-                return "Hello " + param;
+            public Response<String> handle(String param, RouteParameters routeParams) throws HttpErrorException {
+                return new Response<>("Hello " + param);
+            }
+        });
+
+        get(new Route<Void, String>("/othercode", Void.class, String.class) {
+            @Override
+            public Response<String> handle(Void param, RouteParameters routeParams) {
+                return new Response<>("I m a teapot", 418);
             }
         });
 
@@ -124,6 +132,15 @@ public class GenericIntegrationTest {
         assertEquals(201, response.status);
         assertEquals("application/json", response.contentType);
         assertEquals("\"Hello myName\"", response.body);
+    }
+
+    @Test
+    public void can_answer_specific_http_code() throws Exception {
+        SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("GET", "/othercode");
+        assertEquals(418, response.status);
+        assertEquals("application/json", response.contentType);
+        assertEquals("\"I m a teapot\"", response.body);
+
     }
 
     public static void main(String[] args) {

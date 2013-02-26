@@ -88,5 +88,5 @@ public abstract class Route<P, R> {
 
     }
 
-    public abstract R handle(P param, RouteParameters routeParams) throws HttpErrorException ;
+    public abstract Response<R> handle(P param, RouteParameters routeParams) throws HttpErrorException ;
 }

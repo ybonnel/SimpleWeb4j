@@ -62,11 +62,15 @@ public class JsonHandler extends AbstractHandler {
             param = gson.fromJson(request.getReader(), route.getParamType());
         }
         try {
-            Object returnObject = route.handle(param, new RouteParameters(route.getRouteParams(request.getPathInfo())));
-            response.setStatus(HttpMethod.fromValue(request.getMethod()).getDefaultStatus());
-            if (returnObject != null) {
+            Response<?> handlerResponse = route.handle(param, new RouteParameters(route.getRouteParams(request.getPathInfo())));
+            if (handlerResponse.getStatus() == null) {
+                response.setStatus(HttpMethod.fromValue(request.getMethod()).getDefaultStatus());
+            } else {
+                response.setStatus(handlerResponse.getStatus());
+            }
+            if (handlerResponse.getAnswer() != null) {
                 response.setContentType("application/json");
-                response.getOutputStream().print(gson.toJson(returnObject));
+                response.getOutputStream().print(gson.toJson(handlerResponse.getAnswer()));
                 response.getOutputStream().close();
             }
         } catch (HttpErrorException httpError) {
