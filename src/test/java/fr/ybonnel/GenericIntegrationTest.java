@@ -17,6 +17,8 @@
 package fr.ybonnel;
 
 
+import fr.ybonnel.handlers.Route;
+import fr.ybonnel.handlers.RouteMatch;
 import fr.ybonnel.util.SimpleWebTestUtil;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -24,9 +26,7 @@ import org.junit.Test;
 
 import java.util.Random;
 
-import static fr.ybonnel.SimpleWeb.setPort;
-import static fr.ybonnel.SimpleWeb.start;
-import static fr.ybonnel.SimpleWeb.stop;
+import static fr.ybonnel.SimpleWeb.*;
 import static junit.framework.Assert.assertEquals;
 
 public class GenericIntegrationTest {
@@ -41,6 +41,14 @@ public class GenericIntegrationTest {
         port = random.nextInt(10000) + 10000;
         setPort(port);
         testUtil = new SimpleWebTestUtil(port);
+
+        get(new Route<Void, String>("/resource", Void.class, String.class) {
+            @Override
+            public String handle(Void param) {
+                return "Hello World";
+            }
+        });
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -66,5 +74,19 @@ public class GenericIntegrationTest {
         assertEquals(200, response.status);
         assertEquals("just a test", response.body);
     }
+
+    @Test
+    public void should_answer_to_simple_get() throws Exception {
+        SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("GET", "/resource");
+        assertEquals(200, response.status);
+        assertEquals("application/json", response.contentType);
+        assertEquals("\"Hello World\"", response.body);
+    }
+
+    public static void main(String[] args) {
+        startServer();
+        System.out.println(port);
+    }
+
 
 }

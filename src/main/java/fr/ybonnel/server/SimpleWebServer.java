@@ -17,7 +17,7 @@
 package fr.ybonnel.server;
 
 
-import fr.ybonnel.JsonHandler;
+import fr.ybonnel.handlers.JsonHandler;
 import fr.ybonnel.exception.FatalSimpleWebException;
 import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Server;

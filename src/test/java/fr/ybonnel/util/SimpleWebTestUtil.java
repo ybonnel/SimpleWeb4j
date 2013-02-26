@@ -54,6 +54,7 @@ public class SimpleWebTestUtil {
         response.body = res;
         response.status = connection.getResponseCode();
         response.headers = connection.getHeaderFields();
+        response.contentType = connection.getContentType();
         return response;
     }
 
@@ -62,5 +63,6 @@ public class SimpleWebTestUtil {
         public Map<String, List<String>> headers;
         public String body;
         public int status;
+        public String contentType;
     }
 }
