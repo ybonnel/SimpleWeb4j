@@ -63,7 +63,7 @@ public class JsonHandler extends AbstractHandler {
         }
         try {
             Object returnObject = route.handle(param, new RouteParameters(route.getRouteParams(request.getPathInfo())));
-            response.setStatus(HttpServletResponse.SC_OK);
+            response.setStatus(HttpMethod.fromValue(request.getMethod()).getDefaultStatus());
             if (returnObject != null) {
                 response.setContentType("application/json");
                 response.getOutputStream().print(gson.toJson(returnObject));

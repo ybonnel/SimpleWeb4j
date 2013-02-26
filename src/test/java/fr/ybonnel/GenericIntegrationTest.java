@@ -60,6 +60,14 @@ public class GenericIntegrationTest {
             }
         });
 
+        post(new Route<String, String>("/resource", String.class, String.class) {
+
+            @Override
+            public String handle(String param, RouteParameters routeParams) throws HttpErrorException {
+                return "Hello " + param;
+            }
+        });
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -108,6 +116,14 @@ public class GenericIntegrationTest {
         assertEquals(404, response.status);
         assertEquals("application/json", response.contentType);
         assertEquals("\"notfound not found\"", response.body);
+    }
+
+    @Test
+    public void can_post_json() throws Exception {
+        SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("POST", "/resource", "\"myName\"");
+        assertEquals(201, response.status);
+        assertEquals("application/json", response.contentType);
+        assertEquals("\"Hello myName\"", response.body);
     }
 
     public static void main(String[] args) {
