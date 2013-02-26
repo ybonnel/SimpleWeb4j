@@ -42,7 +42,7 @@ public class SimpleWebTestUtil {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod(requestMethod);
 
-        if (requestMethod.equals("POST") && body != null) {
+        if (body != null) {
             connection.setDoOutput(true);
             connection.getOutputStream().write(body.getBytes());
         }

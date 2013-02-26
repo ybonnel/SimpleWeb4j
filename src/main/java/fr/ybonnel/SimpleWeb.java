@@ -69,9 +69,13 @@ public class SimpleWeb {
 
     public static void post(Route route) {
         jsonHandler.addRoute(HttpMethod.POST, route);
-
     }
 
+    public static void put(Route route) {
+        jsonHandler.addRoute(HttpMethod.PUT, route);
+    }
 
-
+    public static void delete(Route route) {
+        jsonHandler.addRoute(HttpMethod.DELETE, route);
+    }
 }

@@ -76,6 +76,20 @@ public class GenericIntegrationTest {
             }
         });
 
+        put(new Route<String, String>("/resource/put", String.class, String.class) {
+            @Override
+            public Response<String> handle(String param, RouteParameters routeParams) throws HttpErrorException {
+                return new Response<>("Hello " + param);
+            }
+        });
+
+        delete(new Route<Void, String>("/resource/delete", Void.class, String.class) {
+            @Override
+            public Response<String> handle(Void param, RouteParameters routeParams) throws HttpErrorException {
+                return new Response<>("deleted");
+            }
+        });
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -140,6 +154,22 @@ public class GenericIntegrationTest {
         assertEquals(418, response.status);
         assertEquals("application/json", response.contentType);
         assertEquals("\"I m a teapot\"", response.body);
+    }
+
+    @Test
+    public void can_answer_to_put_method() throws Exception {
+        SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("PUT", "/resource/put", "\"myName\"");
+        assertEquals(200, response.status);
+        assertEquals("application/json", response.contentType);
+        assertEquals("\"Hello myName\"", response.body);
+    }
+
+    @Test
+    public void can_answer_to_delete_method() throws Exception {
+        SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("DELETE", "/resource/delete");
+        assertEquals(200, response.status);
+        assertEquals("application/json", response.contentType);
+        assertEquals("\"deleted\"", response.body);
     }
 
     public static void main(String[] args) {
