@@ -19,7 +19,7 @@ package fr.ybonnel.handlers;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.apache.commons.io.IOUtils;
+import fr.ybonnel.exception.HttpErrorException;
 import org.mortbay.jetty.HttpConnection;
 import org.mortbay.jetty.Request;
 import org.mortbay.jetty.handler.AbstractHandler;
@@ -28,7 +28,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class JsonHandler extends AbstractHandler {
 
@@ -58,13 +61,21 @@ public class JsonHandler extends AbstractHandler {
         if (route.getParamType() != null && route.getParamType() != Void.class) {
             param = gson.fromJson(request.getReader(), route.getParamType());
         }
-        Object returnObject = route.handle(param, new RouteParameters(route.getRouteParams(request.getPathInfo())));
-
-        response.setStatus(HttpServletResponse.SC_OK);
-        if (returnObject != null) {
-            response.setContentType("application/json");
-            response.getOutputStream().print(gson.toJson(returnObject));
-            response.getOutputStream().close();
+        try {
+            Object returnObject = route.handle(param, new RouteParameters(route.getRouteParams(request.getPathInfo())));
+            response.setStatus(HttpServletResponse.SC_OK);
+            if (returnObject != null) {
+                response.setContentType("application/json");
+                response.getOutputStream().print(gson.toJson(returnObject));
+                response.getOutputStream().close();
+            }
+        } catch (HttpErrorException httpError) {
+            response.setStatus(httpError.getStatus());
+            if (httpError.getAnswer()!= null) {
+                response.setContentType("application/json");
+                response.getOutputStream().print(gson.toJson(httpError.getAnswer()));
+                response.getOutputStream().close();
+            }
         }
         baseRequest.setHandled(true);
 

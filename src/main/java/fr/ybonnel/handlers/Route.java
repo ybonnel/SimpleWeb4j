@@ -18,6 +18,7 @@ package fr.ybonnel.handlers;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
+import fr.ybonnel.exception.HttpErrorException;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -87,5 +88,5 @@ public abstract class Route<P, R> {
 
     }
 
-    public abstract R handle(P param, RouteParameters routeParams);
+    public abstract R handle(P param, RouteParameters routeParams) throws HttpErrorException ;
 }

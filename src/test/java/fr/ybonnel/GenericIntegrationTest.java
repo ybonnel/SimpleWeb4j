@@ -17,6 +17,7 @@
 package fr.ybonnel;
 
 
+import fr.ybonnel.exception.HttpErrorException;
 import fr.ybonnel.handlers.Route;
 import fr.ybonnel.handlers.RouteParameters;
 import fr.ybonnel.util.SimpleWebTestUtil;
@@ -51,7 +52,10 @@ public class GenericIntegrationTest {
 
         get(new Route<Void, String>("/resource/:name", Void.class, String.class) {
             @Override
-            public String handle(Void param, RouteParameters routeParams) {
+            public String handle(Void param, RouteParameters routeParams) throws HttpErrorException {
+                if (routeParams.getParam("name").equals("notfound")) {
+                    throw new HttpErrorException(404, "notfound not found");
+                }
                 return "Hello " + routeParams.getParam("name");
             }
         });
@@ -96,6 +100,14 @@ public class GenericIntegrationTest {
         assertEquals(200, response.status);
         assertEquals("application/json", response.contentType);
         assertEquals("\"Hello myName\"", response.body);
+    }
+
+    @Test
+    public void can_send_http_error() throws Exception {
+        SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("GET", "/resource/notfound");
+        assertEquals(404, response.status);
+        assertEquals("application/json", response.contentType);
+        assertEquals("\"notfound not found\"", response.body);
     }
 
     public static void main(String[] args) {

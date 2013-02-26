@@ -49,12 +49,16 @@ public class SimpleWebTestUtil {
 
         connection.connect();
 
-        String res = IOUtils.toString(connection.getInputStream());
         UrlResponse response = new UrlResponse();
-        response.body = res;
         response.status = connection.getResponseCode();
         response.headers = connection.getHeaderFields();
         response.contentType = connection.getContentType();
+
+        if (response.status >= 400) {
+            response.body = IOUtils.toString(connection.getErrorStream());
+        } else {
+            response.body = IOUtils.toString(connection.getInputStream());
+        }
         return response;
     }
 
