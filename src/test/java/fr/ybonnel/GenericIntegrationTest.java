@@ -140,7 +140,6 @@ public class GenericIntegrationTest {
         assertEquals(418, response.status);
         assertEquals("application/json", response.contentType);
         assertEquals("\"I m a teapot\"", response.body);
-
     }
 
     public static void main(String[] args) {

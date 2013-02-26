@@ -24,8 +24,12 @@ import org.mortbay.jetty.Server;
 import org.mortbay.jetty.handler.HandlerList;
 import org.mortbay.jetty.handler.ResourceHandler;
 import org.mortbay.resource.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SimpleWebServer {
+
+    private static final Logger logger = LoggerFactory.getLogger(SimpleWebServer.class);
 
     private Server jettyServer;
 
@@ -45,6 +49,7 @@ public class SimpleWebServer {
 
     public void start() {
         try {
+            logger.info("Starting SimpleWeb server");
             jettyServer.start();
             jettyServer.join();
         } catch (Exception e) {
@@ -54,6 +59,7 @@ public class SimpleWebServer {
 
     public void stop() {
         try {
+            logger.info("Stopping SimpleWeb server");
             jettyServer.stop();
         } catch (Exception e) {
             throw new FatalSimpleWebException(e);
