@@ -18,7 +18,7 @@ package fr.ybonnel;
 
 
 import fr.ybonnel.handlers.Route;
-import fr.ybonnel.handlers.RouteMatch;
+import fr.ybonnel.handlers.RouteParameters;
 import fr.ybonnel.util.SimpleWebTestUtil;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -44,8 +44,15 @@ public class GenericIntegrationTest {
 
         get(new Route<Void, String>("/resource", Void.class, String.class) {
             @Override
-            public String handle(Void param) {
+            public String handle(Void param, RouteParameters routeParams) {
                 return "Hello World";
+            }
+        });
+
+        get(new Route<Void, String>("/resource/:name", Void.class, String.class) {
+            @Override
+            public String handle(Void param, RouteParameters routeParams) {
+                return "Hello " + routeParams.getParam("name");
             }
         });
 
@@ -81,6 +88,14 @@ public class GenericIntegrationTest {
         assertEquals(200, response.status);
         assertEquals("application/json", response.contentType);
         assertEquals("\"Hello World\"", response.body);
+    }
+
+    @Test
+    public void should_answer_to_get_with_param() throws Exception {
+        SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("GET", "/resource/myName");
+        assertEquals(200, response.status);
+        assertEquals("application/json", response.contentType);
+        assertEquals("\"Hello myName\"", response.body);
     }
 
     public static void main(String[] args) {

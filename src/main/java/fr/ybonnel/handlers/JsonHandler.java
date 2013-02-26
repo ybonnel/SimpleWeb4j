@@ -58,7 +58,7 @@ public class JsonHandler extends AbstractHandler {
         if (route.getParamType() != null && route.getParamType() != Void.class) {
             param = gson.fromJson(request.getReader(), route.getParamType());
         }
-        Object returnObject = route.handle(param);
+        Object returnObject = route.handle(param, new RouteParameters(route.getRouteParams(request.getPathInfo())));
 
         response.setStatus(HttpServletResponse.SC_OK);
         if (returnObject != null) {

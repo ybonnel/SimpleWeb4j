@@ -19,7 +19,10 @@ package fr.ybonnel.handlers;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -68,5 +71,21 @@ public abstract class Route<P, R> {
 
     }
 
-    public abstract R handle(P param);
+    public Map<String, String> getRouteParams(String pathInfo) {
+
+        Map<String, String> params = new HashMap<>();
+
+        List<String> queryPath = newArrayList(Splitter.on('/').omitEmptyStrings().trimResults().split(pathInfo));
+        for (int index = 0; index < queryPath.size(); index++) {
+
+            if (pathInSegments.get(index).startsWith(":")) {
+                params.put(pathInSegments.get(index).substring(1), queryPath.get(index));
+            }
+        }
+
+        return Collections.unmodifiableMap(params);
+
+    }
+
+    public abstract R handle(P param, RouteParameters routeParams);
 }
