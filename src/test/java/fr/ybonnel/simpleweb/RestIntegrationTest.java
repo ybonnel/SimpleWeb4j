@@ -14,22 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.ybonnel;
+package fr.ybonnel.simpleweb;
 
 
 import com.google.common.collect.Lists;
-import fr.ybonnel.exception.HttpErrorException;
-import fr.ybonnel.handlers.Response;
-import fr.ybonnel.handlers.Route;
-import fr.ybonnel.handlers.RouteParameters;
-import fr.ybonnel.handlers.resource.RestResource;
-import fr.ybonnel.util.SimpleWebTestUtil;
+import fr.ybonnel.simpleweb.exception.HttpErrorException;
+import fr.ybonnel.simpleweb.handlers.resource.RestResource;
+import fr.ybonnel.simpleweb.util.SimpleWebTestUtil;
 import org.junit.*;
 
 import java.util.List;
 import java.util.Random;
 
-import static fr.ybonnel.SimpleWeb.*;
+import static fr.ybonnel.simpleweb.SimpleWeb.*;
 import static org.junit.Assert.assertEquals;
 
 public class RestIntegrationTest {

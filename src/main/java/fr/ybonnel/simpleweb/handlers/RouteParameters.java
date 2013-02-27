@@ -14,27 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.ybonnel.handlers;
+package fr.ybonnel.simpleweb.handlers;
 
-public class Response<T> {
+import java.util.HashMap;
+import java.util.Map;
 
-    private T answer;
-    private Integer status;
+public class RouteParameters {
 
-    public Response(T answer) {
-        this(answer, null);
+    private Map<String, String> params = new HashMap<>();
+
+    public RouteParameters(Map<String, String> params) {
+        this.params = params;
     }
 
-    public Response(T answer, Integer status) {
-        this.answer = answer;
-        this.status = status;
-    }
-
-    public T getAnswer() {
-        return answer;
-    }
-
-    public Integer getStatus() {
-        return status;
+    public String getParam(String param) {
+        return params.get(param);
     }
 }

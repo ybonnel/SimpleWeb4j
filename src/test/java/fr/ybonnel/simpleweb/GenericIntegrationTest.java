@@ -14,19 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.ybonnel;
+package fr.ybonnel.simpleweb;
 
 
-import fr.ybonnel.exception.HttpErrorException;
-import fr.ybonnel.handlers.Response;
-import fr.ybonnel.handlers.Route;
-import fr.ybonnel.handlers.RouteParameters;
-import fr.ybonnel.util.SimpleWebTestUtil;
+import fr.ybonnel.simpleweb.exception.HttpErrorException;
+import fr.ybonnel.simpleweb.handlers.Response;
+import fr.ybonnel.simpleweb.handlers.Route;
+import fr.ybonnel.simpleweb.handlers.RouteParameters;
+import fr.ybonnel.simpleweb.util.SimpleWebTestUtil;
 import org.junit.*;
 
 import java.util.Random;
 
-import static fr.ybonnel.SimpleWeb.*;
+import static fr.ybonnel.simpleweb.SimpleWeb.*;
 import static org.junit.Assert.assertEquals;
 
 public class GenericIntegrationTest {

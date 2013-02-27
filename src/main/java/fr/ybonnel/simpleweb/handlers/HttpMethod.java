@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.ybonnel.handlers;
+package fr.ybonnel.simpleweb.handlers;
 
 
 import javax.servlet.http.HttpServletResponse;

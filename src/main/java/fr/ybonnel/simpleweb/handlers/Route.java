@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.ybonnel.handlers;
+package fr.ybonnel.simpleweb.handlers;
 
 import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
-import fr.ybonnel.exception.HttpErrorException;
+import fr.ybonnel.simpleweb.exception.HttpErrorException;
 
 import java.util.Collections;
 import java.util.HashMap;

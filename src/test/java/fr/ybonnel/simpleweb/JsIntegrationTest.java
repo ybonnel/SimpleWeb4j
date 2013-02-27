@@ -14,17 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.ybonnel;
+package fr.ybonnel.simpleweb;
 
 import com.google.common.base.Strings;
-import fr.ybonnel.util.SimpleWebTestUtil;
+import fr.ybonnel.simpleweb.util.SimpleWebTestUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Random;
 
-import static fr.ybonnel.SimpleWeb.*;
+import static fr.ybonnel.simpleweb.SimpleWeb.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 

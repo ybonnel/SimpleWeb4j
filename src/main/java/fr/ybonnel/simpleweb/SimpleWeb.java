@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.ybonnel;
+package fr.ybonnel.simpleweb;
 
 
-import fr.ybonnel.handlers.HttpMethod;
-import fr.ybonnel.handlers.JsonHandler;
-import fr.ybonnel.handlers.Route;
-import fr.ybonnel.handlers.resource.RestResource;
-import fr.ybonnel.server.SimpleWebServer;
+import fr.ybonnel.simpleweb.handlers.HttpMethod;
+import fr.ybonnel.simpleweb.handlers.JsonHandler;
+import fr.ybonnel.simpleweb.handlers.Route;
+import fr.ybonnel.simpleweb.handlers.resource.RestResource;
+import fr.ybonnel.simpleweb.server.SimpleWebServer;
 
 public class SimpleWeb {
 

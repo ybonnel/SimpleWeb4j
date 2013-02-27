@@ -14,28 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.ybonnel.exception;
+package fr.ybonnel.simpleweb.exception;
 
-public class HttpErrorException extends Exception {
 
-    private int status;
-    private Object answer;
+public class FatalSimpleWebException extends RuntimeException {
 
-    public HttpErrorException(int status) {
-        this(status, null);
-    }
-
-    public HttpErrorException(int status, Object answer) {
-        this.status = status;
-        this.answer = answer;
-
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public Object getAnswer() {
-        return answer;
+    public FatalSimpleWebException(Throwable cause) {
+        super(cause);
     }
 }

@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.ybonnel.handlers;
+package fr.ybonnel.simpleweb.handlers;
 
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import fr.ybonnel.exception.HttpErrorException;
+import fr.ybonnel.simpleweb.exception.HttpErrorException;
 import org.mortbay.jetty.HttpConnection;
 import org.mortbay.jetty.Request;
 import org.mortbay.jetty.handler.AbstractHandler;
