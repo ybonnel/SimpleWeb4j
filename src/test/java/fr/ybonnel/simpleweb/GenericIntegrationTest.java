@@ -38,6 +38,7 @@ public class GenericIntegrationTest {
 
     @Before
     public void startServer() {
+        resetDefaultValues();
         port = random.nextInt(10000) + 10000;
         setPort(port);
         testUtil = new SimpleWebTestUtil(port);

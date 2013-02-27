@@ -33,11 +33,11 @@ public class SimpleWebServer {
 
     private Server jettyServer;
 
-    public SimpleWebServer(int port, JsonHandler jsonHandler) {
+    public SimpleWebServer(int port, JsonHandler jsonHandler, String publicResourcesPath) {
         jettyServer = new Server(port);
 
         ResourceHandler resourceHandler = new ResourceHandler();
-        resourceHandler.setBaseResource(Resource.newClassPathResource("/public"));
+        resourceHandler.setBaseResource(Resource.newClassPathResource(publicResourcesPath));
         resourceHandler.setWelcomeFiles(new String[]{"index.html"});
 
         ResourceHandler internalResourceHandler = new ResourceHandler();

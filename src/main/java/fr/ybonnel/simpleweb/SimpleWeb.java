@@ -28,6 +28,7 @@ public class SimpleWeb {
     private static boolean initialized = false;
     private static boolean started = false;
     private static SimpleWebServer server;
+    private static String publicResourcesPath = "/public";
 
     /**
      * Default port is 9999.
@@ -36,6 +37,14 @@ public class SimpleWeb {
 
     private static JsonHandler jsonHandler = new JsonHandler();
 
+    /**
+     * Test usage.
+     */
+    public static void resetDefaultValues() {
+        port = 9999;
+        publicResourcesPath = "/public";
+    }
+
     public static void setPort(int newPort) {
         if (initialized) {
             throw new IllegalStateException("You must set port before settings any route");
@@ -43,10 +52,17 @@ public class SimpleWeb {
         port = newPort;
     }
 
+    public static void setPublicResourcesPath(String newPublicResourcesPath) {
+        if (initialized) {
+            throw new IllegalStateException("You must set public resources path before settings any route");
+        }
+        publicResourcesPath = newPublicResourcesPath;
+    }
+
 
     private static void init() {
         if (!initialized) {
-            server = new SimpleWebServer(port, jsonHandler);
+            server = new SimpleWebServer(port, jsonHandler, publicResourcesPath);
             initialized = true;
         }
     }
