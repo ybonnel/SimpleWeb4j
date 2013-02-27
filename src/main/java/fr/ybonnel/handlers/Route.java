@@ -32,21 +32,15 @@ public abstract class Route<P, R> {
     private String path;
     private List<String> pathInSegments;
     private Class<P> paramType;
-    private Class<R> returnType;
 
-    public Route(String path, Class<P> paramType, Class<R> returnType) {
+    public Route(String path, Class<P> paramType) {
         this.path = path;
         pathInSegments = newArrayList(Splitter.on('/').omitEmptyStrings().trimResults().split(path));
         this.paramType = paramType;
-        this.returnType = returnType;
     }
 
     public Class<P> getParamType() {
         return paramType;
-    }
-
-    public Class<R> getReturnType() {
-        return returnType;
     }
 
     public boolean isThisPath(String path) {

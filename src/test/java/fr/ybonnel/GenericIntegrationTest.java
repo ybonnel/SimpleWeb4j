@@ -22,9 +22,7 @@ import fr.ybonnel.handlers.Response;
 import fr.ybonnel.handlers.Route;
 import fr.ybonnel.handlers.RouteParameters;
 import fr.ybonnel.util.SimpleWebTestUtil;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import java.util.Random;
 
@@ -33,25 +31,25 @@ import static org.junit.Assert.assertEquals;
 
 public class GenericIntegrationTest {
 
-    private static int port;
-    private static Random random = new Random();
-    private static SimpleWebTestUtil testUtil;
+    private int port;
+    private Random random = new Random();
+    private SimpleWebTestUtil testUtil;
 
 
-    @BeforeClass
-    public static void startServer() {
+    @Before
+    public void startServer() {
         port = random.nextInt(10000) + 10000;
         setPort(port);
         testUtil = new SimpleWebTestUtil(port);
 
-        get(new Route<Void, String>("/resource", Void.class, String.class) {
+        get(new Route<Void, String>("/resource", Void.class) {
             @Override
             public Response<String> handle(Void param, RouteParameters routeParams) {
                 return new Response<>("Hello World");
             }
         });
 
-        get(new Route<Void, String>("/resource/:name", Void.class, String.class) {
+        get(new Route<Void, String>("/resource/:name", Void.class) {
             @Override
             public Response<String> handle(Void param, RouteParameters routeParams) throws HttpErrorException {
                 if (routeParams.getParam("name").equals("notfound")) {
@@ -61,7 +59,7 @@ public class GenericIntegrationTest {
             }
         });
 
-        post(new Route<String, String>("/resource", String.class, String.class) {
+        post(new Route<String, String>("/resource", String.class) {
 
             @Override
             public Response<String> handle(String param, RouteParameters routeParams) throws HttpErrorException {
@@ -69,21 +67,21 @@ public class GenericIntegrationTest {
             }
         });
 
-        get(new Route<Void, String>("/othercode", Void.class, String.class) {
+        get(new Route<Void, String>("/othercode", Void.class) {
             @Override
             public Response<String> handle(Void param, RouteParameters routeParams) {
                 return new Response<>("I m a teapot", 418);
             }
         });
 
-        put(new Route<String, String>("/resource/put", String.class, String.class) {
+        put(new Route<String, String>("/resource/put", String.class) {
             @Override
             public Response<String> handle(String param, RouteParameters routeParams) throws HttpErrorException {
                 return new Response<>("Hello " + param);
             }
         });
 
-        delete(new Route<Void, String>("/resource/delete", Void.class, String.class) {
+        delete(new Route<Void, String>("/resource/delete", Void.class) {
             @Override
             public Response<String> handle(Void param, RouteParameters routeParams) throws HttpErrorException {
                 return new Response<>("deleted");
@@ -104,8 +102,8 @@ public class GenericIntegrationTest {
 
     }
 
-    @AfterClass
-    public static void stopServer() {
+    @After
+    public void stopServer() {
         stop();
     }
 
@@ -171,11 +169,4 @@ public class GenericIntegrationTest {
         assertEquals("application/json", response.contentType);
         assertEquals("\"deleted\"", response.body);
     }
-
-    public static void main(String[] args) {
-        startServer();
-        System.out.println(port);
-    }
-
-
 }

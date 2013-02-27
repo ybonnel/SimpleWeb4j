@@ -20,6 +20,7 @@ package fr.ybonnel;
 import fr.ybonnel.handlers.HttpMethod;
 import fr.ybonnel.handlers.JsonHandler;
 import fr.ybonnel.handlers.Route;
+import fr.ybonnel.handlers.resource.RestResource;
 import fr.ybonnel.server.SimpleWebServer;
 
 public class SimpleWeb {
@@ -61,6 +62,8 @@ public class SimpleWeb {
             throw new IllegalStateException("You must start server before stop it!");
         }
         server.stop();
+        initialized = false;
+        started = false;
     }
 
     public static void get(Route route) {
@@ -77,5 +80,13 @@ public class SimpleWeb {
 
     public static void delete(Route route) {
         jsonHandler.addRoute(HttpMethod.DELETE, route);
+    }
+
+    public static void resource(RestResource restResource) {
+        get(restResource.routeGetById());
+        get(restResource.routeGetAll());
+        post(restResource.routeCreate());
+        delete(restResource.routeDelete());
+        put(restResource.routeUpdate());
     }
 }

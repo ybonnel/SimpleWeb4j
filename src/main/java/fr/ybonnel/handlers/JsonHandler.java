@@ -63,10 +63,12 @@ public class JsonHandler extends AbstractHandler {
         }
         try {
             Response<?> handlerResponse = route.handle(param, new RouteParameters(route.getRouteParams(request.getPathInfo())));
-            if (handlerResponse.getStatus() == null) {
-                response.setStatus(HttpMethod.fromValue(request.getMethod()).getDefaultStatus());
-            } else {
+            if (handlerResponse.getStatus() != null) {
                 response.setStatus(handlerResponse.getStatus());
+            } else if (handlerResponse.getAnswer() == null) {
+                response.setStatus(HttpMethod.fromValue(request.getMethod()).getDefaultStatusWithNoContent());
+            } else {
+                response.setStatus(HttpMethod.fromValue(request.getMethod()).getDefaultStatus());
             }
             if (handlerResponse.getAnswer() != null) {
                 response.setContentType("application/json");

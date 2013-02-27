@@ -17,20 +17,21 @@
 package fr.ybonnel.handlers;
 
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public enum HttpMethod {
-    GET, POST(HttpServletResponse.SC_CREATED), PUT, DELETE, HEAD, TRACE, CONNECT, OPTIONS;
+    GET, POST(HttpServletResponse.SC_CREATED, HttpServletResponse.SC_CREATED), PUT, DELETE, HEAD, TRACE, CONNECT, OPTIONS;
 
     private int defaultStatus;
+    private int defaultStatusWithNoContent;
 
     private HttpMethod() {
-        this(HttpServletResponse.SC_OK);
+        this(HttpServletResponse.SC_OK, HttpServletResponse.SC_NO_CONTENT);
     }
 
-    private HttpMethod(int defaultStatus) {
+    private HttpMethod(int defaultStatus, int defaultStatusWithNoContent) {
         this.defaultStatus = defaultStatus;
+        this.defaultStatusWithNoContent = defaultStatusWithNoContent;
     }
 
     public static HttpMethod fromValue(String value) {
@@ -39,5 +40,9 @@ public enum HttpMethod {
 
     public int getDefaultStatus() {
         return defaultStatus;
+    }
+
+    public int getDefaultStatusWithNoContent() {
+        return defaultStatusWithNoContent;
     }
 }
