@@ -37,12 +37,15 @@ public class SimpleWebServer {
         jettyServer = new Server(port);
 
         ResourceHandler resourceHandler = new ResourceHandler();
-        Resource publicResources = Resource.newClassPathResource("/public");
-        resourceHandler.setBaseResource(publicResources);
+        resourceHandler.setBaseResource(Resource.newClassPathResource("/public"));
         resourceHandler.setWelcomeFiles(new String[]{"index.html"});
 
+        ResourceHandler internalResourceHandler = new ResourceHandler();
+        internalResourceHandler.setBaseResource(Resource.newClassPathResource("/fr/ybonnel/simpleweb/public"));
+        internalResourceHandler.setWelcomeFiles(new String[]{"index.html"});
+
         HandlerList handlers = new HandlerList();
-        handlers.setHandlers(new Handler[]{jsonHandler, resourceHandler});
+        handlers.setHandlers(new Handler[]{jsonHandler, resourceHandler, internalResourceHandler});
 
         jettyServer.setHandler(handlers);
     }
