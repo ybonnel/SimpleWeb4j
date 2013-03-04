@@ -2,18 +2,20 @@
 <div class="row">
     <div class="span3"></div>
     <div class="span6">
-        <form class="form-horizontal well">
+        <form name="form" class="form-horizontal well" novalidate>
             <fieldset>
-                <div class="control-group">
+                <div class="control-group" ng-class="{true:'error', false:''}[form.name.$dirty && form.name.$invalid]">
                     <label class="control-label">What's your name?</label>
                     <div class="controls">
-                        <input type="text" ng-model="name" placeholder="World" class="input-small" required>
+                        <input type="text" name="name" ng-model="name" placeholder="World" class="input-small" required>
+                        <span ng-show="form.name.$dirty && form.name.$invalid" class="help-inline">Name is required</span>
                     </div>
                 </div>
-                <div class="control-group">
+                <div class="control-group" ng-class="{true:'error', false:''}[form.times.$dirty && form.times.$invalid]">
                     <label class="control-label">How many times?</label>
                     <div class="controls">
-                        <input type="number" ng-model="times" placeholder="10" class="input-small" required>
+                        <input type="number" name="times" ng-model="times" placeholder="10" class="input-small" required>
+                        <span ng-show="form.times.$dirty && form.times.$invalid" class="help-inline">Times is a required number</span>
                     </div>
                 </div>
                 <div class="control-group">
@@ -28,7 +30,8 @@
                     </div>
                 </div>
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Validate</button>
+                    <button type="submit" class="btn btn-primary"
+                            ng-click="submitForm(name, times, color)">Validate</button>
                 </div>
             </fieldset>
         </form>
