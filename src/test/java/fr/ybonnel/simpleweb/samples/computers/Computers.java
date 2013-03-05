@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.ybonnel.simpleweb.samples.helloworld;
+package fr.ybonnel.simpleweb.samples.computers;
 
-import static fr.ybonnel.simpleweb.SimpleWeb.setPort;
-import static fr.ybonnel.simpleweb.SimpleWeb.setPublicResourcesPath;
-import static fr.ybonnel.simpleweb.SimpleWeb.start;
+import static fr.ybonnel.simpleweb.SimpleWeb.*;
 
-public class HelloWorld {
+public class Computers {
 
     public static void startServer(int port) {
         setPort(port);
-        setPublicResourcesPath("/fr/ybonnel/simpleweb/samples/helloworld");
+        setPublicResourcesPath("/fr/ybonnel/simpleweb/samples/computers");
+
+        resource(new ComputerRestResource("/computer"));
+
         new Thread(new Runnable() {
             @Override
             public void run() {

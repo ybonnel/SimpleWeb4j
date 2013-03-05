@@ -21,6 +21,7 @@ import fr.ybonnel.simpleweb.handlers.Response;
 import fr.ybonnel.simpleweb.handlers.Route;
 import fr.ybonnel.simpleweb.handlers.RouteParameters;
 
+import java.util.Collection;
 import java.util.List;
 
 public abstract class RestResource<T> {
@@ -35,13 +36,13 @@ public abstract class RestResource<T> {
     }
 
     public abstract T getById(String id) throws HttpErrorException;
-    public abstract List<T> getAll() throws HttpErrorException;
+    public abstract Collection<T> getAll() throws HttpErrorException;
     public abstract void update(String id, T resource) throws HttpErrorException;
     public abstract void create(T resource) throws HttpErrorException;
     public abstract void delete(String id) throws HttpErrorException;
 
     private Route<String, T> routeGetById;
-    private Route<Void, List<T>> routeGetAll;
+    private Route<Void, Collection<T>> routeGetAll;
     private Route<T, Void> routeCreate;
     private Route<Void, Void> routeDelete;
     private Route<T, Void> routeUpdate;
@@ -79,9 +80,9 @@ public abstract class RestResource<T> {
             }
         };
 
-        routeGetAll = new Route<Void, List<T>>(resourceRoute, Void.class) {
+        routeGetAll = new Route<Void, Collection<T>>(resourceRoute, Void.class) {
             @Override
-            public Response<List<T>> handle(Void param, RouteParameters routeParams) throws HttpErrorException {
+            public Response<Collection<T>> handle(Void param, RouteParameters routeParams) throws HttpErrorException {
                 return new Response<>(getAll());
             }
         };
@@ -103,7 +104,7 @@ public abstract class RestResource<T> {
         return routeUpdate;
     }
 
-    public Route<Void, List<T>> routeGetAll() {
+    public Route<Void, Collection<T>> routeGetAll() {
         return routeGetAll;
     }
 }
