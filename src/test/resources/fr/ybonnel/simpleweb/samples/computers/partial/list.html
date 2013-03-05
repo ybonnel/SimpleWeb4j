@@ -30,8 +30,8 @@
             <tbody>
                 <tr ng-repeat="computer in computers">
                     <td>{{computer.name}}</td>
-                    <td>{{computer.introduced}}</td>
-                    <td>{{computer.discontinued}}</td>
+                    <td>{{computer.introduced | date:'dd MMM yyyy'}}</td>
+                    <td>{{computer.discontinued | date:'dd MMM yyyy'}}</td>
                     <td>{{computer.company.name}}</td>
                 </tr>
             </tbody>

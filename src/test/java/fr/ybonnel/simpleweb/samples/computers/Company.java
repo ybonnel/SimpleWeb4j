@@ -16,9 +16,19 @@
  */
 package fr.ybonnel.simpleweb.samples.computers;
 
-public class Company {
+public class Company implements Cloneable {
 
     public Long id;
 
     public String name;
+
+    @Override
+    protected Company clone() {
+        try {
+            return (Company) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

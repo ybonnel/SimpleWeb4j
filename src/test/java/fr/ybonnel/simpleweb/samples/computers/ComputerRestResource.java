@@ -20,6 +20,8 @@ import fr.ybonnel.simpleweb.exception.HttpErrorException;
 import fr.ybonnel.simpleweb.handlers.resource.RestResource;
 
 import javax.servlet.http.HttpServletResponse;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +31,27 @@ public class ComputerRestResource extends RestResource<Computer> {
 
     public ComputerRestResource(String resourceRoute) {
         super(resourceRoute, Computer.class);
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            Company apple = new Company();
+            apple.name = "Apple Inc.";
+            Computer apple1 = new Computer();
+            apple1.name = "Apple I";
+            apple1.introduced = sdf.parse("01/04/1976");
+            apple1.discontinued = sdf.parse("01/10/1977");
+            apple1.company = apple.clone();
+
+            Computer apple2 = new Computer();
+            apple2.name = "Apple II";
+            apple2.introduced = sdf.parse("01/04/1977");
+            apple2.discontinued = sdf.parse("01/10/1993");
+            apple2.company = apple.clone();
+
+            create(apple1);
+            create(apple2);
+        } catch (ParseException|HttpErrorException e) {
+            e.printStackTrace();
+        }
     }
 
     private Map<Long, Computer> computers = new HashMap<>();
@@ -37,7 +60,11 @@ public class ComputerRestResource extends RestResource<Computer> {
 
     @Override
     public Computer getById(String id) throws HttpErrorException {
-        return computers.get(Long.parseLong(id));
+        if (computers.containsKey(Long.parseLong(id))) {
+            return computers.get(Long.parseLong(id));
+        } else {
+            throw new HttpErrorException(HttpServletResponse.SC_NOT_FOUND);
+        }
     }
 
     @Override
@@ -64,6 +91,7 @@ public class ComputerRestResource extends RestResource<Computer> {
         if (resource.company != null) {
             resource.company.id = companyIdGenerator.incrementAndGet();
         }
+        computers.put(resource.id, resource);
     }
 
     @Override

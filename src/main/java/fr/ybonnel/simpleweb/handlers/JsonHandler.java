@@ -28,6 +28,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +37,7 @@ import java.util.Map;
 public class JsonHandler extends AbstractHandler {
 
     private Map<HttpMethod, List<Route>> routes = new HashMap<>();
-    private Gson gson = new GsonBuilder().create();
+    private Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXX").create();
 
     public void addRoute(HttpMethod httpMethod, Route route) {
         if (!routes.containsKey(httpMethod)) {
