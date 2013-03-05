@@ -1,0 +1,40 @@
+
+
+<div class="row">
+    <div class="span3">
+        <h3>{{computers.length}} computers found</h3>
+    </div>
+</div>
+
+<div class="row">
+    <div class="span12 relative">
+        <form class="form-search">
+            <input type="search" class="input-xlarge search-query" placeholder="Filter by computer name..." ng-model="search">
+            <button type="submit" class="btn btn-primary">Filter by name</button>
+        </form>
+        <a class="btn btn-success right-btn">Add a new computer</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="span12">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Computer Name</th>
+                    <th>Introduced</th>
+                    <th>Discontinued</th>
+                    <th>Company</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="computer in computers">
+                    <td>{{computer.name}}</td>
+                    <td>{{computer.introduced}}</td>
+                    <td>{{computer.discontinued}}</td>
+                    <td>{{computer.company.name}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
