@@ -1,4 +1,12 @@
-<h3>Add a computer</h3>
+
+<div class="row">
+    <div class="span12 relative">
+        <h3>Add a computer</h3>
+        <input type="submit" value="Delete this computer" ng-click="deleteComputer(computer)" class="btn btn-danger right-btn" ng-show="canDelete">
+    </div>
+</div>
+
+
 <form name="form" class="form-horizontal" novalidate >
     <fieldset>
         <div class="control-group" ng-class="{true:'error', false:''}[form.name.$dirty && form.name.$invalid]">
@@ -36,16 +44,12 @@
         </div>
     </fieldset>
 
-    <div class="alert alert-info" ng-show="loading">
-        <p>{{messageLoading}}</p>
-    </div>
+    <div class="alert alert-info" ng-show="loading">{{messageLoading}}</div>
 
-    <div class="alert alert-error" ng-show="error">
-        <p>{{errorMessage}}</p>
-    </div>
+    <div class="alert alert-error" ng-show="error">{{errorMessage}}</div>
 
     <div class="form-actions">
-        <button type="submit" class="btn btn-primary" ng-click="saveComputer(computer)">Create this computer</button> or
+        <button type="submit" class="btn btn-primary" ng-click="saveComputer(computer)">{{submitMessage}}</button> or
         <a href="#/computers" class="btn">Cancel</a>
     </div>
 

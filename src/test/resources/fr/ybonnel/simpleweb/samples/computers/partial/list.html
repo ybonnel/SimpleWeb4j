@@ -1,5 +1,15 @@
 
 
+
+<div class="row">
+    <div class="span12">
+        <div class="alert alert-warning" ng-repeat="message in messages">
+            <button type="button" class="close" data-dismiss="alert">×</button>
+            <div ng-bind-html="message"></div>
+        </div>
+    </div>
+</div>
+
 <div class="row">
     <div class="span3">
         <h3>{{computers.length}} computers found</h3>
@@ -29,7 +39,7 @@
             </thead>
             <tbody>
                 <tr ng-repeat="computer in computers">
-                    <td>{{computer.name}}</td>
+                    <td><a href="#/computer/{{computer.id}}">{{computer.name}}</a></td>
                     <td>{{computer.introduced | date:'dd MMM yyyy'}}</td>
                     <td>{{computer.discontinued | date:'dd MMM yyyy'}}</td>
                     <td>{{computer.company.name}}</td>

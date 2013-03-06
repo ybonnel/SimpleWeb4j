@@ -63,6 +63,6 @@ public class ComputerRestResource extends RestResource<Computer> {
 
     @Override
     public void delete(String id) throws HttpErrorException {
-        CompanyService.INSTANCE.delete(Long.parseLong(id));
+        ComputerService.INSTANCE.delete(Long.parseLong(id));
     }
 }
