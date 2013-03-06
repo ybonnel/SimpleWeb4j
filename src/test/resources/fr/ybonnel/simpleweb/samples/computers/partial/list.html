@@ -19,8 +19,7 @@
 <div class="row">
     <div class="span12 relative">
         <form class="form-search">
-            <input type="search" class="input-xlarge search-query" placeholder="Filter by computer name..." ng-model="search">
-            <button type="submit" class="btn btn-primary">Filter by name</button>
+            <input type="search" class="input-xlarge search-query" placeholder="Filter by computer name..." ng-model="query">
         </form>
         <a class="btn btn-success right-btn" href="#/computer/new">Add a new computer</a>
     </div>
@@ -38,7 +37,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="computer in computers">
+                <tr ng-repeat="computer in computers | filter:query">
                     <td><a href="#/computer/{{computer.id}}">{{computer.name}}</a></td>
                     <td>{{computer.introduced | date:'dd MMM yyyy'}}</td>
                     <td>{{computer.discontinued | date:'dd MMM yyyy'}}</td>

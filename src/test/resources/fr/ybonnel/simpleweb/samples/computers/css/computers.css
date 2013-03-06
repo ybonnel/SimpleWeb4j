@@ -47,13 +47,8 @@ body {
     position: relative;
 }
 
-input {
+/*input {
     min-height:30px;
-}
+} */
 
-.topRight {
-    position: absolute;
-    right: 20px;
-    top: 70px;
-}
 
