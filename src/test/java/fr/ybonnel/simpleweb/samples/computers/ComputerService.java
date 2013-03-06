@@ -16,13 +16,10 @@
  */
 package fr.ybonnel.simpleweb.samples.computers;
 
-import fr.ybonnel.simpleweb.exception.HttpErrorException;
+import org.apache.commons.math.random.RandomData;
+import org.apache.commons.math.random.RandomDataImpl;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 public enum ComputerService {
@@ -31,27 +28,52 @@ public enum ComputerService {
     private Map<Long, Computer> computers = new HashMap<>();
     private AtomicLong idGenerator = new AtomicLong(0);
 
+    private static final int COMPUTERS_NUMBER = 1000;
+
+    private final static int SIZE_OF_NAME = 30;
+    private RandomData randomData = new RandomDataImpl();
+    private Random random = new Random();
+
     private ComputerService() {
 
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            Computer apple1 = new Computer();
-            apple1.name = "Apple I";
-            apple1.introduced = sdf.parse("01/04/1976");
-            apple1.discontinued = sdf.parse("01/10/1977");
-            apple1.company = CompanyService.INSTANCE.getById(1L);
-
-            Computer apple2 = new Computer();
-            apple2.name = "Apple II";
-            apple2.introduced = sdf.parse("01/04/1977");
-            apple2.discontinued = sdf.parse("01/10/1993");
-            apple2.company = CompanyService.INSTANCE.getById(1L);
-
-            create(apple1);
-            create(apple2);
-        } catch (ParseException e) {
-            e.printStackTrace();
+        for (int i=0;i<COMPUTERS_NUMBER;i++) {
+            create(generateComputer());
         }
+    }
+
+    private Date generateDate(Date min, Date max) {
+        return new Date(randomData.nextLong(min.getTime(), max.getTime()));
+    }
+
+
+    private Date minDate = new Date(0L);
+    private Date maxDate = new Date();
+
+    private Computer generateComputer() {
+        Computer computer = new Computer();
+
+        StringBuilder nameBuilder = new StringBuilder();
+        for (int i=0; i<SIZE_OF_NAME;i++) {
+            System.out.println(random);
+            nameBuilder.append((char)('a' + random.nextInt(26)));
+        }
+        computer.name = nameBuilder.toString();
+
+        boolean generateIntroduced = false;
+        if (random.nextBoolean()) {
+            generateIntroduced = true;
+            computer.introduced = generateDate(minDate, maxDate);
+        }
+
+        if (generateIntroduced && random.nextBoolean()) {
+            computer.discontinued = generateDate(computer.introduced, maxDate);
+        }
+
+        if (random.nextBoolean()) {
+            computer.company = CompanyService.INSTANCE.getById((long)random.nextInt(CompanyService.INSTANCE.getCompanies().size())+1);
+        }
+
+        return computer;
     }
 
     public Computer getById(Long id) {

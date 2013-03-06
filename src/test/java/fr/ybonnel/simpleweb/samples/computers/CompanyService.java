@@ -19,21 +19,39 @@ package fr.ybonnel.simpleweb.samples.computers;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 
 public enum CompanyService {
     INSTANCE;
 
     private Map<Long, Company> companies = new HashMap<>();
+
+    protected Map<Long, Company> getCompanies() {
+        return companies;
+    }
+
     private AtomicLong idGenerator = new AtomicLong(0);
 
+    private final static int COMPANIES_NUMBER = 100;
+
     private CompanyService() {
-        Company apple = new Company();
-        apple.name = "Apple Inc.";
-        Company atari = new Company();
-        atari.name = "Atari";
-        create(apple);
-        create(atari);
+        for (int i=0;i<COMPANIES_NUMBER;i++) {
+            create(generateCompany());
+        }
+    }
+
+    private final static int SIZE_OF_NAME = 50;
+    private Random random = new Random();
+
+    private Company generateCompany() {
+        StringBuilder nameBuilder = new StringBuilder();
+        for (int i=0; i<SIZE_OF_NAME;i++) {
+            nameBuilder.append((char)('a' + random.nextInt(26)));
+        }
+        Company company = new Company();
+        company.name = nameBuilder.toString();
+        return company;
     }
 
     public Company getById(Long id) {
