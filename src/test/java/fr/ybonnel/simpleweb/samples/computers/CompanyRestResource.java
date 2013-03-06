@@ -20,45 +20,40 @@ import fr.ybonnel.simpleweb.exception.HttpErrorException;
 import fr.ybonnel.simpleweb.handlers.resource.RestResource;
 
 import javax.servlet.http.HttpServletResponse;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 
-public class ComputerRestResource extends RestResource<Computer> {
+public class CompanyRestResource extends RestResource<Company> {
 
-    public ComputerRestResource(String resourceRoute) {
-        super(resourceRoute, Computer.class);
+    public CompanyRestResource(String resourceRoute) {
+        super(resourceRoute, Company.class);
     }
 
     @Override
-    public Computer getById(String id) throws HttpErrorException {
-        Computer computer = ComputerService.INSTANCE.getById(Long.parseLong(id));
-        if (computer == null) {
+    public Company getById(String id) throws HttpErrorException {
+        Company company = CompanyService.INSTANCE.getById(Long.parseLong(id));
+        if (company == null) {
             throw new HttpErrorException(HttpServletResponse.SC_NOT_FOUND);
         }
-        return computer;
+        return company;
     }
 
     @Override
-    public Collection<Computer> getAll() throws HttpErrorException {
-        return ComputerService.INSTANCE.getAll();
+    public Collection<Company> getAll() throws HttpErrorException {
+        return CompanyService.INSTANCE.getAll();
     }
 
     @Override
-    public void update(String id, Computer resource) throws HttpErrorException {
+    public void update(String id, Company resource) throws HttpErrorException {
         resource.id = Long.parseLong(id);
-        Computer computer = ComputerService.INSTANCE.update(resource);
-        if (computer == null) {
+        Company company = CompanyService.INSTANCE.update(resource);
+        if (company == null) {
             throw new HttpErrorException(HttpServletResponse.SC_NOT_FOUND);
         }
     }
 
     @Override
-    public void create(Computer resource) throws HttpErrorException {
-        ComputerService.INSTANCE.create(resource);
+    public void create(Company resource) throws HttpErrorException {
+        CompanyService.INSTANCE.create(resource);
     }
 
     @Override

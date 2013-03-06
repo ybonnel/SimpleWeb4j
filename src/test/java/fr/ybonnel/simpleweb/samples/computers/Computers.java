@@ -24,6 +24,7 @@ public class Computers {
         setPort(port);
         setPublicResourcesPath("/fr/ybonnel/simpleweb/samples/computers");
 
+        resource(new CompanyRestResource("/company"));
         resource(new ComputerRestResource("/computer"));
 
         new Thread(new Runnable() {

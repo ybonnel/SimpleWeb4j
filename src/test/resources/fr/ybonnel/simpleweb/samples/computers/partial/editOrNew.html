@@ -9,7 +9,6 @@
             </div>
         </div>
 
-
         <div class="control-group" ng-class="{true:'error', false:''}[form.introduced.$dirty && form.introduced.$invalid]">
             <label class="control-label">Introduced date</label>
             <div class="controls">
@@ -18,11 +17,10 @@
             </div>
         </div>
 
-
         <div class="control-group" ng-class="{true:'error', false:''}[form.discontinued.$dirty && form.discontinued.$invalid]">
             <label class="control-label">Discontinued date</label>
             <div class="controls">
-                <input type="text" name="discontinued" ng-model="computer.discontinued">
+                <input type="text" date name="discontinued" ng-model="computer.discontinued">
                 <span class="help-inline">Date ('yyyy-MM-dd')</span>
             </div>
         </div>
@@ -30,18 +28,24 @@
         <div class="control-group">
             <label class="control-label" for="company">Company</label>
             <div class="controls">
-                <select id="company" ng-model="computer.company">
+                <select id="company" ng-model="computer.company.id">
                     <option class="blank" value="">-- Choose a company --</option>
-                    <option value="26">Xerox</option>
-                    <option value="28">Zemmix</option>
+                    <option ng-repeat="company in companies" value="{{company.id}}">{{company.name}}</option>
                 </select>
             </div>
         </div>
-
-
     </fieldset>
+
+    <div class="alert alert-info" ng-show="loading">
+        <p>{{messageLoading}}</p>
+    </div>
+
+    <div class="alert alert-error" ng-show="error">
+        <p>{{errorMessage}}</p>
+    </div>
+
     <div class="form-actions">
-        <button type="submit" class="btn btn-primary">Create this computer</button> or
+        <button type="submit" class="btn btn-primary" ng-click="saveComputer(computer)">Create this computer</button> or
         <a href="#/computers" class="btn">Cancel</a>
     </div>
 

@@ -3,7 +3,28 @@ function ListComputerCtrl($scope, ComputerService) {
     $scope.computers = ComputerService.query();
 }
 
-function NewComputerCtrl($scope) {
+function NewComputerCtrl($scope, CompanyService, ComputerService, $log, $location) {
+    $scope.companies = CompanyService.query();
+    $scope.loading = false;
+    $scope.messageLoading = 'Creating your computer...';
+    $scope.saveComputer = function(computer) {
+        if ($scope.form.$invalid) {
+            $scope.form.name.$dirty = true;
+            $scope.form.introduced.$dirty = true;
+            $scope.form.discontinued.$dirty = true;
+        } else {
+            $log.info(computer);
+            $scope.error = false;
+            $scope.loading = true;
+            ComputerService.save(computer, function(data) {
+                $location.path('/computers');
+            }, function(err) {
+                $scope.loading = false;
+                $scope.error = true;
+                $scope.errorMessage = err.data;
+            });
+        }
+    }
 }
 
 function EditComputerCtrl($scope) {
@@ -30,7 +51,7 @@ app.directive('date', function (dateFilter) {
                     var parsedDateMilissec = Date.parse(viewValue);
                     if (parsedDateMilissec > 0) {
                         ctrl.$setValidity('date', true);
-                        return parsedDateMilissec;
+                        return viewValue + 'T00:00:00.000Z';
                     }
                 }
 
@@ -50,4 +71,8 @@ var services = angular.module('ComputersServices', ['ngResource']);
 
 services.factory('ComputerService', function($resource) {
     return $resource('/computer/:id', {});
+});
+
+services.factory('CompanyService', function($resource) {
+    return $resource('/company/:id');
 });
