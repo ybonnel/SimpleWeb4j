@@ -54,7 +54,6 @@ public enum ComputerService {
 
         StringBuilder nameBuilder = new StringBuilder();
         for (int i=0; i<SIZE_OF_NAME;i++) {
-            System.out.println(random);
             nameBuilder.append((char)('a' + random.nextInt(26)));
         }
         computer.name = nameBuilder.toString();
