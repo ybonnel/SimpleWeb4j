@@ -8,9 +8,6 @@ body {
 .container > footer p {
     text-align: center; /* center align it with the container */
 }
-/*.container {
-    width: 820px;
-}*/
 
 /* The white background content wrapper */
 .container > .content {
