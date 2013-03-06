@@ -30,14 +30,14 @@
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>
-                    <th>Computer Name</th>
-                    <th>Introduced</th>
-                    <th>Discontinued</th>
-                    <th>Company</th>
+                    <th ng-class="selectedCls('name')" ng-click="changeSorting('name')">Computer Name</th>
+                    <th ng-class="selectedCls('introduced')" ng-click="changeSorting('introduced')">Introduced</th>
+                    <th ng-class="selectedCls('discontinued')" ng-click="changeSorting('discontinued')">Discontinued</th>
+                    <th ng-class="selectedCls('company.name')" ng-click="changeSorting('company.name')">Company</th>
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="computer in computers | filter:query">
+                <tr ng-repeat="computer in computers | filter:query | orderBy:sort.column:sort.descending">
                     <td><a href="#/computer/{{computer.id}}">{{computer.name}}</a></td>
                     <td>{{computer.introduced | date:'dd MMM yyyy'}}</td>
                     <td>{{computer.discontinued | date:'dd MMM yyyy'}}</td>

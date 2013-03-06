@@ -47,8 +47,12 @@ body {
     position: relative;
 }
 
-/*input {
-    min-height:30px;
-} */
+.sort-true::before {
+    content: '↓ ';
+}
+
+.sort-false::before {
+    content: '↑ ';
+}
 
 
