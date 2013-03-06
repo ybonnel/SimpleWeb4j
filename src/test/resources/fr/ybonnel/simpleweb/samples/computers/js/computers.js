@@ -1,5 +1,8 @@
 
-function ListComputerCtrl($scope, ComputerService, MessageService, $log) {
+function ListComputerCtrl($scope, ComputerService, MessageService, $log, $filter) {
+
+    $scope.computersByPage = 10;
+    $scope.currentPage = 0;
 
     $scope.messages = MessageService.consumMessages();
     $scope.sort = {
@@ -7,7 +10,10 @@ function ListComputerCtrl($scope, ComputerService, MessageService, $log) {
         descending:false
     };
     $log.info($scope.messages);
-    $scope.computers = ComputerService.query();
+    ComputerService.query(function(data){
+        $scope.computers = data;
+        $scope.search();
+    });
 
     $scope.selectedCls = function (column) {
         return column === $scope.sort.column && 'sort-' + $scope.sort.descending;
@@ -21,7 +27,69 @@ function ListComputerCtrl($scope, ComputerService, MessageService, $log) {
             sort.column = column;
             sort.descending = false;
         }
+        $scope.search();
     }
+
+
+    var searchMatch = function (haystack, needle) {
+        if (!needle) {
+            return true;
+        }
+        return haystack.toLowerCase().indexOf(needle.toLowerCase()) !== -1;
+    };
+
+    // init the filtered computers
+    $scope.search = function () {
+        $scope.filteredComputers = $filter('filter')($scope.computers, function (computer) {
+                return searchMatch(computer.name, $scope.query);
+            });
+        // take care of the sorting order
+        $scope.filteredComputers = $filter('orderBy')($scope.filteredComputers, $scope.sort.column, $scope.sort.descending);
+        $scope.currentPage = 0;
+        // now group by pages
+        $scope.groupToPages();
+    };
+
+    // calculate page in place
+    $scope.groupToPages = function () {
+        $scope.pagedComputers = [];
+
+        for (var i = 0; i < $scope.filteredComputers.length; i++) {
+            if (i % $scope.computersByPage === 0) {
+                $scope.pagedComputers[Math.floor(i / $scope.computersByPage)] = [ $scope.filteredComputers[i] ];
+            } else {
+                $scope.pagedComputers[Math.floor(i / $scope.computersByPage)].push($scope.filteredComputers[i]);
+            }
+        }
+    };
+
+    $scope.range = function (start, end) {
+        var ret = [];
+        if (!end) {
+            end = start;
+            start = 0;
+        }
+        for (var i = start; i < end; i++) {
+            ret.push(i);
+        }
+        return ret;
+    };
+
+    $scope.prevPage = function () {
+        if ($scope.currentPage > 0) {
+            $scope.currentPage--;
+        }
+    };
+
+    $scope.nextPage = function () {
+        if ($scope.currentPage < $scope.pagedComputers.length - 1) {
+            $scope.currentPage++;
+        }
+    };
+
+    $scope.setPage = function () {
+        $scope.currentPage = this.n;
+    };
 }
 
 function NewComputerCtrl($scope, CompanyService, ComputerService, $location) {

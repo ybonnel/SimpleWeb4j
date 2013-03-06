@@ -75,4 +75,8 @@ table.computers tr th.currentSort {
     text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
 }
 
+.pagination ul .current a {
+    color: #666;
+}
+
 
