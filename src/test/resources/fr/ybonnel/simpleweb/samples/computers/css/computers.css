@@ -47,12 +47,35 @@ body {
     position: relative;
 }
 
-.sort-true::before {
+.sort-true::after {
     content: '↓ ';
 }
 
-.sort-false::before {
+.sort-false::after {
     content: '↑ ';
+}
+
+table.computers tr th {
+  cursor: pointer;
+}
+
+table.computers .col2, table.computers .col3 {
+    width: 10%;
+    min-width: 120px;
+}
+
+table.computers .col4 {
+    width: 30%;
+    min-width: 150px;
+}
+
+#actions {
+    position: relative;
+}
+
+table.computers tr th.currentSort {
+    background-color: rgba(141, 192, 219, 0.25);
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
 }
 
 
