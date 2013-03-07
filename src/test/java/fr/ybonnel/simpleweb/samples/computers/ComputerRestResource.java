@@ -50,10 +50,7 @@ public class ComputerRestResource extends RestResource<Computer> {
     @Override
     public void update(String id, Computer resource) throws HttpErrorException {
         resource.id = Long.parseLong(id);
-        Computer computer = ComputerService.INSTANCE.update(resource);
-        if (computer == null) {
-            throw new HttpErrorException(HttpServletResponse.SC_NOT_FOUND);
-        }
+        ComputerService.INSTANCE.update(resource);
     }
 
     @Override

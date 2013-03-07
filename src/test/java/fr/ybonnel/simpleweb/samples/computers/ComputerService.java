@@ -19,14 +19,12 @@ package fr.ybonnel.simpleweb.samples.computers;
 import org.apache.commons.math.random.RandomData;
 import org.apache.commons.math.random.RandomDataImpl;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Random;
 
 public enum ComputerService {
     INSTANCE;
-
-    private Map<Long, Computer> computers = new HashMap<>();
-    private AtomicLong idGenerator = new AtomicLong(0);
 
     private static final int COMPUTERS_NUMBER = 1000;
 
@@ -35,6 +33,8 @@ public enum ComputerService {
     private Random random = new Random();
 
     private ComputerService() {
+        // Generate companies
+        CompanyService.INSTANCE.getAll();
 
         for (int i=0;i<COMPUTERS_NUMBER;i++) {
             create(generateComputer());
@@ -69,48 +69,32 @@ public enum ComputerService {
         }
 
         if (random.nextBoolean()) {
-            computer.company = CompanyService.INSTANCE.getById((long)random.nextInt(CompanyService.INSTANCE.getCompanies().size())+1);
+            computer.company = CompanyService.INSTANCE.getById((long)random.nextInt(CompanyService.COMPANIES_NUMBER)+1);
         }
 
         return computer;
     }
 
     public Computer getById(Long id) {
-        return computers.get(id);
+        return Computer.entityManager.getById(id);
     }
 
     public Collection<Computer> getAll() {
-        return computers.values();
+        return Computer.entityManager.getAll();
     }
 
-    public Computer update(Computer resource) {
-        if (computers.containsKey(resource.id)) {
-            Computer computer = computers.get(resource.id);
-            computer.name = resource.name;
-            computer.introduced = resource.introduced;
-            computer.discontinued = resource.discontinued;
-            if (resource.company == null || resource.company.id == null) {
-                computer.company = null;
-            } else {
-                computer.company = CompanyService.INSTANCE.getById(resource.company.id);
-            }
-            return computer;
-        } else {
-            return null;
+    public void update(Computer resource) {
+        if (resource.company != null) {
+            resource.company = Company.entityManager.getById(resource.company.id);
         }
+        Computer.entityManager.update(resource);
     }
 
     public void create(Computer resource) {
-        resource.id = idGenerator.incrementAndGet();
-        if (resource.company == null || resource.company.id == null) {
-            resource.company = null;
-        } else {
-            resource.company = CompanyService.INSTANCE.getById(resource.company.id);
-        }
-        computers.put(resource.id, resource);
+        Computer.entityManager.save(resource);
     }
 
-    public Computer delete(Long id) {
-        return computers.remove(id);
+    public void delete(Long id) {
+        Computer.entityManager.delete(id);
     }
 }

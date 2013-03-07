@@ -121,8 +121,8 @@ function EditComputerCtrl($scope, $routeParams, CompanyService, ComputerService,
     $scope.canDelete = true;
     $scope.loading = false;
     $scope.submitMessage = "Save this computer";
-    $scope.computer = ComputerService.get({id:$routeParams.id});
     $scope.companies = CompanyService.query();
+    $scope.computer = ComputerService.get({id:$routeParams.id});
     $scope.saveComputer = function(computer) {
         if ($scope.form.$invalid) {
             $scope.form.name.$dirty = true;

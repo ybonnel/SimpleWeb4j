@@ -16,14 +16,23 @@
  */
 package fr.ybonnel.simpleweb.samples.computers;
 
+import javax.persistence.*;
 import java.util.Date;
 
+@Entity
 public class Computer {
 
+    @Id
+    @GeneratedValue
     public Long id;
     public String name;
+    @Temporal(TemporalType.DATE)
     public Date introduced;
+    @Temporal(TemporalType.DATE)
     public Date discontinued;
+    @ManyToOne(fetch = FetchType.EAGER)
     public Company company;
 
+
+    public static EntityManager<Computer, Long> entityManager = new EntityManager<>(Computer.class);
 }

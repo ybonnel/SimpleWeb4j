@@ -17,23 +17,12 @@
 package fr.ybonnel.simpleweb.samples.computers;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicLong;
 
 public enum CompanyService {
     INSTANCE;
 
-    private Map<Long, Company> companies = new HashMap<>();
-
-    protected Map<Long, Company> getCompanies() {
-        return companies;
-    }
-
-    private AtomicLong idGenerator = new AtomicLong(0);
-
-    private final static int COMPANIES_NUMBER = 100;
+    protected final static int COMPANIES_NUMBER = 100;
 
     private CompanyService() {
         for (int i=0;i<COMPANIES_NUMBER;i++) {
@@ -55,29 +44,22 @@ public enum CompanyService {
     }
 
     public Company getById(Long id) {
-        return companies.get(id);
+        return Company.entityManager.getById(id);
     }
 
     public Collection<Company> getAll() {
-        return companies.values();
+        return Company.entityManager.getAll();
     }
 
-    public Company update(Company resource) {
-        if (companies.containsKey(resource.id)) {
-            Company company = companies.get(resource.id);
-            company.name = resource.name;
-            return company;
-        } else {
-            return null;
-        }
+    public void update(Company resource) {
+        Company.entityManager.update(resource);
     }
 
     public void create(Company resource) {
-        resource.id = idGenerator.incrementAndGet();
-        companies.put(resource.id, resource);
+        Company.entityManager.save(resource);
     }
 
-    public Company delete(Long id) {
-        return companies.remove(id);
+    public void delete(Long id) {
+        Company.entityManager.delete(id);
     }
 }

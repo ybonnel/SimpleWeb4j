@@ -34,12 +34,9 @@
         </div>
 
         <div class="control-group">
-            <label class="control-label" for="company">Company</label>
+            <label class="control-label">Company</label>
             <div class="controls">
-                <select id="company" ng-model="computer.company.id">
-                    <option class="blank" value="">-- Choose a company --</option>
-                    <option ng-repeat="company in companies" value="{{company.id}}">{{company.name}}</option>
-                </select>
+                <select ng-model="computer.company.id" ng-options="company.id as company.name for company in companies"></select>
             </div>
         </div>
     </fieldset>

@@ -45,10 +45,7 @@ public class CompanyRestResource extends RestResource<Company> {
     @Override
     public void update(String id, Company resource) throws HttpErrorException {
         resource.id = Long.parseLong(id);
-        Company company = CompanyService.INSTANCE.update(resource);
-        if (company == null) {
-            throw new HttpErrorException(HttpServletResponse.SC_NOT_FOUND);
-        }
+        CompanyService.INSTANCE.update(resource);
     }
 
     @Override

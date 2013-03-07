@@ -16,9 +16,18 @@
  */
 package fr.ybonnel.simpleweb.samples.computers;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+@Entity
 public class Company {
 
+    @Id
+    @GeneratedValue
     public Long id;
 
     public String name;
+
+    public static EntityManager<Company, Long> entityManager = new EntityManager<>(Company.class);
 }
