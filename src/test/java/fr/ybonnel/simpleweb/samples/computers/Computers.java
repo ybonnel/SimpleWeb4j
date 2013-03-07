@@ -16,6 +16,8 @@
  */
 package fr.ybonnel.simpleweb.samples.computers;
 
+import fr.ybonnel.simpleweb.model.SimpleEntityManager;
+
 import static fr.ybonnel.simpleweb.SimpleWeb.*;
 
 public class Computers {
@@ -27,6 +29,12 @@ public class Computers {
 
         resource(new CompanyRestResource("/company"));
         resource(new ComputerRestResource("/computer"));
+
+        // Generate datas.
+        SimpleEntityManager.openSession().beginTransaction();
+        ComputerService.INSTANCE.getAll();
+        SimpleEntityManager.getCurrentSession().getTransaction().commit();
+        SimpleEntityManager.closeSession();
 
         new Thread(new Runnable() {
             @Override
