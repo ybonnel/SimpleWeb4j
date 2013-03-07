@@ -16,6 +16,8 @@
  */
 package fr.ybonnel.simpleweb.samples.computers;
 
+import fr.ybonnel.simpleweb.model.SimpleEntityManager;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -34,5 +36,5 @@ public class Computer {
     public Company company;
 
 
-    public static EntityManager<Computer, Long> entityManager = new EntityManager<>(Computer.class);
+    public static SimpleEntityManager<Computer, Long> simpleEntityManager = new SimpleEntityManager<>(Computer.class);
 }

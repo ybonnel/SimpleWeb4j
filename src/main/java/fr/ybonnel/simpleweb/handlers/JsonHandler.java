@@ -20,6 +20,7 @@ package fr.ybonnel.simpleweb.handlers;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fr.ybonnel.simpleweb.exception.HttpErrorException;
+import fr.ybonnel.simpleweb.model.SimpleEntityManager;
 import org.mortbay.jetty.HttpConnection;
 import org.mortbay.jetty.Request;
 import org.mortbay.jetty.handler.AbstractHandler;
@@ -28,7 +29,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,8 +62,15 @@ public class JsonHandler extends AbstractHandler {
         if (route.getParamType() != null && route.getParamType() != Void.class) {
             param = gson.fromJson(request.getReader(), route.getParamType());
         }
+        if (SimpleEntityManager.hasEntities()) {
+            SimpleEntityManager.openSession().beginTransaction();
+        }
         try {
             Response<?> handlerResponse = route.handle(param, new RouteParameters(route.getRouteParams(request.getPathInfo())));
+            if (SimpleEntityManager.hasEntities()) {
+                SimpleEntityManager.getCurrentSession().getTransaction().commit();
+                SimpleEntityManager.closeSession();
+            }
             if (handlerResponse.getStatus() != null) {
                 response.setStatus(handlerResponse.getStatus());
             } else if (handlerResponse.getAnswer() == null) {
@@ -82,6 +89,11 @@ public class JsonHandler extends AbstractHandler {
                 response.setContentType("application/json");
                 response.getOutputStream().print(gson.toJson(httpError.getAnswer()));
                 response.getOutputStream().close();
+            }
+        } finally {
+            if (SimpleEntityManager.hasEntities() && SimpleEntityManager.getCurrentSession() != null) {
+                SimpleEntityManager.getCurrentSession().getTransaction().rollback();
+                SimpleEntityManager.closeSession();
             }
         }
         baseRequest.setHandled(true);

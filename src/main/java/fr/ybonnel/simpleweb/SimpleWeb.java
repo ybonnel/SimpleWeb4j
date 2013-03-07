@@ -21,6 +21,7 @@ import fr.ybonnel.simpleweb.handlers.HttpMethod;
 import fr.ybonnel.simpleweb.handlers.JsonHandler;
 import fr.ybonnel.simpleweb.handlers.Route;
 import fr.ybonnel.simpleweb.handlers.resource.RestResource;
+import fr.ybonnel.simpleweb.model.SimpleEntityManager;
 import fr.ybonnel.simpleweb.server.SimpleWebServer;
 
 public class SimpleWeb {
@@ -57,6 +58,20 @@ public class SimpleWeb {
             throw new IllegalStateException("You must set public resources path before settings any route");
         }
         publicResourcesPath = newPublicResourcesPath;
+    }
+
+    public static void setHibernateCfgPath(String hibernateCfgPath) {
+        if (initialized) {
+            throw new IllegalStateException("You must set hibernate cfg path resources path before settings any route");
+        }
+        SimpleEntityManager.setCfgPath(hibernateCfgPath);
+    }
+
+    public static void setEntitiesPackage(String entitiesPackge) {
+        if (initialized) {
+            throw new IllegalStateException("You must set entities packge resources path before settings any route");
+        }
+        SimpleEntityManager.setEntitiesPackage(entitiesPackge);
     }
 
 

@@ -23,6 +23,7 @@ public class Computers {
     public static void startServer(int port) {
         setPort(port);
         setPublicResourcesPath("/fr/ybonnel/simpleweb/samples/computers");
+        setEntitiesPackage("fr.ybonnel.simpleweb.samples.computers");
 
         resource(new CompanyRestResource("/company"));
         resource(new ComputerRestResource("/computer"));

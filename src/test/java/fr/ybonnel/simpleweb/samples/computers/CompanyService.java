@@ -44,22 +44,22 @@ public enum CompanyService {
     }
 
     public Company getById(Long id) {
-        return Company.entityManager.getById(id);
+        return Company.simpleEntityManager.getById(id);
     }
 
     public Collection<Company> getAll() {
-        return Company.entityManager.getAll();
+        return Company.simpleEntityManager.getAll();
     }
 
     public void update(Company resource) {
-        Company.entityManager.update(resource);
+        Company.simpleEntityManager.update(resource);
     }
 
     public void create(Company resource) {
-        Company.entityManager.save(resource);
+        Company.simpleEntityManager.save(resource);
     }
 
     public void delete(Long id) {
-        Company.entityManager.delete(id);
+        Company.simpleEntityManager.delete(id);
     }
 }

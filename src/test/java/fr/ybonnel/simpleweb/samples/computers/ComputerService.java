@@ -76,25 +76,25 @@ public enum ComputerService {
     }
 
     public Computer getById(Long id) {
-        return Computer.entityManager.getById(id);
+        return Computer.simpleEntityManager.getById(id);
     }
 
     public Collection<Computer> getAll() {
-        return Computer.entityManager.getAll();
+        return Computer.simpleEntityManager.getAll();
     }
 
     public void update(Computer resource) {
         if (resource.company != null) {
-            resource.company = Company.entityManager.getById(resource.company.id);
+            resource.company = Company.simpleEntityManager.getById(resource.company.id);
         }
-        Computer.entityManager.update(resource);
+        Computer.simpleEntityManager.update(resource);
     }
 
     public void create(Computer resource) {
-        Computer.entityManager.save(resource);
+        Computer.simpleEntityManager.save(resource);
     }
 
     public void delete(Long id) {
-        Computer.entityManager.delete(id);
+        Computer.simpleEntityManager.delete(id);
     }
 }
