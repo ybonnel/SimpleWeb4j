@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>Form samples</title>
+        <meta charset='utf-8'>
+        <link href="css/bootstrap.css" rel="stylesheet"/>
+        <link href="css/bootstrap-responsive.css" rel="stylesheet"/>
+        <link href="css/forms.css" rel="stylesheet"/>
+    </head>
+    <body ng-app="Forms">
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <a class="brand" href="/">Forms</a>
+                    <ul class="nav">
+                        <li class="">
+                            <a href="#/signup">Sign up</a>
+                        </li>
+                        <li class="">
+                            <a href="#/contacts">Contacts</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="content">
+                <section ng-view>
+                </section>
+            </div>
+
+        </div>
+    </body>
+    <script src="js/angular.min.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/forms.js"></script>
+</html>

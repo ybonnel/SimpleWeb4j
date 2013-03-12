@@ -1,0 +1,73 @@
+<div class="row">
+    <div class="span12">
+        <form name="form" class="form-horizontal" novalidate>
+            <fieldset>
+                <legend>General informations</legend>
+                <div class="control-group">
+                    <label class="control-label">First name</label>
+
+                    <div class="controls">
+                        <input type="text" name="firstname" ng-model="firstname" required>
+                        <span class="help-block"><p class="muted">Required</p></span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Last name</label>
+
+                    <div class="controls">
+                        <input type="text" name="lastname" ng-model="lastname" required>
+                        <span class="help-block"><p class="muted">Required</p></span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Company</label>
+
+                    <div class="controls">
+                        <input type="text" name="company" ng-model="company">
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend>Profiles</legend>
+                <div class="well" ng-repeat="profile in profiles">
+                    <a class="btn btn-danger pull-right" ng-click="removeProfile($index)">Remove this profile</a>
+
+                    <div class="control-group">
+                        <label class="control-label">Label</label>
+
+                        <div class="controls">
+                            <input type="text" ng-model="profile.label">
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Email</label>
+                        <div class="controls">
+                            <input type="email" ng-model="profile.email">
+                        </div>
+                    </div>
+                    <div class="control-group" ng-repeat="phone in profile.phones">
+                        <label class="control-label">Phone numbers</label>
+                        <div class="controls">
+                            <input type="tel" ng-model="phone.number">
+                            <a class="btn btn-danger" ng-click="removePhone(profile, $index)">Remove</a>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <a class="btn btn-success" ng-click="addNewPhone(profile)">Add a phone number</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="manage">
+                    <a class="btn btn-success" ng-click="addNewProfile()">Add another profile</a>
+                </div>
+            </fieldset>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Insert</button>
+                <a href="#/forms" class="btn">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
