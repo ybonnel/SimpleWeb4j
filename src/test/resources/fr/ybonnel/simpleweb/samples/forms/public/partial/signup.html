@@ -3,8 +3,6 @@
         <form name="form" class="form-horizontal" novalidate >
             <fieldset>
                 <legend>Account informations</legend>
-
-
                 <div class="control-group">
                     <label class="control-label">Username</label>
                     <div class="controls">
@@ -12,7 +10,6 @@
                         <span class="help-block"><p class="muted">Please choose a valid username.</p></span>
                     </div>
                 </div>
-
                 <div class="control-group">
                     <label class="control-label">Email</label>
                     <div class="controls">
@@ -35,22 +32,13 @@
                     </div>
                 </div>
             </fieldset>
+
             <fieldset>
                 <legend>Contact informations</legend>
                 <div class="control-group">
                     <label class="control-label">Country</label>
                     <div class="controls">
-                        <select name="profile.country" ng-model="profile.country">
-                            <option class="blank" value="">--- Choose a country ---</option>
-                            <option value="France">France</option>
-                            <option value="Austria">Austria</option>
-                            <option value="Belgium">Belgium</option>
-                            <option value="Bulgaria">Bulgaria</option>
-                            <option value="Cyprus">Cyprus</option>
-                            <option value="Czech Republic">Czech Republic</option>
-                            <option value="Denmark">Denmark</option>
-                            <option value="Estonia">Estonia</option>
-                        </select>
+                        <select ng-model="profile.country" ng-options="country for country in countries" required></select>
                         <span class="help-block"><p class="muted">Required</p></span>
                     </div>
                 </div>

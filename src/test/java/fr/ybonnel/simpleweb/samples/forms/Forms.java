@@ -16,6 +16,14 @@
  */
 package fr.ybonnel.simpleweb.samples.forms;
 
+import fr.ybonnel.simpleweb.exception.HttpErrorException;
+import fr.ybonnel.simpleweb.handlers.Response;
+import fr.ybonnel.simpleweb.handlers.Route;
+import fr.ybonnel.simpleweb.handlers.RouteParameters;
+import fr.ybonnel.simpleweb.samples.forms.model.Countries;
+
+import java.util.List;
+
 import static fr.ybonnel.simpleweb.SimpleWeb.*;
 
 public class Forms {
@@ -23,6 +31,14 @@ public class Forms {
     public static void startServer(int port) {
         setPort(port);
         setPublicResourcesPath("/fr/ybonnel/simpleweb/samples/forms/public");
+        setEntitiesPackage("fr/ybonnel/simpleweb/samples/forms");
+
+        get(new Route<Void, List<String>>("countries", Void.class) {
+            @Override
+            public Response<List<String>> handle(Void param, RouteParameters routeParams) throws HttpErrorException {
+                return new Response<>(Countries.list());
+            }
+        });
 
         new Thread(new Runnable() {
             @Override

@@ -1,6 +1,8 @@
 
-function SignupCtrl($scope) {
-
+function SignupCtrl($scope, $http) {
+    $http.get("/countries").success(function(data) {
+        $scope.countries = data;
+    });
 }
 
 function ContactsCtrl($scope, $log) {
