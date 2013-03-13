@@ -1,5 +1,5 @@
 
-function ListComputerCtrl($scope, ComputerService, MessageService, $log, $filter) {
+function ListComputerCtrl($scope, ComputerService, MessageService, $filter) {
 
     $scope.computersByPage = 10;
     $scope.currentPage = 0;
@@ -9,7 +9,6 @@ function ListComputerCtrl($scope, ComputerService, MessageService, $log, $filter
         column:'name',
         descending:false
     };
-    $log.info($scope.messages);
     ComputerService.query(function(data){
         $scope.computers = data;
         $scope.search();
