@@ -3,71 +3,81 @@
         <form name="form" class="form-horizontal" novalidate >
             <fieldset>
                 <legend>Account informations</legend>
-                <div class="control-group">
+                <div class="control-group" ng-class="{true:'error', false:''}[form.username.$dirty && form.username.$invalid]">
                     <label class="control-label">Username</label>
                     <div class="controls">
-                        <input type="text" name="username" ng-model="username" required>
-                        <span class="help-block"><p class="muted">Please choose a valid username.</p></span>
+                        <input type="text" name="username" ng-model="user.username" required ng-minlength="4">
+                        <span class="help-inline" ng-show="form.username.$dirty && form.username.$error.minlength">Minimum legth is 4</span>
+                        <span class="help-inline" ng-show="form.username.$dirty && form.username.$error.required">Required</span>
+                        <span class="help-block"><p ng-class="{true:'',false:'muted'}[form.username.$dirty && form.username.$invalid]">Please choose a valid username.</p></span>
                     </div>
                 </div>
-                <div class="control-group">
+                <div class="control-group" ng-class="{true:'error', false:''}[form.email.$dirty && form.email.$invalid]">
                     <label class="control-label">Email</label>
                     <div class="controls">
-                        <input type="email" name="email" ng-model="email">
-                        <span class="help-block"><p class="muted">Enter a valid email address.</p></span>
+                        <input type="email" name="email" ng-model="user.email" required>
+                        <span class="help-inline" ng-show="form.email.$dirty && form.email.$invalid">Valid email is required</span>
+                        <span class="help-block"><p ng-class="{true:'',false:'muted'}[form.email.$dirty && form.email.$invalid]">Enter a valid email address.</p></span>
                     </div>
                 </div>
-                <div class="control-group">
+                <div class="control-group" ng-class="{true:'error', false:''}[form.passwordmain.$dirty && form.passwordmain.$invalid]">
                     <label class="control-label">Password</label>
                     <div class="controls">
-                        <input type="password" name="password.main" ng-model="password.main">
-                        <span class="help-block"><p class="muted">A password must be at least 6 characters.</p></span>
+                        <input type="password" name="passwordmain" ng-model="user.password.main" required ng-minlength="6">
+                        <span class="help-inline" ng-show="form.passwordmain.$dirty && form.passwordmain.$error.minlength">Minimum legth is 6</span>
+                        <span class="help-inline" ng-show="form.passwordmain.$dirty && form.passwordmain.$error.required">Required</span>
+                        <span class="help-block"><p ng-class="{true:'',false:'muted'}[form.passwordmain.$dirty && form.passwordmain.$invalid]">A password must be at least 6 characters.</p></span>
                     </div>
                 </div>
-                <div class="control-group">
+                <div class="control-group" ng-class="{true:'error', false:''}[form.passwordconfirm.$dirty && form.passwordconfirm.$invalid]">
                     <label class="control-label">Repeat Password</label>
                     <div class="controls">
-                        <input type="password" name="password.confirm" ng-model="password.confirm">
-                        <span class="help-block"><p class="muted">Please repeat your password again.</p></span>
+                        <input type="password" name="passwordconfirm" ng-model="user.password.confirm" required validate-equals="user.password.main">
+                        <span class="help-inline" ng-show="form.passwordconfirm.$dirty && form.passwordconfirm.$error.equal">Passwords don't match</span>
+                        <span class="help-block"><p ng-class="{true:'',false:'muted'}[form.passwordconfirm.$dirty && form.passwordconfirm.$invalid]">Please repeat your password again.</p></span>
                     </div>
                 </div>
             </fieldset>
 
             <fieldset>
                 <legend>Contact informations</legend>
-                <div class="control-group">
+                <div class="control-group" ng-class="{true:'error', false:''}[form.country.$dirty && form.country.$invalid]">
                     <label class="control-label">Country</label>
                     <div class="controls">
-                        <select ng-model="profile.country" ng-options="country for country in countries" required></select>
-                        <span class="help-block"><p class="muted">Required</p></span>
+                        <select name="country" ng-model="user.profile.country" ng-options="country for country in countries" required></select>
+                        <span class="help-inline" ng-show="form.country.$dirty && form.country.$error.required">Please select your country</span>
+                        <span class="help-block"><p ng-class="{true:'',false:'muted'}[form.country.$dirty && form.country.$invalid]">Required</p></span>
                     </div>
                 </div>
-                <div class="control-group">
+                <div class="control-group" ng-class="{true:'error', false:''}[form.address.$dirty && form.address.$invalid]">
                     <label class="control-label">Address</label>
                     <div class="controls">
-                        <textarea name="profile.address" ng-model="profile.address" cols="50"></textarea>
+                        <textarea name="address" ng-model="user.profile.address" cols="50"></textarea>
                     </div>
                 </div>
-                <div class="control-group">
+                <div class="control-group" ng-class="{true:'error', false:''}[form.age.$dirty && form.age.$invalid]">
                     <label class="control-label">Age</label>
                     <div class="controls">
-                        <input type="text" name="profile.age" ng-model="profile.age">
+                        <input type="number" name="age" min="18" max="100" ng-model="user.profile.age">
+                        <span class="help-inline" ng-show="form.age.$dirty && form.age.$error.min">Must be greater or equal to 18</span>
+                        <span class="help-inline" ng-show="form.age.$dirty && form.age.$error.max">Must be less or equal to 100</span>
                     </div>
                 </div>
             </fieldset>
 
             <fieldset>
-                <div class="control-group">
+                <div class="control-group" ng-class="{true:'error', false:''}[form.accept.$dirty && form.accept.$invalid]">
                     <div class="controls">
                         <label class="checkbox">
-                            <input type="checkbox" name="accept" ng-model="accept"> You aggree the Terms and conditions
+                            <input type="checkbox" name="accept" ng-model="accept" required> You aggree the Terms and conditions
+                            <span class="help-inline" ng-show="form.accept.$dirty && form.accept.$error.required">You must accept the conditions</span>
                         </label>
                     </div>
                 </div>
             </fieldset>
 
             <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Sign up</button>
+                <button type="submit" class="btn btn-primary" ng-click="saveUser(user)">Sign up</button>
                 <a href="#/forms" class="btn">Cancel</a>
             </div>
         </form>
