@@ -114,10 +114,12 @@ public class SimpleEntityManager<T, I extends Serializable> {
         getCurrentSession().update(entity);
     }
 
+    @SuppressWarnings("unchecked")
     public T getById(I id) {
         return (T) getCurrentSession().get(entityClass, id);
     }
 
+    @SuppressWarnings("unchecked")
     public Collection<T> getAll() {
         return getCurrentSession().createCriteria(entityClass).list();
     }

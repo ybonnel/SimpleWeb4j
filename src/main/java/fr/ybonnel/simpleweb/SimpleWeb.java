@@ -41,9 +41,10 @@ public class SimpleWeb {
     /**
      * Test usage.
      */
-    public static void resetDefaultValues() {
+    protected static void resetDefaultValues() {
         port = 9999;
         publicResourcesPath = "/public";
+        initialized = false;
     }
 
     public static void setPort(int newPort) {
@@ -75,7 +76,7 @@ public class SimpleWeb {
     }
 
 
-    private static void init() {
+    protected static void init() {
         if (!initialized) {
             server = new SimpleWebServer(port, jsonHandler, publicResourcesPath);
             initialized = true;

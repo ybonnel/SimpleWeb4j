@@ -54,7 +54,7 @@ public class GenericIntegrationTest {
             @Override
             public Response<String> handle(Void param, RouteParameters routeParams) throws HttpErrorException {
                 if (routeParams.getParam("name").equals("notfound")) {
-                    throw new HttpErrorException(404, "notfound not found");
+                    throw new HttpErrorException(404);
                 }
                 return new Response<>("Hello " + routeParams.getParam("name"));
             }
@@ -135,8 +135,6 @@ public class GenericIntegrationTest {
     public void can_send_http_error() throws Exception {
         SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("GET", "/resource/notfound");
         assertEquals(404, response.status);
-        assertEquals("application/json", response.contentType);
-        assertEquals("\"notfound not found\"", response.body);
     }
 
     @Test

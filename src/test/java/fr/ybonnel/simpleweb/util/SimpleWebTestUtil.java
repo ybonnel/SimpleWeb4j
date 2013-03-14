@@ -55,9 +55,13 @@ public class SimpleWebTestUtil {
         response.contentType = connection.getContentType();
 
         if (response.status >= 400) {
-            response.body = IOUtils.toString(connection.getErrorStream());
+            if (connection.getErrorStream() != null) {
+                response.body = IOUtils.toString(connection.getErrorStream());
+            }
         } else {
-            response.body = IOUtils.toString(connection.getInputStream());
+            if (connection.getInputStream() != null) {
+                response.body = IOUtils.toString(connection.getInputStream());
+            }
         }
         return response;
     }

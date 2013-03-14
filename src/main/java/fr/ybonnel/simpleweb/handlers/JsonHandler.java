@@ -47,6 +47,7 @@ public class JsonHandler extends AbstractHandler {
     }
 
 
+    @SuppressWarnings("unchecked")
     @Override
     public void handle(String target, HttpServletRequest request, HttpServletResponse response, int dispatch) throws IOException, ServletException {
         Request baseRequest = request instanceof Request ? (Request) request : HttpConnection.getCurrentConnection().getRequest();
