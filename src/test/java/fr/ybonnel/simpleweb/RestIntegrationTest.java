@@ -71,18 +71,7 @@ public class RestIntegrationTest {
             }
         });
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    start();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }).start();
-
-
+        start(false);
     }
 
     @After

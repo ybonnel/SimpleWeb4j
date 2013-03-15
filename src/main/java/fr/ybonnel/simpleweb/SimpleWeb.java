@@ -84,9 +84,13 @@ public class SimpleWeb {
     }
 
     public static void start() {
+        start(true);
+    }
+
+    public static void start(boolean waitStop) {
         init();
         started = true;
-        server.start();
+        server.start(waitStop);
     }
 
     public static void stop() {

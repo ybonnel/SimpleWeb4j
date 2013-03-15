@@ -42,16 +42,7 @@ public class JsIntegrationTest {
         setPort(port);
         testUtil = new SimpleWebTestUtil(port);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    start();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }).start();
+        start(false);
     }
 
     @After

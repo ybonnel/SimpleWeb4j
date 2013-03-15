@@ -51,10 +51,16 @@ public class SimpleWebServer {
     }
 
     public void start() {
+        start(true);
+    }
+
+    public void start(boolean waitStop) {
         try {
             logger.info("Starting SimpleWeb server");
             jettyServer.start();
-            jettyServer.join();
+            if (waitStop) {
+                jettyServer.join();
+            }
         } catch (Exception e) {
             throw new FatalSimpleWebException(e);
         }
