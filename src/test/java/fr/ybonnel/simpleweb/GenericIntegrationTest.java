@@ -31,7 +31,6 @@ import static org.junit.Assert.assertEquals;
 
 public class GenericIntegrationTest {
 
-    private int port;
     private Random random = new Random();
     private SimpleWebTestUtil testUtil;
 
@@ -39,7 +38,7 @@ public class GenericIntegrationTest {
     @Before
     public void startServer() {
         resetDefaultValues();
-        port = random.nextInt(10000) + 10000;
+        int port = Integer.getInteger("test.http.port", random.nextInt(10000) + 10000);
         setPort(port);
         testUtil = new SimpleWebTestUtil(port);
 

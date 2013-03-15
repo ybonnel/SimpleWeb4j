@@ -17,10 +17,6 @@
 package fr.ybonnel.simpleweb;
 
 
-import fr.ybonnel.simpleweb.exception.HttpErrorException;
-import fr.ybonnel.simpleweb.handlers.Response;
-import fr.ybonnel.simpleweb.handlers.Route;
-import fr.ybonnel.simpleweb.handlers.RouteParameters;
 import fr.ybonnel.simpleweb.util.SimpleWebTestUtil;
 import org.junit.After;
 import org.junit.Before;
@@ -33,7 +29,6 @@ import static org.junit.Assert.assertEquals;
 
 public class ChangePublicIntegrationTest {
 
-    private int port;
     private Random random = new Random();
     private SimpleWebTestUtil testUtil;
 
@@ -41,7 +36,7 @@ public class ChangePublicIntegrationTest {
     @Before
     public void startServer() {
         resetDefaultValues();
-        port = random.nextInt(10000) + 10000;
+        int port = Integer.getInteger("test.http.port", random.nextInt(10000) + 10000);
         setPort(port);
         testUtil = new SimpleWebTestUtil(port);
         setPublicResourcesPath("/otherpublic");
