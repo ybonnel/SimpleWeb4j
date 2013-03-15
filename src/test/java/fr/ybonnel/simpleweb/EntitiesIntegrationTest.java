@@ -17,7 +17,6 @@
 package fr.ybonnel.simpleweb;
 
 
-import com.google.common.collect.Lists;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import fr.ybonnel.simpleweb.entities.SimpleEntity;
@@ -29,9 +28,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.lang.reflect.Type;
 import java.util.Collection;
-import java.util.List;
 import java.util.Random;
 
 import static fr.ybonnel.simpleweb.SimpleWeb.*;
@@ -105,10 +102,11 @@ public class EntitiesIntegrationTest {
 
 
         SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("GET", "/entity");
-        assertEquals(200, response.status);
         assertEquals("[]", response.body);
+        assertEquals(200, response.status);
 
         response = testUtil.doMethod("POST", "/entity", "{name:\"nom\"}");
+        assertEquals("", response.body);
         assertEquals(201, response.status);
 
         response = testUtil.doMethod("GET", "/entity");

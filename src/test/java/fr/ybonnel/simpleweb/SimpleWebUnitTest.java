@@ -16,10 +16,16 @@
  */
 package fr.ybonnel.simpleweb;
 
+import fr.ybonnel.simpleweb.server.SimpleWebServer;
 import org.junit.Before;
 import org.junit.Test;
+import org.reflections.ReflectionUtils;
+
+import java.lang.reflect.Field;
 
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 /**
  * This class is used to test function in SimpleWeb which can be test by integration test.
@@ -61,5 +67,43 @@ public class SimpleWebUnitTest {
     @Test(expected = IllegalStateException.class)
     public void testStopWithoutStart() {
         SimpleWeb.stop();
+    }
+
+    @Test
+    public void testSetHibernateCfgPathAfterInit() {
+        SimpleWeb.setHibernateCfgPath("/fr/ybonnel/simpleweb/entities/hibernate.cfg.xml");
+        SimpleWeb.init();
+        SimpleWeb.init();
+        try {
+            SimpleWeb.setHibernateCfgPath("/fr/ybonnel/simpleweb/entities/hibernate.cfg.xml");
+            fail("An exception must be throw");
+        } catch (IllegalStateException ignore) {
+        }
+    }
+
+    @Test
+    public void testSetEntitiesPackageAfterInit() {
+        SimpleWeb.setEntitiesPackage("fr.entities");
+        SimpleWeb.init();
+        SimpleWeb.init();
+        try {
+            SimpleWeb.setEntitiesPackage("fr.entities");
+            fail("An exception must be throw");
+        } catch (IllegalStateException ignore) {
+        }
+    }
+
+    @Test
+    public void testStartMethod() throws IllegalAccessException, NoSuchFieldException {
+        SimpleWebServer mockServer = mock(SimpleWebServer.class);
+
+        SimpleWeb.init();
+        Field serverField = SimpleWeb.class.getDeclaredField("server");
+        serverField.setAccessible(true);
+        serverField.set(null, mockServer);
+
+        SimpleWeb.start();
+
+        verify(mockServer).start(true);
     }
 }

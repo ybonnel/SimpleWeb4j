@@ -33,6 +33,10 @@ public class SimpleWebServer {
 
     private Server jettyServer;
 
+    protected SimpleWebServer(Server jettyServer) {
+        this.jettyServer = jettyServer;
+    }
+
     public SimpleWebServer(int port, JsonHandler jsonHandler, String publicResourcesPath) {
         jettyServer = new Server(port);
 
@@ -48,10 +52,6 @@ public class SimpleWebServer {
         handlers.setHandlers(new Handler[]{jsonHandler, resourceHandler, internalResourceHandler});
 
         jettyServer.setHandler(handlers);
-    }
-
-    public void start() {
-        start(true);
     }
 
     public void start(boolean waitStop) {

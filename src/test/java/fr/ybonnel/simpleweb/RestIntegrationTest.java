@@ -42,6 +42,7 @@ public class RestIntegrationTest {
         resetDefaultValues();
         int port = Integer.getInteger("test.http.port", random.nextInt(10000) + 10000);
         setPort(port);
+        setEntitiesPackage("fr.ybonnel.noentities");
         testUtil = new SimpleWebTestUtil(port);
 
         resource(new RestResource<String>("string", String.class) {

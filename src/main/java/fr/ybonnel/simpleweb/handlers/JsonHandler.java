@@ -17,6 +17,7 @@
 package fr.ybonnel.simpleweb.handlers;
 
 
+import com.google.common.base.Throwables;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fr.ybonnel.simpleweb.exception.HttpErrorException;
@@ -29,6 +30,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -91,6 +94,10 @@ public class JsonHandler extends AbstractHandler {
                 response.getOutputStream().print(gson.toJson(httpError.getAnswer()));
                 response.getOutputStream().close();
             }
+        } catch (Exception exception) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getOutputStream().print(Throwables.getStackTraceAsString(exception));
+            response.getOutputStream().close();
         } finally {
             if (SimpleEntityManager.hasEntities() && SimpleEntityManager.getCurrentSession() != null) {
                 SimpleEntityManager.getCurrentSession().getTransaction().rollback();

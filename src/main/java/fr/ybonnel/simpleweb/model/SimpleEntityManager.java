@@ -16,6 +16,7 @@
  */
 package fr.ybonnel.simpleweb.model;
 
+import com.google.common.base.Strings;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -97,11 +98,20 @@ public class SimpleEntityManager<T, I extends Serializable> {
     }
 
     private static Collection<Class<?>> annotatedClasses = null;
+    private static String actualEntitiesPackage = null;
+
+    protected static boolean actualEntitiesPackageHasChange() {
+        if (actualEntitiesPackage == null) {
+            return entitiesPackage != null;
+        }
+        return !actualEntitiesPackage.equals(entitiesPackage);
+    }
 
     private static Collection<Class<?>> getAnnotatedClasses() {
-        if (annotatedClasses == null) {
+        if (annotatedClasses == null || actualEntitiesPackageHasChange()) {
             Reflections reflections = entitiesPackage == null ? new Reflections("") : new Reflections(entitiesPackage);
             annotatedClasses = reflections.getTypesAnnotatedWith(Entity.class);
+            actualEntitiesPackage = entitiesPackage;
         }
         return annotatedClasses;
     }
