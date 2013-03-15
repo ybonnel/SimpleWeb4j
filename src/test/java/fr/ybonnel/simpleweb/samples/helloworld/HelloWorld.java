@@ -25,20 +25,10 @@ public class HelloWorld {
     public static void startServer(int port) {
         setPort(port);
         setPublicResourcesPath("/fr/ybonnel/simpleweb/samples/helloworld");
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    start();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }).start();
+        start();
     }
 
     public static void main(String[] args) {
         startServer(9999);
-
     }
 }
