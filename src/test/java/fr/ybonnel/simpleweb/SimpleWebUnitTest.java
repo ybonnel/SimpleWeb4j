@@ -28,6 +28,9 @@ public class SimpleWebUnitTest {
 
     @Before
     public void setUp() {
+        // Stupid test to cover <init>
+        new SimpleWeb();
+
         SimpleWeb.resetDefaultValues();
     }
 
@@ -59,7 +62,4 @@ public class SimpleWebUnitTest {
     public void testStopWithoutStart() {
         SimpleWeb.stop();
     }
-
-
-
 }
