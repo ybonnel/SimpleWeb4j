@@ -4,17 +4,18 @@ SimpleWeb4j - A very Simple stack web (inspired by Spark).
 ## Why SimpleWeb4j
 
 My current way to create web application is angular.js on client size, with twitter bootstrap for css, and have json resources on server side.
-So I want a very simple framework to help create this sort of web app.
+So I want a very simple framework to help create this kind of web app.
 
-It's why I created SimpleWeb4j, on server side, you can handle http request, in order to create quickly json services, and on client side create an angular.js app.
+It's why I created SimpleWeb4j, on server side, you can handle http request in order to create quickly json services,
+and on client side create an angular.js app (you can also use others javascript framework, but I perfer angular).
 
 ## Dependencies
 
 - Jetty : used for http server.
 - Guava : Util classes (if you don't know it, look at it right now!).
 - slf4j : For the logs.
-- Hibernate : use for entities managment.
-- Reflections : use to find entities.
+- Hibernate : Use for entities managment.
+- Reflections : Use to find entities by reflection.
 - H2 : use by default for database (you can exclude it if you use another database or if you don't use databases).
 
 ## Licence
