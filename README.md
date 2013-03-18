@@ -38,3 +38,7 @@ All samples are directly inspired by play framework, which is a great web framew
 ## Build status
 
 [![Build Status](https://simpleweb4j.ci.cloudbees.com/job/SimpleWeb4j-build/badge/icon)](https://simpleweb4j.ci.cloudbees.com/job/SimpleWeb4j-build/)
+
+## Other documentation
+
+You can find all the generated maven site in [jenkins](https://simpleweb4j.ci.cloudbees.com/job/SimpleWeb4j-build/site/)
