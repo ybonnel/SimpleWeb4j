@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Server part of SimpleWeb4j.
+ * <b>Don't use it directly</b>, use the methods of {@link fr.ybonnel.simpleweb4j.SimpleWeb4j}.
  */
 public class SimpleWeb4jServer {
 
