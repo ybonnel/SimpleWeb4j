@@ -5,10 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>fr.ybonnel</groupId>
-    <artifactId>simpleweb</artifactId>
+    <artifactId>simpleweb4j</artifactId>
     <packaging>jar</packaging>
     <version>0.0.1-SNAPSHOT</version>
-    <name>SimpleWeb</name>
+    <name>SimpleWeb4j</name>
     <url>https://ybonnel.github.com/SimpleWeb</url>
     <description>A very simple web stack.</description>
 
