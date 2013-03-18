@@ -20,17 +20,17 @@
  * On client side, you can use angular.js (or any other MVC javascript framework).<br/>
  * On can have a look on samples in package fr.ybonnel.simpleweb4j.samples in test resources.<br/>
  *
- * The entry class is {@link SimpleWeb4j} :
+ * The entry class is {@link fr.ybonnel.simpleweb4j.SimpleWeb4j} :
  * <ul>
- *     <li>{@link SimpleWeb4j#setPort(int)} to change the http port.</li>
- *     <li>{@link SimpleWeb4j#setPublicResourcesPath(String)} to change the path yo your public resources like html files.</li>
+ *     <li>{@link fr.ybonnel.simpleweb4j.SimpleWeb4j#setPort(int)} to change the http port.</li>
+ *     <li>{@link fr.ybonnel.simpleweb4j.SimpleWeb4j#setPublicResourcesPath(String)} to change the path yo your public resources like html files.</li>
  *     <li>{@link fr.ybonnel.simpleweb4j.SimpleWeb4j#start()} to start the server.</li>
  *     <li>{@link fr.ybonnel.simpleweb4j.SimpleWeb4j#stop()} to stop the server.</li>
- *     <li>{@link SimpleWeb4j#resource(fr.ybonnel.simpleweb4j.handlers.resource.RestResource)} to add a Rest resource.</li>
- *     <li>{@link SimpleWeb4j#get(fr.ybonnel.simpleweb4j.handlers.Route)} to add a route on GET method.</li>
- *     <li>{@link SimpleWeb4j#post(fr.ybonnel.simpleweb4j.handlers.Route)} to add a route on POST method.</li>
- *     <li>{@link SimpleWeb4j#put(fr.ybonnel.simpleweb4j.handlers.Route)} to add a route on PUT method.</li>
- *     <li>{@link SimpleWeb4j#delete(fr.ybonnel.simpleweb4j.handlers.Route)} to add a route on DELETE method.</li>
+ *     <li>{@link fr.ybonnel.simpleweb4j.SimpleWeb4j#resource(fr.ybonnel.simpleweb4j.handlers.resource.RestResource)} to add a Rest resource.</li>
+ *     <li>{@link fr.ybonnel.simpleweb4j.SimpleWeb4j#get(fr.ybonnel.simpleweb4j.handlers.Route)} to add a route on GET method.</li>
+ *     <li>{@link fr.ybonnel.simpleweb4j.SimpleWeb4j#post(fr.ybonnel.simpleweb4j.handlers.Route)} to add a route on POST method.</li>
+ *     <li>{@link fr.ybonnel.simpleweb4j.SimpleWeb4j#put(fr.ybonnel.simpleweb4j.handlers.Route)} to add a route on PUT method.</li>
+ *     <li>{@link fr.ybonnel.simpleweb4j.SimpleWeb4j#delete(fr.ybonnel.simpleweb4j.handlers.Route)} to add a route on DELETE method.</li>
  * </ul>
  *
  * If you have entities to manage, you can see {@link fr.ybonnel.simpleweb4j.model.SimpleEntityManager}.

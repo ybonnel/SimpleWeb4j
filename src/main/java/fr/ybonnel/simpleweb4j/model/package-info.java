@@ -22,6 +22,6 @@
  * By default, SimpleWeb4J scan the entire classPath to find classes annotated with {@link javax.persistence.Entity},
  * but you can the your package with {@link fr.ybonnel.simpleweb4j.SimpleWeb4j#setEntitiesPackage(String)}.<br/>
  *
- * SimpleWeb4j have a simple manager to help you with save/delete/get operations : {@link SimpleEntityManager}.
+ * SimpleWeb4j have a simple manager to help you with save/delete/get operations : {@link fr.ybonnel.simpleweb4j.model.SimpleEntityManager}.
  */
 package fr.ybonnel.simpleweb4j.model;
