@@ -26,7 +26,6 @@ import org.mortbay.jetty.HttpConnection;
 import org.mortbay.jetty.Request;
 import org.mortbay.jetty.handler.AbstractHandler;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -35,11 +34,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Class use to handler all json services (declared by Route or RestResource).
+ */
 public class JsonHandler extends AbstractHandler {
 
+    /**
+     * Map of routes by HttpMethod.
+     */
     private Map<HttpMethod, List<Route>> routes = new HashMap<>();
+
+    /**
+     * Gson used to serialize/deserialize json objects.
+     */
     private Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXX").create();
 
+    /**
+     * Add a route.
+     * @param httpMethod http method of the route.
+     * @param route route to add.
+     */
     public void addRoute(HttpMethod httpMethod, Route route) {
         if (!routes.containsKey(httpMethod)) {
             routes.put(httpMethod, new ArrayList<Route>());
@@ -47,10 +61,21 @@ public class JsonHandler extends AbstractHandler {
         routes.get(httpMethod).add(route);
     }
 
-
+    /**
+     * Handle a request.
+     * @param target The target of the request - either a URI or a name.
+     * @param request The request either as the {@link Request}
+     * object or a wrapper of that request. The {@link HttpConnection#getCurrentConnection()}
+     * method can be used access the Request object if required.
+     * @param response The response as the {@link org.mortbay.jetty.Response}
+     * object or a wrapper of that request. The {@link HttpConnection#getCurrentConnection()}
+     * method can be used access the Response object if required.
+     * @param dispatch The dispatch mode: {@link #REQUEST}, {@link #FORWARD}, {@link #INCLUDE}, {@link #ERROR}
+     * @throws IOException in case of I/O error.
+     */
     @SuppressWarnings("unchecked")
     @Override
-    public void handle(String target, HttpServletRequest request, HttpServletResponse response, int dispatch) throws IOException, ServletException {
+    public void handle(String target, HttpServletRequest request, HttpServletResponse response, int dispatch) throws IOException {
         Request baseRequest = request instanceof Request ? (Request) request : HttpConnection.getCurrentConnection().getRequest();
         if (baseRequest.isHandled()) {
             return;
@@ -87,7 +112,7 @@ public class JsonHandler extends AbstractHandler {
             }
         } catch (HttpErrorException httpError) {
             response.setStatus(httpError.getStatus());
-            if (httpError.getAnswer()!= null) {
+            if (httpError.getAnswer() != null) {
                 response.setContentType("application/json");
                 response.getOutputStream().print(gson.toJson(httpError.getAnswer()));
                 response.getOutputStream().close();
@@ -106,6 +131,12 @@ public class JsonHandler extends AbstractHandler {
 
     }
 
+    /**
+     * Find a route for method and path.
+     * @param httpMethod http method.
+     * @param pathInfo path.
+     * @return the route found (null if no route found).
+     */
     private Route findRoute(String httpMethod, String pathInfo) {
         if (!routes.containsKey(HttpMethod.fromValue(httpMethod))) {
             return null;

@@ -16,24 +16,49 @@
  */
 package fr.ybonnel.simpleweb4j.handlers;
 
+/**
+ * Response for a route.
+ * @param <T> type of the object to serialize in response's body.
+ */
 public class Response<T> {
 
+    /**
+     * Answer.
+     */
     private T answer;
+    /**
+     * Http status.
+     */
     private Integer status;
 
+    /**
+     * Constructor.
+     * @param answer object to serialize in response's body.
+     */
     public Response(T answer) {
         this(answer, null);
     }
 
+    /**
+     * Constructor.
+     * @param answer object to serialize in response's body.
+     * @param status http status.
+     */
     public Response(T answer, Integer status) {
         this.answer = answer;
         this.status = status;
     }
 
+    /**
+     * @return object to serialize in response's body.
+     */
     public T getAnswer() {
         return answer;
     }
 
+    /**
+     * @return http status.
+     */
     public Integer getStatus() {
         return status;
     }

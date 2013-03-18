@@ -16,10 +16,16 @@
  */
 package fr.ybonnel.simpleweb4j.exception;
 
+/**
+ * Fatal exception, this exception is thrown in case of non previewed errors.
+ */
+public class FatalSimpleWeb4jException extends RuntimeException {
 
-public class FatalSimpleWebException extends RuntimeException {
-
-    public FatalSimpleWebException(Throwable cause) {
+    /**
+     * Constructor.
+     * @param cause the root exception.
+     */
+    public FatalSimpleWeb4jException(Throwable cause) {
         super(cause);
     }
 }

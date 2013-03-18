@@ -16,7 +16,7 @@
  */
 package fr.ybonnel.simpleweb4j.server;
 
-import fr.ybonnel.simpleweb4j.exception.FatalSimpleWebException;
+import fr.ybonnel.simpleweb4j.exception.FatalSimpleWeb4jException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mortbay.jetty.Server;
@@ -68,7 +68,7 @@ public class SimpleWebServerUnitTest {
         verify(serverInterface).join();
     }
 
-    @Test(expected = FatalSimpleWebException.class)
+    @Test(expected = FatalSimpleWeb4jException.class)
     public void testStartWithFatalError() {
 
         doThrow(new NullPointerException()).when(serverInterface).start();
@@ -77,7 +77,7 @@ public class SimpleWebServerUnitTest {
 
     }
 
-    @Test(expected = FatalSimpleWebException.class)
+    @Test(expected = FatalSimpleWeb4jException.class)
     public void testStopWithFatalError() {
 
         simpleWeb4jServer.start(true);

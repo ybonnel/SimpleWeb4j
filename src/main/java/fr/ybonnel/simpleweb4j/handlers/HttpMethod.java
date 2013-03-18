@@ -19,29 +19,72 @@ package fr.ybonnel.simpleweb4j.handlers;
 
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * HTTP Methods used by SimpleWeb4j..
+ */
 public enum HttpMethod {
-    GET, POST(HttpServletResponse.SC_CREATED, HttpServletResponse.SC_CREATED), PUT, DELETE, HEAD, TRACE, CONNECT, OPTIONS;
+    /**
+     * GET method.
+     */
+    GET,
+    /**
+     * POST Method.
+     */
+    POST(HttpServletResponse.SC_CREATED, HttpServletResponse.SC_CREATED),
+    /**
+     * PUT Method.
+     */
+    PUT,
+    /**
+     * DELETE Method.
+     */
+    DELETE;
 
+    /**
+     * Default http status for a method.
+     */
     private int defaultStatus;
+    /**
+     * Default http status for a method if there's no content in response.
+     */
     private int defaultStatusWithNoContent;
 
+    /**
+     * Constructor with default valued (200 and 204) for defaultStatus and defaultStatusWithNoContent.
+     */
     private HttpMethod() {
         this(HttpServletResponse.SC_OK, HttpServletResponse.SC_NO_CONTENT);
     }
 
+    /**
+     * Constructor.
+     * @param defaultStatus Default http status for a method.
+     * @param defaultStatusWithNoContent Default http status for a method if there's no content in response.
+     */
     private HttpMethod(int defaultStatus, int defaultStatusWithNoContent) {
         this.defaultStatus = defaultStatus;
         this.defaultStatusWithNoContent = defaultStatusWithNoContent;
     }
 
+    /**
+     * Get the HttpMethod from the string value.
+     * @param value string value of method.
+     * @return the HttpMethod.
+     */
     public static HttpMethod fromValue(String value) {
         return HttpMethod.valueOf(value);
     }
 
+    /**
+     * @return Default http status for a method.
+     */
     public int getDefaultStatus() {
         return defaultStatus;
     }
 
+    /**
+     * @return Default http status for a method if there's no content in response.
+     */
     public int getDefaultStatusWithNoContent() {
         return defaultStatusWithNoContent;
     }

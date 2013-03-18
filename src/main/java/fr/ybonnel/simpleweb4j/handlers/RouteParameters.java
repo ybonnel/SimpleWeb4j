@@ -19,14 +19,29 @@ package fr.ybonnel.simpleweb4j.handlers;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class used to represent the parameters in a request path.
+ */
 public class RouteParameters {
 
+    /**
+     * Map of parameters by name.
+     */
     private Map<String, String> params = new HashMap<>();
 
-    public RouteParameters(Map<String, String> params) {
+    /**
+     * Constructor.
+     * @param params map of parameters by name.
+     */
+    protected RouteParameters(Map<String, String> params) {
         this.params = params;
     }
 
+    /**
+     * Get a parameter value.
+     * @param param name of parameter.
+     * @return value of parameter if found, null otherwise.
+     */
     public String getParam(String param) {
         return params.get(param);
     }

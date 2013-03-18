@@ -17,8 +17,8 @@
 package fr.ybonnel.simpleweb4j.server;
 
 
+import fr.ybonnel.simpleweb4j.exception.FatalSimpleWeb4jException;
 import fr.ybonnel.simpleweb4j.handlers.JsonHandler;
-import fr.ybonnel.simpleweb4j.exception.FatalSimpleWebException;
 import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.handler.HandlerList;
@@ -85,7 +85,7 @@ public class SimpleWeb4jServer {
                 jettyServer.join();
             }
         } catch (Exception e) {
-            throw new FatalSimpleWebException(e);
+            throw new FatalSimpleWeb4jException(e);
         }
     }
 
@@ -97,7 +97,7 @@ public class SimpleWeb4jServer {
             LOGGER.info("Stopping SimpleWeb4j server");
             jettyServer.stop();
         } catch (Exception e) {
-            throw new FatalSimpleWebException(e);
+            throw new FatalSimpleWeb4jException(e);
         }
     }
 }
