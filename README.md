@@ -27,7 +27,13 @@ All SimpleWeb4j is under the Apache License, Version 2.0
 
 ### Maven dependency
 
-Soon.
+```xml
+<dependency>
+    <groupId>fr.ybonnel</groupId>
+    <artifactId>simpleweb4j</artifactId>
+    <version>0.0.1</version>
+</dependency>
+```
 
 ### Your first application
 
@@ -113,7 +119,7 @@ You can find all the generated maven site in [jenkins](https://simpleweb4j.ci.cl
 
 ## TODO List
 
-- [ ] Deploy SimpleWeb4j in central repository.
+- [x] Deploy SimpleWeb4j in central repository.
 - [x] Create a very simple sample usage in readme.
 - [ ] Create an archetype.
 - [ ] Create a minified process for javascript and css.
