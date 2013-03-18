@@ -9,7 +9,7 @@
     <packaging>jar</packaging>
     <version>0.0.1-SNAPSHOT</version>
     <name>SimpleWeb4j</name>
-    <url>https://ybonnel.github.com/SimpleWeb</url>
+    <url>https://ybonnel.github.com/SimpleWeb4j</url>
     <description>A very simple web stack.</description>
 
     <parent>
@@ -32,9 +32,9 @@
         </license>
     </licenses>
     <scm>
-        <connection>scm:git:git@github.com:ybonnel/SimpleWeb.git</connection>
-        <developerConnection>scm:git:git@github.com:ybonnel/SimpleWeb.git</developerConnection>
-        <url>scm:git:git@github.com:ybonnel/SimpleWeb.git</url>
+        <connection>scm:git:git@github.com:ybonnel/SimpleWeb4j.git</connection>
+        <developerConnection>scm:git:git@github.com:ybonnel/SimpleWeb4j.git</developerConnection>
+        <url>scm:git:git@github.com:ybonnel/SimpleWeb4j.git</url>
     </scm>
     <developers>
         <developer>
