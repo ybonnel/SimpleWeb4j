@@ -27,16 +27,35 @@ import org.mortbay.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Server part of SimpleWeb4j.
+ */
 public class SimpleWeb4jServer {
 
-    private static final Logger logger = LoggerFactory.getLogger(SimpleWeb4jServer.class);
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleWeb4jServer.class);
 
+    /**
+     * Jetty server.
+     */
     private Server jettyServer;
 
+    /**
+     * Constructor for unit test.
+     * @param jettyServer the Jetty server.
+     */
     protected SimpleWeb4jServer(Server jettyServer) {
         this.jettyServer = jettyServer;
     }
 
+    /**
+     * Constructor.
+     * @param port Http port to use.
+     * @param jsonHandler the handler for json services.
+     * @param publicResourcesPath path to public resources.
+     */
     public SimpleWeb4jServer(int port, JsonHandler jsonHandler, String publicResourcesPath) {
         jettyServer = new Server(port);
 
@@ -54,9 +73,13 @@ public class SimpleWeb4jServer {
         jettyServer.setHandler(handlers);
     }
 
+    /**
+     * Start the server.
+     * @param waitStop true is you want the method wait the server stop.
+     */
     public void start(boolean waitStop) {
         try {
-            logger.info("Starting SimpleWeb4j server");
+            LOGGER.info("Starting SimpleWeb4j server");
             jettyServer.start();
             if (waitStop) {
                 jettyServer.join();
@@ -66,9 +89,12 @@ public class SimpleWeb4jServer {
         }
     }
 
+    /**
+     * Stop the server.
+     */
     public void stop() {
         try {
-            logger.info("Stopping SimpleWeb4j server");
+            LOGGER.info("Stopping SimpleWeb4j server");
             jettyServer.stop();
         } catch (Exception e) {
             throw new FatalSimpleWebException(e);
