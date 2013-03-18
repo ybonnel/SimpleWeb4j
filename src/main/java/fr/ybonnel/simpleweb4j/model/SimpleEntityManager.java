@@ -77,11 +77,6 @@ public class SimpleEntityManager<T, I extends Serializable> {
     }
 
     /**
-     * The sesssionFactory.
-     */
-    private static SessionFactory sessionFactory = null;
-
-    /**
      * Method used to know if the current application have entities to manage.
      * @return true is there's entities to manage.
      */
@@ -90,26 +85,38 @@ public class SimpleEntityManager<T, I extends Serializable> {
     }
 
     /**
+     * Helper to have lazy initialize of SessionFactory.
+     */
+    private static class SessionFactoryHelper {
+        /**
+         * Session factory.
+         */
+        //CHECKSTYLE:OFF
+        public static final SessionFactory sessionFactory = init();
+        //CHECKSTYLE:ON
+
+        /**
+         * Initialize of Session factory.
+         * @return the session factory initialized.
+         */
+        private static SessionFactory init() {
+            Configuration configuration = new Configuration();
+            configuration.configure(cfgPath);
+            for (Class<?> entityClass : getAnnotatedClasses()) {
+                configuration.addAnnotatedClass(entityClass);
+            }
+            ServiceRegistry serviceRegistry = new ServiceRegistryBuilder().applySettings(
+                    configuration.getProperties()).buildServiceRegistry();
+            return configuration.buildSessionFactory(serviceRegistry);
+        }
+    }
+
+    /**
      * Get the session factory.
      * @return session factory.
      */
     private static SessionFactory getSessionFactory() {
-        if (sessionFactory == null) {
-            synchronized (SimpleEntityManager.class) {
-                if (sessionFactory == null) {
-
-                    Configuration configuration = new Configuration();
-                    configuration.configure(cfgPath);
-                    for (Class<?> entityClass : getAnnotatedClasses()) {
-                        configuration.addAnnotatedClass(entityClass);
-                    }
-                    ServiceRegistry serviceRegistry = new ServiceRegistryBuilder().applySettings(
-                            configuration.getProperties()).buildServiceRegistry();
-                    sessionFactory = configuration.buildSessionFactory(serviceRegistry);
-                }
-            }
-        }
-        return sessionFactory;
+        return SessionFactoryHelper.sessionFactory;
     }
 
     /**
