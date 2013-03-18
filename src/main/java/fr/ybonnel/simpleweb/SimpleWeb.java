@@ -42,7 +42,13 @@ import fr.ybonnel.simpleweb.server.SimpleWebServer;
  * }
  * </pre></blockquote></p>
  */
-public class SimpleWeb {
+public final class SimpleWeb {
+
+    /**
+     * Private constructor to avoid instantiation.
+     */
+    private SimpleWeb() {
+    }
 
     /**
      * Used to know if SimpleWeb is already initialized.
@@ -62,9 +68,13 @@ public class SimpleWeb {
     private static String publicResourcesPath = "/public";
 
     /**
-     * Default port is 9999.
+     * Default http port.
      */
-    private static int port = 9999;
+    public static final int DEFAULT_PORT = 9999;
+    /**
+     * Http port.
+     */
+    private static int port = DEFAULT_PORT;
 
     /**
      * Handler for all request others than static files.
@@ -75,7 +85,7 @@ public class SimpleWeb {
      * Test usage.
      */
     protected static void resetDefaultValues() {
-        port = 9999;
+        port = DEFAULT_PORT;
         publicResourcesPath = "/public";
         initialized = false;
     }

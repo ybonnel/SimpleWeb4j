@@ -21,7 +21,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.reflections.ReflectionUtils;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
@@ -33,9 +35,12 @@ import static org.mockito.Mockito.verify;
 public class SimpleWebUnitTest {
 
     @Before
-    public void setUp() {
+    public void setUp() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         // Stupid test to cover <init>
-        new SimpleWeb();
+
+        Constructor<SimpleWeb> privateConstructor = SimpleWeb.class.getDeclaredConstructor();
+        privateConstructor.setAccessible(true);
+        privateConstructor.newInstance();
 
         SimpleWeb.resetDefaultValues();
     }
