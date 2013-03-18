@@ -10,6 +10,12 @@ It's why I created SimpleWeb4j, on server side, you can handle http request, in 
 
 ## Dependencies
 
+- Jetty : used for http server.
+- Guava : Util classes (if you don't know it, look at it right now!).
+- slf4j : For the logs.
+- Hibernate : use for entities managment.
+- Reflections : use to find entities.
+- H2 : use by default for database (you can exclude it if you use another database or if you don't use databases).
 
 ## Licence
 
@@ -82,7 +88,7 @@ After started server, you will see "Hello World" is you access to "http://localh
 
 Now, just add you static files under the package set with "setPublicResourcesPath", and start using angular.js or what ever you want.
 
-### Static files give with SimpleWeb4j
+### Static files embedded with SimpleWeb4j
 
 SimpleWeb4j comes with angular, jquery and twitter bootstrap. All the resources of SimpleWeb4j are under the package [fr.ybonnel.simpleweb4j.public](https://github.com/ybonnel/SimpleWeb4j/tree/master/src/main/resources/fr/ybonnel/simpleweb4j/public)
 
