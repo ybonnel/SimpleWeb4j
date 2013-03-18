@@ -8,6 +8,8 @@ So I want a very simple framework to help create this sort of web app.
 
 It's why I created SimpleWeb4j, on server side, you can handle http request, in order to create quickly json services, and on client side create an angular.js app.
 
+## Dependencies
+
 
 ## Licence
 
@@ -16,18 +18,77 @@ All SimpleWeb4j is under the Apache License, Version 2.0
 
 ## Usage
 
-### Maven dependancy
+### Maven dependency
 
-- [ ] Have do deploy it in central repository (soon).
+Soon.
 
 ### Your first application
 
-- [ ] Create a very simple sample.
+Create you main class :
+```java
+package fr.mygroup;
+
+import static fr.ybonnel.simpleweb4j.SimpleWeb4j.*;
+
+public class MyApplication {
+
+    public static void startServer(int port) {
+        setPort(port);
+        // Put all your static resource under a package named "fr.mygroup.public"
+        setPublicResourcesPath("/fr/mygroup/public");
+        // Rest resource sample
+        resource(new RestResource<String>("resource", String.class) {
+            @Override
+            public String getById(String id) throws HttpErrorException {
+                return "myResource";
+            }
+
+            @Override
+            public List<String> getAll() throws HttpErrorException {
+                return new ArrayList<String>();
+            }
+
+            @Override
+            public void update(String id, String resource) throws HttpErrorException {
+            }
+
+            @Override
+            public void create(String resource) throws HttpErrorException {
+            }
+
+            @Override
+            public void delete(String id) throws HttpErrorException {
+            }
+        });
+        // Get sample
+        get(new Route<Void, String>("/hello", Void.class) {
+            @Override
+            public Response<String> handle(Void param, RouteParameters routeParams) {
+                return new Response<>("Hello World");
+            }
+        });
+
+        start();
+    }
+
+    public static void main(String[] args) {
+        // Start the server on port 9999.
+        startServer(9999);
+    }
+}
+```
+
+After started server, you will see "Hello World" is you access to "http://localhost:9999"
+
+Now, just add you static files under the package set with "setPublicResourcesPath", and start using angular.js or what ever you want.
+
+### Static files give with SimpleWeb4j
+
+SimpleWeb4j comes with angular, jquery and twitter bootstrap. All the resources of SimpleWeb4j are under the package [fr.ybonnel.simpleweb4j.public](https://github.com/ybonnel/SimpleWeb4j/tree/master/src/main/resources/fr/ybonnel/simpleweb4j/public)
 
 ### Use maven archetype
 
-- [ ] Have to create this archetype.
-
+Soon.
 
 ## Samples
 
@@ -42,3 +103,14 @@ All samples are directly inspired by play framework, which is a great web framew
 ## Other documentation
 
 You can find all the generated maven site in [jenkins](https://simpleweb4j.ci.cloudbees.com/job/SimpleWeb4j-build/site/)
+
+## TODO List
+
+- [ ] Deploy SimpleWeb4j in central repository.
+- [x] Create a very simple sample usage in readme.
+- [ ] Create an archetype.
+- [ ] Create a minified process for javascript and css.
+- [ ] Add some useful util js for client side.
+- [ ] Add sample explanation in wiki.
+- [ ] Add a wiki page for each functionnality.
+- [ ] Add unit test sample in wiki.
