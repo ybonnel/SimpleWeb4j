@@ -12,10 +12,10 @@ and on client side create an angular.js app (you can also use others javascript 
 ## Dependencies
 
 - Jetty : used for http server.
-- Guava : Util classes (if you don't know it, look at it right now!).
 - slf4j : For the logs.
+- gson : use for serialize/deserialize json objects.
+- scannotation : Use to find entities by reflection.
 - Hibernate : Use for entities managment.
-- Reflections : Use to find entities by reflection.
 - H2 : use by default for database (you can exclude it if you use another database or if you don't use databases).
 
 ## Licence
@@ -31,7 +31,7 @@ All SimpleWeb4j is under the Apache License, Version 2.0
 <dependency>
     <groupId>fr.ybonnel</groupId>
     <artifactId>simpleweb4j</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
 </dependency>
 ```
 
@@ -106,13 +106,14 @@ In order to create a project very quickly, you can use the archetype fr.ybonnel:
 mvn archetype:generate -DarchetypeGroupId=fr.ybonnel -DarchetypeArtifactId=simpleweb4j-archetype -DarchetypeVersion=0.0.2 -DgroupId=com.exemple -DartifactId=myapp -Dpackage=com.exemple.myapp -DclassName=MyApp -DwithHibernate=true -Dversion=0.0.1-SNAPSHOT
 ```
 
-Archetype parameters are :
- - groupId : your groupId.
- - artifactId : your artifactId.
- - package (default = groupId) : the main package of your application.
- - className (default = "HelloWorld") : the name of your main class.
- - withHibernate (default = "true") : true if you want the entity managment, false otherwize.
- - version : your version.
+Archetype parameters :
+
+- groupId : your groupId.
+- artifactId : your artifactId.
+- package (default = groupId) : the main package of your application.
+- className (default = "HelloWorld") : the name of your main class.
+- withHibernate (default = "true") : true if you want the entity managment, false otherwize.
+- version : your version.
 
 
 ## Samples
