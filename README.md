@@ -132,9 +132,11 @@ You can find all the generated maven site in [jenkins](https://simpleweb4j.ci.cl
 
 ## TODO List
 
+This is my todo list, if you have others ideas, feel free to create issues.
+
 - [x] Deploy SimpleWeb4j in central repository.
 - [x] Create a very simple sample usage in readme.
-- [X] Create an archetype.
+- [x] Create an archetype.
 - [ ] Add some explaination for the content of project created with archetype.
 - [ ] Create a minified process for javascript and css.
 - [ ] Add some useful util js for client side.
