@@ -13,7 +13,7 @@ and on client side create an angular.js app (you can also use others javascript 
 
 - Jetty : used for http server.
 - slf4j : For the logs.
-- gson : use for serialize/deserialize json objects.
+- gson : use to serialize/deserialize json objects.
 - scannotation : Use to find entities by reflection.
 - Hibernate : Use for entities managment.
 - H2 : use by default for database (you can exclude it if you use another database or if you don't use databases).
