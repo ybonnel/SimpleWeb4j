@@ -18,7 +18,11 @@ package fr.ybonnel.simpleweb4j.handlers;
 
 import fr.ybonnel.simpleweb4j.exception.HttpErrorException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Route for SimpleWeb4j.

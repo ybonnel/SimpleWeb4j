@@ -163,9 +163,36 @@ public class SimpleEntityManager<T, I extends Serializable> {
     }
 
     /**
-     * Annotated classes (list of all entities).
+     * Helper to have lazy initialize of annotatedClasses.
      */
-    private static Collection<Class<?>> annotatedClasses = null;
+    private static class AnnotatedClassesHelper {
+        /**
+         * Session factory.
+         */
+        //CHECKSTYLE:OFF
+        private static Collection<Class<?>> annotatedClasses = init();
+        //CHECKSTYLE:ON
+
+        /**
+         * Initialize of Session factory.
+         * @return the session factory initialized.
+         */
+        private static Collection<Class<?>> init() {
+            try {
+                URL[] urls = ClasspathUrlFinder.findClassPaths();
+                AnnotationDB db = new AnnotationDB();
+                db.scanArchives(urls);
+                Collection<Class<?>> annotatedClasses = new ArrayList<>();
+                for (String className : db.getAnnotationIndex().get(Entity.class.getName())) {
+                    annotatedClasses.add(Class.forName(className));
+                }
+                return annotatedClasses;
+            } catch (IOException|ClassNotFoundException exception) {
+                throw new FatalSimpleWeb4jException(exception);
+            }
+        }
+    }
+
 
     /**
      * Get the annotated classes (entities).
@@ -173,20 +200,7 @@ public class SimpleEntityManager<T, I extends Serializable> {
      * @return the list of annotated classes.
      */
     private static Collection<Class<?>> getAnnotatedClasses() {
-        if (annotatedClasses == null) {
-            try {
-                URL[] urls = ClasspathUrlFinder.findClassPaths();
-                AnnotationDB db = new AnnotationDB();
-                db.scanArchives(urls);
-                annotatedClasses = new ArrayList<>();
-                for (String className : db.getAnnotationIndex().get(Entity.class.getName())) {
-                    annotatedClasses.add(Class.forName(className));
-                }
-            } catch (IOException|ClassNotFoundException exception) {
-                throw new FatalSimpleWeb4jException(exception);
-            }
-        }
-        return annotatedClasses;
+        return AnnotatedClassesHelper.annotatedClasses;
     }
 
     /**
