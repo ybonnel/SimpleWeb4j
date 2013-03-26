@@ -30,7 +30,6 @@ public class SimpleEntityManagerUnitTest {
 
     @Before
     public void setup() {
-        SimpleEntityManager.setEntitiesPackage(null);
         try {
             SimpleEntityManager.closeSession();
         } catch (Exception ignore){}
@@ -57,27 +56,5 @@ public class SimpleEntityManagerUnitTest {
     @Test(expected = IllegalStateException.class)
     public void testCloseSessionAlreadyClosed() {
         SimpleEntityManager.closeSession();
-    }
-
-    @Test
-    public void testActualEntitiesPackageHasChange() throws NoSuchFieldException, IllegalAccessException {
-        Field actualEntitiesPackage = SimpleEntityManager.class.getDeclaredField("actualEntitiesPackage");
-        actualEntitiesPackage.setAccessible(true);
-        actualEntitiesPackage.set(null, null);
-        SimpleEntityManager.setEntitiesPackage(null);
-        assertFalse(SimpleEntityManager.actualEntitiesPackageHasChange());
-
-        SimpleEntityManager.setEntitiesPackage("test");
-        assertTrue(SimpleEntityManager.actualEntitiesPackageHasChange());
-
-        actualEntitiesPackage.set(null, "test");
-        SimpleEntityManager.setEntitiesPackage(null);
-        assertTrue(SimpleEntityManager.actualEntitiesPackageHasChange());
-
-        SimpleEntityManager.setEntitiesPackage("test2");
-        assertTrue(SimpleEntityManager.actualEntitiesPackageHasChange());
-
-        SimpleEntityManager.setEntitiesPackage("test");
-        assertFalse(SimpleEntityManager.actualEntitiesPackageHasChange());
     }
 }

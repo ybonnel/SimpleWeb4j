@@ -126,18 +126,6 @@ public final class SimpleWeb4j {
     }
 
     /**
-     * Change the package of your entities.
-     * Default value is all.
-     * @param entitiesPackage the package you want.
-     */
-    public static void setEntitiesPackage(String entitiesPackage) {
-        if (initialized) {
-            throw new IllegalStateException("You must set entities packge resources path before settings any route");
-        }
-        SimpleEntityManager.setEntitiesPackage(entitiesPackage);
-    }
-
-    /**
      * Initialize the server.
      */
     protected static void init() {

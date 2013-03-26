@@ -31,7 +31,6 @@ public class Forms {
     public static void startServer(int port) {
         setPort(port);
         setPublicResourcesPath("/fr/ybonnel/simpleweb4j/samples/forms/public");
-        setEntitiesPackage("fr/ybonnel/simpleweb4j/samples/forms");
 
         get(new Route<Void, List<String>>("countries", Void.class) {
             @Override

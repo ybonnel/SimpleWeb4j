@@ -16,7 +16,6 @@
  */
 package fr.ybonnel.simpleweb4j;
 
-import com.google.common.base.Strings;
 import fr.ybonnel.simpleweb4j.util.SimpleWebTestUtil;
 import org.junit.After;
 import org.junit.Before;
@@ -54,41 +53,41 @@ public class JsIntegrationTest {
     public void should_serve_jquery_library() throws Exception {
         SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("GET", "/js/jquery.js");
         assertEquals(200, response.status);
-        assertFalse(Strings.isNullOrEmpty(response.body));
+        assertFalse(response.body.isEmpty());
 
         response = testUtil.doMethod("GET", "/js/jquery.min.js");
         assertEquals(200, response.status);
-        assertFalse(Strings.isNullOrEmpty(response.body));
+        assertFalse(response.body.isEmpty());
     }
 
     @Test
     public void should_serve_angular_library() throws Exception {
         SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("GET", "/js/angular.js");
         assertEquals(200, response.status);
-        assertFalse(Strings.isNullOrEmpty(response.body));
+        assertFalse(response.body.isEmpty());
 
         response = testUtil.doMethod("GET", "/js/angular.min.js");
         assertEquals(200, response.status);
-        assertFalse(Strings.isNullOrEmpty(response.body));
+        assertFalse(response.body.isEmpty());
     }
 
     @Test
     public void should_serve_bootstrap_css() throws Exception {
         SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("GET", "/css/bootstrap.css");
         assertEquals(200, response.status);
-        assertFalse(Strings.isNullOrEmpty(response.body));
+        assertFalse(response.body.isEmpty());
 
         response = testUtil.doMethod("GET", "/css/bootstrap.min.css");
         assertEquals(200, response.status);
-        assertFalse(Strings.isNullOrEmpty(response.body));
+        assertFalse(response.body.isEmpty());
 
         response = testUtil.doMethod("GET", "/css/bootstrap-responsive.css");
         assertEquals(200, response.status);
-        assertFalse(Strings.isNullOrEmpty(response.body));
+        assertFalse(response.body.isEmpty());
 
         response = testUtil.doMethod("GET", "/css/bootstrap-responsive.min.css");
         assertEquals(200, response.status);
-        assertFalse(Strings.isNullOrEmpty(response.body));
+        assertFalse(response.body.isEmpty());
     }
 
 }

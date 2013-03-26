@@ -86,18 +86,6 @@ public class SimpleWebUnitTest {
     }
 
     @Test
-    public void testSetEntitiesPackageAfterInit() {
-        SimpleWeb4j.setEntitiesPackage("fr.entities");
-        SimpleWeb4j.init();
-        SimpleWeb4j.init();
-        try {
-            SimpleWeb4j.setEntitiesPackage("fr.entities");
-            fail("An exception must be throw");
-        } catch (IllegalStateException ignore) {
-        }
-    }
-
-    @Test
     public void testStartMethod() throws IllegalAccessException, NoSuchFieldException {
         SimpleWeb4jServer mockServer = mock(SimpleWeb4jServer.class);
 

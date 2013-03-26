@@ -17,12 +17,14 @@
 package fr.ybonnel.simpleweb4j;
 
 
-import com.google.common.collect.Lists;
 import fr.ybonnel.simpleweb4j.exception.HttpErrorException;
 import fr.ybonnel.simpleweb4j.handlers.resource.RestResource;
 import fr.ybonnel.simpleweb4j.util.SimpleWebTestUtil;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -42,7 +44,6 @@ public class RestIntegrationTest {
         resetDefaultValues();
         int port = Integer.getInteger("test.http.port", random.nextInt(10000) + 10000);
         setPort(port);
-        setEntitiesPackage("fr.ybonnel.noentities");
         testUtil = new SimpleWebTestUtil(port);
 
         resource(new RestResource<String>("string", String.class) {
@@ -53,7 +54,7 @@ public class RestIntegrationTest {
 
             @Override
             public List<String> getAll() throws HttpErrorException {
-                return Lists.newArrayList("getAll1", "getAll2");
+                return Arrays.asList("getAll1", "getAll2");
             }
 
             @Override

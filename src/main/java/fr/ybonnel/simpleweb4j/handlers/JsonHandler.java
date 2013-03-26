@@ -17,7 +17,6 @@
 package fr.ybonnel.simpleweb4j.handlers;
 
 
-import com.google.common.base.Throwables;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fr.ybonnel.simpleweb4j.exception.HttpErrorException;
@@ -29,6 +28,8 @@ import org.mortbay.jetty.handler.AbstractHandler;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -119,7 +120,10 @@ public class JsonHandler extends AbstractHandler {
             }
         } catch (Exception exception) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getOutputStream().print(Throwables.getStackTraceAsString(exception));
+            StringWriter writer = new StringWriter();
+            PrintWriter printWriter = new PrintWriter(writer);
+            exception.printStackTrace(printWriter);
+            response.getOutputStream().print(writer.toString());
             response.getOutputStream().close();
         } finally {
             if (SimpleEntityManager.hasEntities() && SimpleEntityManager.getCurrentSession() != null) {

@@ -16,15 +16,20 @@
  */
 package fr.ybonnel.simpleweb4j.model;
 
+import fr.ybonnel.simpleweb4j.exception.FatalSimpleWeb4jException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.service.ServiceRegistryBuilder;
-import org.reflections.Reflections;
+import org.scannotation.AnnotationDB;
+import org.scannotation.ClasspathUrlFinder;
 
 import javax.persistence.Entity;
+import java.io.IOException;
 import java.io.Serializable;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -64,24 +69,24 @@ public class SimpleEntityManager<T, I extends Serializable> {
     }
 
     /**
-     * Package of entities.
+     * Bypass if no hibernate dependency.
      */
-    private static String entitiesPackage = null;
-
-    /**
-     * Change the package of entities.
-     * @param newEntitiesPackge new package of entities.
-     */
-    public static void setEntitiesPackage(String newEntitiesPackge) {
-        entitiesPackage = newEntitiesPackge;
-    }
+    private static Boolean hasHibernate = null;
 
     /**
      * Method used to know if the current application have entities to manage.
      * @return true is there's entities to manage.
      */
     public static boolean hasEntities() {
-        return !getAnnotatedClasses().isEmpty();
+        if (hasHibernate == null) {
+            try {
+                Class.forName("javax.persistence.Entity");
+                hasHibernate = true;
+            } catch (ClassNotFoundException e) {
+                hasHibernate = false;
+            }
+        }
+        return hasHibernate && !getAnnotatedClasses().isEmpty();
     }
 
     /**
@@ -161,21 +166,6 @@ public class SimpleEntityManager<T, I extends Serializable> {
      * Annotated classes (list of all entities).
      */
     private static Collection<Class<?>> annotatedClasses = null;
-    /**
-     * Last package use for entities.
-     */
-    private static String actualEntitiesPackage = null;
-
-    /**
-     * Use to know is entities package has changed (used for unit tests).
-     * @return true is entities packages has changed.
-     */
-    protected static boolean actualEntitiesPackageHasChange() {
-        if (actualEntitiesPackage == null) {
-            return entitiesPackage != null;
-        }
-        return !actualEntitiesPackage.equals(entitiesPackage);
-    }
 
     /**
      * Get the annotated classes (entities).
@@ -183,10 +173,18 @@ public class SimpleEntityManager<T, I extends Serializable> {
      * @return the list of annotated classes.
      */
     private static Collection<Class<?>> getAnnotatedClasses() {
-        if (annotatedClasses == null || actualEntitiesPackageHasChange()) {
-            Reflections reflections = entitiesPackage == null ? new Reflections("") : new Reflections(entitiesPackage);
-            annotatedClasses = reflections.getTypesAnnotatedWith(Entity.class);
-            actualEntitiesPackage = entitiesPackage;
+        if (annotatedClasses == null) {
+            try {
+                URL[] urls = ClasspathUrlFinder.findClassPaths();
+                AnnotationDB db = new AnnotationDB();
+                db.scanArchives(urls);
+                annotatedClasses = new ArrayList<>();
+                for (String className : db.getAnnotationIndex().get(Entity.class.getName())) {
+                    annotatedClasses.add(Class.forName(className));
+                }
+            } catch (IOException|ClassNotFoundException exception) {
+                throw new FatalSimpleWeb4jException(exception);
+            }
         }
         return annotatedClasses;
     }

@@ -48,7 +48,6 @@ public class EntitiesIntegrationTest {
         setPort(port);
         testUtil = new SimpleWebTestUtil(port);
         setHibernateCfgPath("/fr/ybonnel/simpleweb4j/entities/hibernate.cfg.xml");
-        setEntitiesPackage("fr.ybonnel.simpleweb4j.entities");
 
         resource(new RestResource<SimpleEntity>("entity", SimpleEntity.class) {
             @Override

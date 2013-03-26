@@ -16,15 +16,9 @@
  */
 package fr.ybonnel.simpleweb4j.handlers;
 
-import com.google.common.base.Splitter;
 import fr.ybonnel.simpleweb4j.exception.HttpErrorException;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static com.google.common.collect.Lists.newArrayList;
+import java.util.*;
 
 /**
  * Route for SimpleWeb4j.
@@ -57,7 +51,12 @@ public abstract class Route<P, R> {
      */
     public Route(String routePath, Class<P> paramType) {
         this.routePath = routePath;
-        pathInSegments = newArrayList(Splitter.on('/').omitEmptyStrings().trimResults().split(routePath));
+        pathInSegments = new ArrayList<>();
+        for (String path : routePath.split("\\/")) {
+            if (path != null && path.length() > 0) {
+                pathInSegments.add(path);
+            }
+        }
         this.paramType = paramType;
     }
 
@@ -77,7 +76,12 @@ public abstract class Route<P, R> {
         if (this.routePath.equals(path)) {
             return true;
         }
-        List<String> queryPath = newArrayList(Splitter.on('/').omitEmptyStrings().trimResults().split(path));
+        List<String> queryPath = new ArrayList<>();
+        for (String segment : path.split("\\/")) {
+            if (segment != null && segment.length() > 0) {
+                queryPath.add(segment);
+            }
+        }
         if (queryPath.size() == pathInSegments.size()) {
             boolean same = true;
             for (int index = 0; index < queryPath.size(); index++) {
@@ -101,7 +105,12 @@ public abstract class Route<P, R> {
      */
     protected Map<String, String> getRouteParams(String pathInfo) {
         Map<String, String> params = new HashMap<>();
-        List<String> queryPath = newArrayList(Splitter.on('/').omitEmptyStrings().trimResults().split(pathInfo));
+        List<String> queryPath = new ArrayList<>();
+        for (String segment : pathInfo.split("\\/")) {
+            if (segment != null && segment.length() > 0) {
+                queryPath.add(segment);
+            }
+        }
         for (int index = 0; index < queryPath.size(); index++) {
             if (pathInSegments.get(index).startsWith(":")) {
                 params.put(pathInSegments.get(index).substring(1), queryPath.get(index));
