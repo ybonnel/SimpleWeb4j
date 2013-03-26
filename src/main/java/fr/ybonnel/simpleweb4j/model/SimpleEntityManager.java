@@ -182,11 +182,11 @@ public class SimpleEntityManager<T, I extends Serializable> {
                 URL[] urls = ClasspathUrlFinder.findClassPaths();
                 AnnotationDB db = new AnnotationDB();
                 db.scanArchives(urls);
-                Collection<Class<?>> annotatedClasses = new ArrayList<>();
+                Collection<Class<?>> annotatedClassesTmp = new ArrayList<>();
                 for (String className : db.getAnnotationIndex().get(Entity.class.getName())) {
-                    annotatedClasses.add(Class.forName(className));
+                    annotatedClassesTmp.add(Class.forName(className));
                 }
-                return annotatedClasses;
+                return annotatedClassesTmp;
             } catch (IOException|ClassNotFoundException exception) {
                 throw new FatalSimpleWeb4jException(exception);
             }
