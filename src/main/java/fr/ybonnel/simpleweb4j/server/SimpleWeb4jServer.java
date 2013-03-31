@@ -27,6 +27,9 @@ import org.mortbay.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Server part of SimpleWeb4j.
  * <b>Don't use it directly</b>, use the methods of {@link fr.ybonnel.simpleweb4j.SimpleWeb4j}.
@@ -45,6 +48,7 @@ public class SimpleWeb4jServer {
 
     /**
      * Constructor for unit test.
+     *
      * @param jettyServer the Jetty server.
      */
     protected SimpleWeb4jServer(Server jettyServer) {
@@ -53,11 +57,14 @@ public class SimpleWeb4jServer {
 
     /**
      * Constructor.
-     * @param port Http port to use.
-     * @param jsonHandler the handler for json services.
+     *
+     * @param port                Http port to use.
+     * @param jsonHandler         the handler for json services.
      * @param publicResourcesPath path to public resources.
+     * @param specificHandlers    handlers to add to server.
      */
-    public SimpleWeb4jServer(int port, JsonHandler jsonHandler, String publicResourcesPath) {
+    public SimpleWeb4jServer(int port, JsonHandler jsonHandler, String publicResourcesPath,
+                             List<Handler> specificHandlers) {
         jettyServer = new Server(port);
 
         ResourceHandler resourceHandler = new ResourceHandler();
@@ -69,13 +76,20 @@ public class SimpleWeb4jServer {
         internalResourceHandler.setWelcomeFiles(new String[]{"index.html"});
 
         HandlerList handlers = new HandlerList();
-        handlers.setHandlers(new Handler[]{jsonHandler, resourceHandler, internalResourceHandler});
+
+        List<Handler> handlersList = new ArrayList<>(specificHandlers);
+        handlersList.add(jsonHandler);
+        handlersList.add(resourceHandler);
+        handlersList.add(internalResourceHandler);
+
+        handlers.setHandlers(handlersList.toArray(new Handler[handlersList.size()]));
 
         jettyServer.setHandler(handlers);
     }
 
     /**
      * Start the server.
+     *
      * @param waitStop true is you want the method wait the server stop.
      */
     public void start(boolean waitStop) {

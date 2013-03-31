@@ -23,6 +23,11 @@ import fr.ybonnel.simpleweb4j.handlers.Route;
 import fr.ybonnel.simpleweb4j.handlers.resource.RestResource;
 import fr.ybonnel.simpleweb4j.model.SimpleEntityManager;
 import fr.ybonnel.simpleweb4j.server.SimpleWeb4jServer;
+import org.mortbay.jetty.Handler;
+import org.mortbay.jetty.handler.AbstractHandler;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is the entry point for all your uses of SimpleWeb4j.<br/>
@@ -88,6 +93,7 @@ public final class SimpleWeb4j {
         port = DEFAULT_PORT;
         publicResourcesPath = "/public";
         initialized = false;
+        handlers = new ArrayList<>();
     }
 
     /**
@@ -126,11 +132,27 @@ public final class SimpleWeb4j {
     }
 
     /**
+     * Handlers for jetty server.
+     */
+    private static List<Handler> handlers = new ArrayList<>();
+
+    /**
+     * Add you specific handler.
+     * @param handler your handler.
+     */
+    public static void addSpecificHandler(Handler handler) {
+        if (initialized) {
+            throw new IllegalStateException("You must add your handlers before settings any route");
+        }
+        handlers.add(handler);
+    }
+
+    /**
      * Initialize the server.
      */
     protected static void init() {
         if (!initialized) {
-            server = new SimpleWeb4jServer(port, jsonHandler, publicResourcesPath);
+            server = new SimpleWeb4jServer(port, jsonHandler, publicResourcesPath, handlers);
             initialized = true;
         }
     }
