@@ -130,16 +130,3 @@ All samples are directly inspired by play framework, which is a great web framew
 
 You can find all the generated maven site in [jenkins](https://simpleweb4j.ci.cloudbees.com/job/SimpleWeb4j-build/site/)
 
-## TODO List
-
-This is my todo list, if you have others ideas, feel free to create issues.
-
-- [x] Deploy SimpleWeb4j in central repository.
-- [x] Create a very simple sample usage in readme.
-- [x] Create an archetype.
-- [ ] Add some explaination for the content of project created with archetype.
-- [ ] Create a minified process for javascript and css.
-- [ ] Add some useful util js for client side.
-- [ ] Add sample explanation in wiki.
-- [ ] Add a wiki page for each functionnality.
-- [ ] Add unit test sample in wiki.
