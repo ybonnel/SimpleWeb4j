@@ -18,7 +18,6 @@ package fr.ybonnel.simpleweb4j.server;
 
 
 import fr.ybonnel.simpleweb4j.exception.FatalSimpleWeb4jException;
-import fr.ybonnel.simpleweb4j.handlers.JsonHandler;
 import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.handler.HandlerList;
@@ -28,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -59,11 +59,10 @@ public class SimpleWeb4jServer {
      * Constructor.
      *
      * @param port                Http port to use.
-     * @param jsonHandler         the handler for json services.
      * @param publicResourcesPath path to public resources.
      * @param specificHandlers    handlers to add to server.
      */
-    public SimpleWeb4jServer(int port, JsonHandler jsonHandler, String publicResourcesPath,
+    public SimpleWeb4jServer(int port, String publicResourcesPath,
                              List<Handler> specificHandlers) {
         jettyServer = new Server(port);
 
@@ -77,8 +76,9 @@ public class SimpleWeb4jServer {
 
         HandlerList handlers = new HandlerList();
 
+        Collections.reverse(specificHandlers);
+
         List<Handler> handlersList = new ArrayList<>(specificHandlers);
-        handlersList.add(jsonHandler);
         handlersList.add(resourceHandler);
         handlersList.add(internalResourceHandler);
 

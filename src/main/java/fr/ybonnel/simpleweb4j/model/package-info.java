@@ -19,8 +19,7 @@
  * SimpleWeb4j use hibernate, it has a default configuration with a H2 in memory database,
  * but it's strongly recommended to add your own configuration and
  * use it with {@link fr.ybonnel.simpleweb4j.SimpleWeb4j#setHibernateCfgPath(String)}.<br/>
- * By default, SimpleWeb4J scan the entire classPath to find classes annotated with {@link javax.persistence.Entity},
- * but you can the your package with {@link fr.ybonnel.simpleweb4j.SimpleWeb4j#setEntitiesPackage(String)}.<br/>
+ * By default, SimpleWeb4J scan the entire classPath to find classes annotated with {@link javax.persistence.Entity}.<br/>
  *
  * SimpleWeb4j have a simple manager to help you with save/delete/get operations : {@link fr.ybonnel.simpleweb4j.model.SimpleEntityManager}.
  */

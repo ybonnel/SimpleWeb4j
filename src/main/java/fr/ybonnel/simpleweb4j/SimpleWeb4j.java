@@ -17,6 +17,7 @@
 package fr.ybonnel.simpleweb4j;
 
 
+import fr.ybonnel.simpleweb4j.handlers.CoffeeCompilerHandler;
 import fr.ybonnel.simpleweb4j.handlers.HttpMethod;
 import fr.ybonnel.simpleweb4j.handlers.JsonHandler;
 import fr.ybonnel.simpleweb4j.handlers.Route;
@@ -24,8 +25,10 @@ import fr.ybonnel.simpleweb4j.handlers.resource.RestResource;
 import fr.ybonnel.simpleweb4j.model.SimpleEntityManager;
 import fr.ybonnel.simpleweb4j.server.SimpleWeb4jServer;
 import org.mortbay.jetty.Handler;
+import org.mortbay.jetty.handler.AbstractHandler;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -84,6 +87,14 @@ public final class SimpleWeb4j {
      * Handler for all request others than static files.
      */
     private static JsonHandler jsonHandler = new JsonHandler();
+    /**
+     * Handler to compile coffeeScript.
+     */
+    private static CoffeeCompilerHandler coffeeCompilerHandler = new CoffeeCompilerHandler();
+    /**
+     * List of all internal handlers.
+     */
+    private static List<AbstractHandler> simpleWeb4jHandlers = Arrays.asList(jsonHandler, coffeeCompilerHandler);
 
     /**
      * Test usage.
@@ -91,8 +102,9 @@ public final class SimpleWeb4j {
     protected static void resetDefaultValues() {
         port = DEFAULT_PORT;
         publicResourcesPath = "/public";
+        coffeeCompilerHandler.setPublicResourcePath("/public");
         initialized = false;
-        handlers = new ArrayList<>();
+        handlers = new ArrayList<Handler>(simpleWeb4jHandlers);
     }
 
     /**
@@ -116,6 +128,7 @@ public final class SimpleWeb4j {
             throw new IllegalStateException("You must set public resources path before settings any route");
         }
         publicResourcesPath = newPublicResourcesPath;
+        coffeeCompilerHandler.setPublicResourcePath("/public");
     }
 
     /**
@@ -133,7 +146,7 @@ public final class SimpleWeb4j {
     /**
      * Handlers for jetty server.
      */
-    private static List<Handler> handlers = new ArrayList<>();
+    private static List<Handler> handlers = new ArrayList<Handler>(simpleWeb4jHandlers);
 
     /**
      * Add you specific handler.
@@ -151,7 +164,7 @@ public final class SimpleWeb4j {
      */
     protected static void init() {
         if (!initialized) {
-            server = new SimpleWeb4jServer(port, jsonHandler, publicResourcesPath, handlers);
+            server = new SimpleWeb4jServer(port, publicResourcesPath, handlers);
             initialized = true;
         }
     }
