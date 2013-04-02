@@ -20,6 +20,7 @@ package fr.ybonnel.simpleweb4j;
 import fr.ybonnel.simpleweb4j.handlers.CoffeeCompilerHandler;
 import fr.ybonnel.simpleweb4j.handlers.HttpMethod;
 import fr.ybonnel.simpleweb4j.handlers.JsonHandler;
+import fr.ybonnel.simpleweb4j.handlers.LessCompilerHandler;
 import fr.ybonnel.simpleweb4j.handlers.Route;
 import fr.ybonnel.simpleweb4j.handlers.resource.RestResource;
 import fr.ybonnel.simpleweb4j.model.SimpleEntityManager;
@@ -92,9 +93,13 @@ public final class SimpleWeb4j {
      */
     private static CoffeeCompilerHandler coffeeCompilerHandler = new CoffeeCompilerHandler();
     /**
+     * Handler to compile less.
+     */
+    private static LessCompilerHandler lessCompilerHandler = new LessCompilerHandler();
+    /**
      * List of all internal handlers.
      */
-    private static List<AbstractHandler> simpleWeb4jHandlers = Arrays.asList(jsonHandler, coffeeCompilerHandler);
+    private static List<AbstractHandler> simpleWeb4jHandlers = Arrays.asList(jsonHandler, coffeeCompilerHandler, lessCompilerHandler);
 
     /**
      * Test usage.
@@ -102,7 +107,8 @@ public final class SimpleWeb4j {
     protected static void resetDefaultValues() {
         port = DEFAULT_PORT;
         publicResourcesPath = "/public";
-        coffeeCompilerHandler.setPublicResourcePath("/public");
+        coffeeCompilerHandler.setPublicResourcePath(publicResourcesPath);
+        lessCompilerHandler.setPublicResourcePath(publicResourcesPath);
         initialized = false;
         handlers = new ArrayList<Handler>(simpleWeb4jHandlers);
     }
@@ -128,7 +134,8 @@ public final class SimpleWeb4j {
             throw new IllegalStateException("You must set public resources path before settings any route");
         }
         publicResourcesPath = newPublicResourcesPath;
-        coffeeCompilerHandler.setPublicResourcePath("/public");
+        coffeeCompilerHandler.setPublicResourcePath(publicResourcesPath);
+        lessCompilerHandler.setPublicResourcePath(publicResourcesPath);
     }
 
     /**

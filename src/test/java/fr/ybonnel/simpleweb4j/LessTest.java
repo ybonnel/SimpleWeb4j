@@ -31,7 +31,7 @@ import static fr.ybonnel.simpleweb4j.SimpleWeb4j.stop;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class CoffeScriptTest {
+public class LessTest {
 
 
     private Random random = new Random();
@@ -54,26 +54,25 @@ public class CoffeScriptTest {
     }
 
     @Test
-    public void should_compile_coffee() throws Exception {
-        SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("GET", "/testcoffee.coffee");
+    public void should_compile_less() throws Exception {
+        SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("GET", "/testless.less");
         assertEquals(200, response.status);
-        assertEquals("application/javascript", response.contentType);
-        assertEquals("var square;\n" +
-                "square = function(x) {\n" +
-                "  return x * x;\n" +
-                "};", response.body);
+        assertEquals("text/css", response.contentType);
+        assertEquals("#header #underheader {\n" +
+                "  font-size: 26px;\n" +
+                "}\n", response.body);
     }
 
     @Test
     public void should_have_well_compile_error() throws Exception {
-        SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("GET", "/testcoffeeError.coffee");
+        SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("GET", "/testlessError.less");
         assertEquals(500, response.status);
-        assertTrue(response.body.contains("JCoffeeScriptCompileException"));
+        assertTrue(response.body.contains("LessException"));
     }
 
     @Test
-    public void should_answer_notFound_if_no_coffee_resource() throws Exception {
-        SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("GET", "/notexists.coffee");
+    public void should_answer_notFound_isNoLessFile() throws Exception {
+        SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("GET", "/notexists.less");
         assertEquals(404, response.status);
     }
 }

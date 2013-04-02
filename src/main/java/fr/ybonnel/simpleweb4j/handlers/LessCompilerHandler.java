@@ -16,9 +16,8 @@
  */
 package fr.ybonnel.simpleweb4j.handlers;
 
-import org.jcoffeescript.JCoffeeScriptCompileException;
-import org.jcoffeescript.JCoffeeScriptCompiler;
-import org.jcoffeescript.Option;
+import org.lesscss.LessCompiler;
+import org.lesscss.LessException;
 import org.mortbay.jetty.HttpConnection;
 import org.mortbay.jetty.Request;
 import org.mortbay.jetty.handler.AbstractHandler;
@@ -33,17 +32,15 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Scanner;
 
-import static java.util.Arrays.asList;
-
 /**
  * Compiler for coffee files.
  */
-public class CoffeeCompilerHandler extends AbstractHandler {
+public class LessCompilerHandler extends AbstractHandler {
 
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(CoffeeCompilerHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LessCompilerHandler.class);
 
     /**
      * Path to public resource.
@@ -51,9 +48,9 @@ public class CoffeeCompilerHandler extends AbstractHandler {
     private String publicResourcePath = "/public";
 
     /**
-     * CoffeeScript compiler.
+     * Less compiler.
      */
-    private JCoffeeScriptCompiler compiler = new JCoffeeScriptCompiler(asList(Option.BARE));
+    private LessCompiler compiler = new LessCompiler();
 
     /**
      * Change the path to public resources.
@@ -73,7 +70,7 @@ public class CoffeeCompilerHandler extends AbstractHandler {
      * object or a wrapper of that request. The {@link org.mortbay.jetty.HttpConnection#getCurrentConnection()}
      * method can be used access the Response object if required.
      * @param dispatch The dispatch mode: {@link #REQUEST}, {@link #FORWARD}, {@link #INCLUDE}, {@link #ERROR}
-     * @throws IOException in case of I/O error.
+     * @throws java.io.IOException in case of I/O error.
      */
     @Override
     public void handle(String target, HttpServletRequest request, HttpServletResponse response, int dispatch) throws IOException {
@@ -82,12 +79,12 @@ public class CoffeeCompilerHandler extends AbstractHandler {
             return;
         }
 
-        if (!request.getPathInfo().endsWith(".coffee")) {
+        if (!request.getPathInfo().endsWith(".less")) {
             return;
         }
 
         try {
-            InputStream resource = CoffeeCompilerHandler.class.getResourceAsStream(
+            InputStream resource = LessCompilerHandler.class.getResourceAsStream(
                     publicResourcePath + request.getPathInfo());
             if (resource != null) {
                 String result = compiler.compile(
@@ -95,14 +92,14 @@ public class CoffeeCompilerHandler extends AbstractHandler {
                                 resource));
 
                 baseRequest.setHandled(true);
-                response.setContentType("application/javascript");
+                response.setContentType("text/css");
                 response.setStatus(HttpServletResponse.SC_OK);
                 response.getOutputStream().print(result);
                 response.getOutputStream().flush();
                 response.getOutputStream().close();
             }
-        } catch (JCoffeeScriptCompileException exception) {
-            LOGGER.warn("CoffeeScript compile error on {}", request.getPathInfo());
+        } catch (LessException exception) {
+            LOGGER.warn("Less compile error on {}", request.getPathInfo());
             LOGGER.warn("Compile error", exception);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             StringWriter writer = new StringWriter();
