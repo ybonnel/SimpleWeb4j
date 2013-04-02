@@ -16,7 +16,7 @@
  */
 package fr.ybonnel.simpleweb4j;
 
-import fr.ybonnel.simpleweb4j.handlers.CoffeeCompilerHandler;
+import fr.ybonnel.simpleweb4j.handlers.LessCompilerHandler;
 import fr.ybonnel.simpleweb4j.server.SimpleWeb4jServer;
 import org.junit.Before;
 import org.junit.Test;
@@ -88,11 +88,11 @@ public class SimpleWebUnitTest {
 
     @Test
     public void testAddSpecificHandlerAfterInit() {
-        SimpleWeb4j.addSpecificHandler(new CoffeeCompilerHandler());
+        SimpleWeb4j.addSpecificHandler(new LessCompilerHandler());
         SimpleWeb4j.init();
         SimpleWeb4j.init();
         try {
-            SimpleWeb4j.addSpecificHandler(new CoffeeCompilerHandler());
+            SimpleWeb4j.addSpecificHandler(new LessCompilerHandler());
             fail("An exception must be throw");
         } catch (IllegalStateException ignore) {
         }
