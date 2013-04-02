@@ -43,7 +43,7 @@ public class CoffeeCompilerHandler extends AbstractHandler {
     /**
      * Logger.
      */
-    private static final Logger logger = LoggerFactory.getLogger(CoffeeCompilerHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CoffeeCompilerHandler.class);
 
     /**
      * Path to public resource.
@@ -99,8 +99,8 @@ public class CoffeeCompilerHandler extends AbstractHandler {
             response.getOutputStream().flush();
             response.getOutputStream().close();
         } catch (JCoffeeScriptCompileException exception) {
-            logger.warn("CoffeeScript compile error on {}", request.getPathInfo());
-            logger.warn("Compile error", exception);
+            LOGGER.warn("CoffeeScript compile error on {}", request.getPathInfo());
+            LOGGER.warn("Compile error", exception);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             StringWriter writer = new StringWriter();
             PrintWriter printWriter = new PrintWriter(writer);

@@ -45,7 +45,8 @@ public class SimpleEntityManager<T, I extends Serializable> {
     /**
      * Entity class.
      */
-    protected static String ENTITY_CLASS = "javax.persistence.Entity";
+    private static String entityClassName = "javax.persistence.Entity";
+
     /**
      * Class of the entity.
      */
@@ -75,7 +76,7 @@ public class SimpleEntityManager<T, I extends Serializable> {
     /**
      * Bypass if no hibernate dependency.
      */
-    protected static Boolean hasHibernate = null;
+    private static Boolean hasHibernate = null;
 
     /**
      * Method used to know if the current application have entities to manage.
@@ -84,7 +85,7 @@ public class SimpleEntityManager<T, I extends Serializable> {
     public static boolean hasEntities() {
         if (hasHibernate == null) {
             try {
-                Class.forName(ENTITY_CLASS);
+                Class.forName(entityClassName);
                 hasHibernate = true;
             } catch (ClassNotFoundException e) {
                 hasHibernate = false;

@@ -24,29 +24,34 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collection;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.fail;
 
 public class SimpleEntityManagerUnitTest {
 
     @Before
-    public void setup() {
+    public void setup() throws NoSuchFieldException, IllegalAccessException {
         try {
             SimpleEntityManager.closeSession();
         } catch (Exception ignore){}
-        SimpleEntityManager.hasHibernate = null;
+        Field hasHibernateField = SimpleEntityManager.class.getDeclaredField("hasHibernate");
+        hasHibernateField.setAccessible(true);
+        hasHibernateField.set(null, null);
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws NoSuchFieldException, IllegalAccessException {
         try {
             SimpleEntityManager.closeSession();
         } catch (Exception ignore){}
-        SimpleEntityManager.ENTITY_CLASS = "javax.persistence.Entity";
-        SimpleEntityManager.hasHibernate = null;
+        Field entityClassNameField = SimpleEntityManager.class.getDeclaredField("entityClassName");
+        entityClassNameField.setAccessible(true);
+        entityClassNameField.set(null, "javax.persistence.Entity");
+
+        Field hasHibernateField = SimpleEntityManager.class.getDeclaredField("hasHibernate");
+        hasHibernateField.setAccessible(true);
+        hasHibernateField.set(null, null);
     }
 
     @Test
@@ -67,7 +72,7 @@ public class SimpleEntityManagerUnitTest {
 
     @Test
     public void stupidTestOnPrivateConstructor() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
-        for (Class clazz : SimpleEntityManager.class.getDeclaredClasses()) {
+        for (Class<?> clazz : SimpleEntityManager.class.getDeclaredClasses()) {
             Constructor<?> constructor = clazz.getDeclaredConstructor();
             constructor.setAccessible(true);
             constructor.newInstance();
@@ -75,8 +80,10 @@ public class SimpleEntityManagerUnitTest {
     }
 
     @Test
-    public void testHasEntitiesWithClassNotFound() {
-        SimpleEntityManager.ENTITY_CLASS = "notexists.Class";
+    public void testHasEntitiesWithClassNotFound() throws NoSuchFieldException, IllegalAccessException {
+        Field entityClassNameField = SimpleEntityManager.class.getDeclaredField("entityClassName");
+        entityClassNameField.setAccessible(true);
+        entityClassNameField.set(null, "notexists.Class");
 
         assertFalse(SimpleEntityManager.hasEntities());
     }
