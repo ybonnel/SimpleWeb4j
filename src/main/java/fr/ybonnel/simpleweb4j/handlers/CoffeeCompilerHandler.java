@@ -22,6 +22,8 @@ import org.jcoffeescript.Option;
 import org.mortbay.jetty.HttpConnection;
 import org.mortbay.jetty.Request;
 import org.mortbay.jetty.handler.AbstractHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,6 +39,11 @@ import static java.util.Arrays.asList;
  * Compiler for coffee files.
  */
 public class CoffeeCompilerHandler extends AbstractHandler {
+
+    /**
+     * Logger.
+     */
+    private static final Logger logger = LoggerFactory.getLogger(CoffeeCompilerHandler.class);
 
     /**
      * Path to public resource.
@@ -92,6 +99,8 @@ public class CoffeeCompilerHandler extends AbstractHandler {
             response.getOutputStream().flush();
             response.getOutputStream().close();
         } catch (JCoffeeScriptCompileException exception) {
+            logger.warn("CoffeeScript compile error on {}", request.getPathInfo());
+            logger.warn("Compile error", exception);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             StringWriter writer = new StringWriter();
             PrintWriter printWriter = new PrintWriter(writer);
@@ -108,8 +117,7 @@ public class CoffeeCompilerHandler extends AbstractHandler {
      * @param is inputStream to convert.
      * @return the string converted.
      */
-    private static String convertStreamToString(InputStream is) {
-        Scanner s = new Scanner(is, "UTF-8").useDelimiter("\\A");
-        return s.hasNext() ? s.next() : "";
+    protected static String convertStreamToString(InputStream is) {
+        return new Scanner(is, "UTF-8").useDelimiter("\\A").next();
     }
 }

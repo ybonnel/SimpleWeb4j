@@ -16,6 +16,7 @@
  */
 package fr.ybonnel.simpleweb4j;
 
+import fr.ybonnel.simpleweb4j.model.SimpleEntityManager;
 import fr.ybonnel.simpleweb4j.util.SimpleWebTestUtil;
 import org.junit.After;
 import org.junit.Before;
@@ -25,6 +26,7 @@ import java.util.Random;
 
 import static fr.ybonnel.simpleweb4j.SimpleWeb4j.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class CoffeScriptTest {
 
@@ -57,5 +59,12 @@ public class CoffeScriptTest {
                 "square = function(x) {\n" +
                 "  return x * x;\n" +
                 "};", response.body);
+    }
+
+    @Test
+    public void should_have_well_compile_error() throws Exception {
+        SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("GET", "/testcoffeeError.coffee");
+        assertEquals(500, response.status);
+        assertTrue(response.body.contains("JCoffeeScriptCompileException"));
     }
 }

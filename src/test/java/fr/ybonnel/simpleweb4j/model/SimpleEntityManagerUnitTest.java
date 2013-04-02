@@ -20,10 +20,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.fail;
 
 public class SimpleEntityManagerUnitTest {
@@ -33,13 +37,16 @@ public class SimpleEntityManagerUnitTest {
         try {
             SimpleEntityManager.closeSession();
         } catch (Exception ignore){}
+        SimpleEntityManager.hasHibernate = null;
     }
 
     @After
     public void tearDown() {
         try {
             SimpleEntityManager.closeSession();
-        } catch (Exception ignore){};
+        } catch (Exception ignore){}
+        SimpleEntityManager.ENTITY_CLASS = "javax.persistence.Entity";
+        SimpleEntityManager.hasHibernate = null;
     }
 
     @Test
@@ -56,5 +63,37 @@ public class SimpleEntityManagerUnitTest {
     @Test(expected = IllegalStateException.class)
     public void testCloseSessionAlreadyClosed() {
         SimpleEntityManager.closeSession();
+    }
+
+    @Test
+    public void stupidTestOnPrivateConstructor() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
+        for (Class clazz : SimpleEntityManager.class.getDeclaredClasses()) {
+            Constructor<?> constructor = clazz.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            constructor.newInstance();
+        }
+    }
+
+    @Test
+    public void testHasEntitiesWithClassNotFound() {
+        SimpleEntityManager.ENTITY_CLASS = "notexists.Class";
+
+        assertFalse(SimpleEntityManager.hasEntities());
+    }
+
+    @Test
+    public void testHasEntitiesWithNoEntities() throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
+        Object oldAnnotatedClasses;
+        Class<?> clazz = Class.forName("fr.ybonnel.simpleweb4j.model.SimpleEntityManager$AnnotatedClassesHelper");
+        Field annotatedClasses = clazz.getDeclaredField("annotatedClasses");
+        annotatedClasses.setAccessible(true);
+        oldAnnotatedClasses = annotatedClasses.get(null);
+
+        annotatedClasses.set(null, new ArrayList<Class<?>>());
+
+        assertFalse(SimpleEntityManager.hasEntities());
+
+        annotatedClasses.set(null, oldAnnotatedClasses);
+
     }
 }
