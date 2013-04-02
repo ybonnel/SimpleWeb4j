@@ -16,36 +16,14 @@
  */
 package fr.ybonnel.simpleweb4j.handlers;
 
+import fr.ybonnel.simpleweb4j.exception.CompileErrorException;
 import org.lesscss.LessCompiler;
 import org.lesscss.LessException;
-import org.mortbay.jetty.HttpConnection;
-import org.mortbay.jetty.Request;
-import org.mortbay.jetty.handler.AbstractHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Scanner;
 
 /**
- * Compiler for coffee files.
+ * Compiler for less files.
  */
-public class LessCompilerHandler extends AbstractHandler {
-
-    /**
-     * Logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(LessCompilerHandler.class);
-
-    /**
-     * Path to public resource.
-     */
-    private String publicResourcePath = "/public";
+public class LessCompilerHandler extends AbstractCompilerHandler {
 
     /**
      * Less compiler.
@@ -53,71 +31,35 @@ public class LessCompilerHandler extends AbstractHandler {
     private LessCompiler compiler = new LessCompiler();
 
     /**
-     * Change the path to public resources.
-     * @param newPublicResourcePath new path.
-     */
-    public void setPublicResourcePath(String newPublicResourcePath) {
-        this.publicResourcePath = newPublicResourcePath;
-    }
-
-    /**
-     * Handle a request.
-     * @param target The target of the request - either a URI or a name.
-     * @param request The request either as the {@link org.mortbay.jetty.Request}
-     * object or a wrapper of that request. The {@link org.mortbay.jetty.HttpConnection#getCurrentConnection()}
-     * method can be used access the Request object if required.
-     * @param response The response as the {@link org.mortbay.jetty.Response}
-     * object or a wrapper of that request. The {@link org.mortbay.jetty.HttpConnection#getCurrentConnection()}
-     * method can be used access the Response object if required.
-     * @param dispatch The dispatch mode: {@link #REQUEST}, {@link #FORWARD}, {@link #INCLUDE}, {@link #ERROR}
-     * @throws java.io.IOException in case of I/O error.
+     * Suffixe name for less file is ".less".
+     * @return always ".less".
      */
     @Override
-    public void handle(String target, HttpServletRequest request, HttpServletResponse response, int dispatch) throws IOException {
-        Request baseRequest = request instanceof Request ? (Request) request : HttpConnection.getCurrentConnection().getRequest();
-        if (baseRequest.isHandled() || !"GET".equals(request.getMethod())) {
-            return;
-        }
-
-        if (!request.getPathInfo().endsWith(".less")) {
-            return;
-        }
-
-        try {
-            InputStream resource = LessCompilerHandler.class.getResourceAsStream(
-                    publicResourcePath + request.getPathInfo());
-            if (resource != null) {
-                String result = compiler.compile(
-                        convertStreamToString(
-                                resource));
-
-                baseRequest.setHandled(true);
-                response.setContentType("text/css");
-                response.setStatus(HttpServletResponse.SC_OK);
-                response.getOutputStream().print(result);
-                response.getOutputStream().flush();
-                response.getOutputStream().close();
-            }
-        } catch (LessException exception) {
-            LOGGER.warn("Less compile error on {}", request.getPathInfo());
-            LOGGER.warn("Compile error", exception);
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            StringWriter writer = new StringWriter();
-            PrintWriter printWriter = new PrintWriter(writer);
-            exception.printStackTrace(printWriter);
-            response.getOutputStream().print(writer.toString());
-            response.getOutputStream().close();
-            baseRequest.setHandled(true);
-        }
-
+    protected String getSuffixeName() {
+        return ".less";
     }
 
     /**
-     * Convert InputStream to string.
-     * @param is inputStream to convert.
-     * @return the string converted.
+     * Compile a less file.
+     * @param source source to compile.
+     * @return the compiled css result.
+     * @throws CompileErrorException in case of compile error.
      */
-    protected static String convertStreamToString(InputStream is) {
-        return new Scanner(is, "UTF-8").useDelimiter("\\A").next();
+    @Override
+    protected String compile(String source) throws CompileErrorException {
+        try {
+            return compiler.compile(source);
+        } catch (LessException lessException) {
+            throw new CompileErrorException(lessException);
+        }
+    }
+
+    /**
+     * Content type for less compiled is "text/css".
+     * @return always "text/css".
+     */
+    @Override
+    protected String getContentType() {
+        return "text/css";
     }
 }
