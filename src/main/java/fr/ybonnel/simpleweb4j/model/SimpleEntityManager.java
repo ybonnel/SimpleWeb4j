@@ -31,6 +31,7 @@ import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * Simple entityManager from SimpleWeb4j.
@@ -188,8 +189,11 @@ public class SimpleEntityManager<T, I extends Serializable> {
                 AnnotationDB db = new AnnotationDB();
                 db.scanArchives(urls);
                 Collection<Class<?>> annotatedClassesTmp = new ArrayList<>();
-                for (String className : db.getAnnotationIndex().get(Entity.class.getName())) {
-                    annotatedClassesTmp.add(Class.forName(className));
+                Set<String> annotatedClassesName = db.getAnnotationIndex().get(Entity.class.getName());
+                if (annotatedClassesName != null) {
+                    for (String className : annotatedClassesName) {
+                        annotatedClassesTmp.add(Class.forName(className));
+                    }
                 }
                 return annotatedClassesTmp;
             } catch (IOException|ClassNotFoundException exception) {
