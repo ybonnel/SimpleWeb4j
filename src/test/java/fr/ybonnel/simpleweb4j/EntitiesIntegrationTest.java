@@ -33,6 +33,7 @@ import java.util.Random;
 
 import static fr.ybonnel.simpleweb4j.SimpleWeb4j.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class EntitiesIntegrationTest {
@@ -67,8 +68,9 @@ public class EntitiesIntegrationTest {
             }
 
             @Override
-            public void create(SimpleEntity resource) throws HttpErrorException {
+            public SimpleEntity create(SimpleEntity resource) throws HttpErrorException {
                 SimpleEntity.simpleEntityManager.save(resource);
+                return resource;
             }
 
             @Override
@@ -105,7 +107,9 @@ public class EntitiesIntegrationTest {
         assertEquals(200, response.status);
 
         response = testUtil.doMethod("POST", "/entity", "{name:\"nom\"}");
-        assertEquals("", response.body);
+        SimpleEntity simpleEntity = new GsonBuilder().create().fromJson(response.body, SimpleEntity.class);
+        assertNotNull(simpleEntity.id);
+        assertEquals("nom", simpleEntity.name);
         assertEquals(201, response.status);
 
         response = testUtil.doMethod("GET", "/entity");

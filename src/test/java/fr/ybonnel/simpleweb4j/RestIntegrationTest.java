@@ -63,8 +63,9 @@ public class RestIntegrationTest {
             }
 
             @Override
-            public void create(String resource) throws HttpErrorException {
+            public String create(String resource) throws HttpErrorException {
                 lastCall = "create " + resource;
+                return resource;
             }
 
             @Override
@@ -101,6 +102,7 @@ public class RestIntegrationTest {
         SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("POST", "/string", "createdResource");
         assertEquals(201, response.status);
         assertEquals("create createdResource", lastCall);
+        assertEquals("\"createdResource\"", response.body);
     }
 
     @Test

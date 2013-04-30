@@ -49,8 +49,9 @@ public class CompanyRestResource extends RestResource<Company> {
     }
 
     @Override
-    public void create(Company resource) throws HttpErrorException {
+    public Company create(Company resource) throws HttpErrorException {
         CompanyService.INSTANCE.create(resource);
+        return resource;
     }
 
     @Override

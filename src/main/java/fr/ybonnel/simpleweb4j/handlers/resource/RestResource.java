@@ -20,7 +20,9 @@ import fr.ybonnel.simpleweb4j.exception.HttpErrorException;
 import fr.ybonnel.simpleweb4j.handlers.Response;
 import fr.ybonnel.simpleweb4j.handlers.Route;
 import fr.ybonnel.simpleweb4j.handlers.RouteParameters;
+import org.mortbay.jetty.HttpStatus;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
 
 /**
@@ -81,10 +83,11 @@ public abstract class RestResource<T> {
      * Method to implement to create of a resource.
      * This method will be invoked when a POST on "/<resourceRoute>" is detected.
      * @param resource resource to create.
+     * @return result of creation.
      * @throws HttpErrorException any error you want to throw, for example,
      * you can throw a new HttpErrorException(400) if a required attribute is missing (bad request).
      */
-    public abstract void create(T resource) throws HttpErrorException;
+    public abstract T create(T resource) throws HttpErrorException;
 
     /**
      * Method to implement to delete a resource.
@@ -105,7 +108,7 @@ public abstract class RestResource<T> {
     /**
      * Route for create.
      */
-    private Route<T, Void> routeCreate;
+    private Route<T, T> routeCreate;
     /**
      * Route for delete.
      */
@@ -127,11 +130,10 @@ public abstract class RestResource<T> {
             }
         };
 
-        routeCreate = new Route<T, Void>(resourceRoute, resourceType) {
+        routeCreate = new Route<T, T>(resourceRoute, resourceType) {
             @Override
-            public Response<Void> handle(T param, RouteParameters routeParams) throws HttpErrorException {
-                create(param);
-                return new Response<>(null);
+            public Response<T> handle(T param, RouteParameters routeParams) throws HttpErrorException {
+                return new Response<>(create(param), HttpServletResponse.SC_CREATED);
             }
         };
 
@@ -171,7 +173,7 @@ public abstract class RestResource<T> {
      * Get the route of create (don't use it directly).
      * @return the route of create.
      */
-    public Route<T, Void> routeCreate() {
+    public Route<T, T> routeCreate() {
         return routeCreate;
     }
 

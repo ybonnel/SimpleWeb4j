@@ -49,8 +49,9 @@ public class ComputerRestResource extends RestResource<Computer> {
     }
 
     @Override
-    public void create(Computer resource) throws HttpErrorException {
+    public Computer create(Computer resource) throws HttpErrorException {
         ComputerService.INSTANCE.create(resource);
+        return resource;
     }
 
     @Override
