@@ -26,9 +26,14 @@ import org.lesscss.LessException;
 public class LessCompilerHandler extends AbstractCompilerHandler {
 
     /**
-     * Less compiler.
+     * Singleton helper.
      */
-    private LessCompiler compiler = new LessCompiler();
+    private static class LessCompilerHelper {
+        /**
+         * Less compiler.
+         */
+        public static final LessCompiler compiler = new LessCompiler();
+    }
 
     /**
      * Suffixe name for less file is ".less".
@@ -48,7 +53,7 @@ public class LessCompilerHandler extends AbstractCompilerHandler {
     @Override
     protected String compile(String source) throws CompileErrorException {
         try {
-            return compiler.compile(source);
+            return LessCompilerHelper.compiler.compile(source);
         } catch (LessException lessException) {
             throw new CompileErrorException(lessException);
         }
