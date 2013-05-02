@@ -24,7 +24,9 @@ import org.hibernate.service.ServiceRegistryBuilder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Simple entityManager from SimpleWeb4j.
@@ -127,12 +129,12 @@ public class SimpleEntityManager<T, I extends Serializable> {
      * @return session factory.
      */
     private static SessionFactory getSessionFactory() {
-        if (oldAnnotatedClasses == null) {
-            oldAnnotatedClasses = getAnnotatedClasses();
-        } else if (oldAnnotatedClasses != getAnnotatedClasses()) {
+        if (oldAnnotatedClasses != null
+                && oldAnnotatedClasses != getAnnotatedClasses()
+                && !Arrays.equals(oldAnnotatedClasses.toArray(), getAnnotatedClasses().toArray())) {
             SessionFactoryHelper.reset();
-            oldAnnotatedClasses = getAnnotatedClasses();
         }
+        oldAnnotatedClasses = getAnnotatedClasses();
         return SessionFactoryHelper.sessionFactory;
     }
 
