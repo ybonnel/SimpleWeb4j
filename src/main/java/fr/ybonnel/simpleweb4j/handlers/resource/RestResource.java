@@ -20,7 +20,6 @@ import fr.ybonnel.simpleweb4j.exception.HttpErrorException;
 import fr.ybonnel.simpleweb4j.handlers.Response;
 import fr.ybonnel.simpleweb4j.handlers.Route;
 import fr.ybonnel.simpleweb4j.handlers.RouteParameters;
-import org.mortbay.jetty.HttpStatus;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
