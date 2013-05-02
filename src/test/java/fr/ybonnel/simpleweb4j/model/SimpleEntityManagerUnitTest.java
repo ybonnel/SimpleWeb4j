@@ -16,18 +16,20 @@
  */
 package fr.ybonnel.simpleweb4j.model;
 
+import org.hibernate.SessionFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class SimpleEntityManagerUnitTest {
 
@@ -82,5 +84,33 @@ public class SimpleEntityManagerUnitTest {
 
         SimpleEntityManager.setEntitiesClasses(Arrays.asList(Object.class, String.class));
         assertTrue(SimpleEntityManager.hasEntities());
+    }
+
+    @Entity
+    private static class Entity1 {
+        @Id
+        private Long id;
+    }
+
+    @Entity
+    private static class Entity2 {
+        @Id
+        private Long id;
+    }
+
+    @Test
+    public void testGetSessionFactory() throws IllegalAccessException, NoSuchFieldException {
+        Field oldAnnotatedClasses = SimpleEntityManager.class.getDeclaredField("oldAnnotatedClasses");
+        oldAnnotatedClasses.setAccessible(true);
+        oldAnnotatedClasses.set(null, null);
+        SimpleEntityManager.setEntitiesClasses(Arrays.<Class<?>>asList(Entity1.class));
+
+        SessionFactory sessionFactory = SimpleEntityManager.getSessionFactory();
+        assertNotNull(sessionFactory);
+        assertTrue(sessionFactory == SimpleEntityManager.getSessionFactory());
+        SimpleEntityManager.setEntitiesClasses(Arrays.<Class<?>>asList(Entity1.class));
+        assertTrue(sessionFactory == SimpleEntityManager.getSessionFactory());
+        SimpleEntityManager.setEntitiesClasses(Arrays.<Class<?>>asList(Entity1.class, Entity2.class));
+        assertFalse(sessionFactory == SimpleEntityManager.getSessionFactory());
     }
 }

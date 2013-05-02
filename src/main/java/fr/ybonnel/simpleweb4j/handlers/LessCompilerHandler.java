@@ -32,7 +32,9 @@ public class LessCompilerHandler extends AbstractCompilerHandler {
         /**
          * Less compiler.
          */
+        //CHECKSTYLE:OFF
         public static final LessCompiler compiler = new LessCompiler();
+        //CHECKSTYLE:ON
     }
 
     /**

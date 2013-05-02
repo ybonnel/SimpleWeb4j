@@ -86,53 +86,127 @@ public class JsonHandler extends AbstractHandler {
             return;
         }
 
+        Object param = getRouteParam(request, route);
+        try {
+            beginTransaction();
+            Response<?> handlerResponse = route.handle(param, new RouteParameters(route.getRouteParams(request.getPathInfo())));
+            commitTransaction();
+            writeHttpResponse(request, response, handlerResponse);
+        } catch (HttpErrorException httpError) {
+            commitTransaction();
+            writeHttpError(response, httpError);
+        } catch (Exception exception) {
+            rollBackTransaction();
+            writeInternalError(response, exception);
+        }
+        baseRequest.setHandled(true);
+
+    }
+
+
+    /**
+     * Write http response with exception details.
+     * @param response http response.
+     * @param exception exception.
+     * @throws IOException in case of IO error.
+     */
+    private void writeInternalError(HttpServletResponse response, Exception exception) throws IOException {
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        StringWriter writer = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(writer);
+        exception.printStackTrace(printWriter);
+        response.getOutputStream().print(writer.toString());
+        response.getOutputStream().close();
+    }
+
+    /**
+     * Write http response with HttpError details.
+     * @param response http response.
+     * @param httpError http error.
+     * @throws IOException in case of IO error.
+     */
+    private void writeHttpError(HttpServletResponse response, HttpErrorException httpError) throws IOException {
+        response.setStatus(httpError.getStatus());
+        if (httpError.getAnswer() != null) {
+            response.setContentType("application/json");
+            response.getOutputStream().print(gson.toJson(httpError.getAnswer()));
+            response.getOutputStream().close();
+        }
+    }
+
+    /**
+     * Write http response.
+     * @param request http request.
+     * @param response http response.
+     * @param handlerResponse response of route handler.
+     * @throws IOException in case of IO error.
+     */
+    private void writeHttpResponse(HttpServletRequest request, HttpServletResponse response, Response<?> handlerResponse) throws IOException {
+        if (handlerResponse.getStatus() != null) {
+            response.setStatus(handlerResponse.getStatus());
+        } else if (handlerResponse.getAnswer() == null) {
+            response.setStatus(HttpMethod.fromValue(request.getMethod()).getDefaultStatusWithNoContent());
+        } else {
+            response.setStatus(HttpMethod.fromValue(request.getMethod()).getDefaultStatus());
+        }
+        if (handlerResponse.getAnswer() != null) {
+            response.setContentType("application/json");
+            response.getOutputStream().print(gson.toJson(handlerResponse.getAnswer()));
+            response.getOutputStream().close();
+        }
+    }
+
+    /**
+     * Rollback current transaction if exists.
+     */
+    private void rollBackTransaction() {
+        closeTransaction(true);
+    }
+
+    /**
+     * Close current transaction if exists.
+     * @param rollback true if you want a rollback, false if you want a commit.
+     */
+    private void closeTransaction(boolean rollback) {
+        if (SimpleEntityManager.getCurrentSession() != null) {
+            if (rollback) {
+                SimpleEntityManager.getCurrentSession().getTransaction().rollback();
+            } else {
+                SimpleEntityManager.getCurrentSession().getTransaction().commit();
+            }
+            SimpleEntityManager.closeSession();
+        }
+    }
+
+    /**
+     * Commit current transaction if exists.
+     */
+    private void commitTransaction() {
+        closeTransaction(false);
+    }
+
+    /**
+     * Open a new transaction if there is entities.
+     */
+    private void beginTransaction() {
+        if (SimpleEntityManager.hasEntities()) {
+            SimpleEntityManager.openSession().beginTransaction();
+        }
+    }
+
+    /**
+     * Parse the parameter of route (content of request body).
+     * @param request http request.
+     * @param route the route.
+     * @return the parameters parsed.
+     * @throws IOException in case of IO error.
+     */
+    private Object getRouteParam(HttpServletRequest request, Route route) throws IOException {
         Object param = null;
         if (route.getParamType() != null && route.getParamType() != Void.class) {
             param = gson.fromJson(request.getReader(), route.getParamType());
         }
-        if (SimpleEntityManager.hasEntities()) {
-            SimpleEntityManager.openSession().beginTransaction();
-        }
-        try {
-            Response<?> handlerResponse = route.handle(param, new RouteParameters(route.getRouteParams(request.getPathInfo())));
-            if (SimpleEntityManager.hasEntities()) {
-                SimpleEntityManager.getCurrentSession().getTransaction().commit();
-                SimpleEntityManager.closeSession();
-            }
-            if (handlerResponse.getStatus() != null) {
-                response.setStatus(handlerResponse.getStatus());
-            } else if (handlerResponse.getAnswer() == null) {
-                response.setStatus(HttpMethod.fromValue(request.getMethod()).getDefaultStatusWithNoContent());
-            } else {
-                response.setStatus(HttpMethod.fromValue(request.getMethod()).getDefaultStatus());
-            }
-            if (handlerResponse.getAnswer() != null) {
-                response.setContentType("application/json");
-                response.getOutputStream().print(gson.toJson(handlerResponse.getAnswer()));
-                response.getOutputStream().close();
-            }
-        } catch (HttpErrorException httpError) {
-            response.setStatus(httpError.getStatus());
-            if (httpError.getAnswer() != null) {
-                response.setContentType("application/json");
-                response.getOutputStream().print(gson.toJson(httpError.getAnswer()));
-                response.getOutputStream().close();
-            }
-        } catch (Exception exception) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            StringWriter writer = new StringWriter();
-            PrintWriter printWriter = new PrintWriter(writer);
-            exception.printStackTrace(printWriter);
-            response.getOutputStream().print(writer.toString());
-            response.getOutputStream().close();
-        } finally {
-            if (SimpleEntityManager.hasEntities() && SimpleEntityManager.getCurrentSession() != null) {
-                SimpleEntityManager.getCurrentSession().getTransaction().rollback();
-                SimpleEntityManager.closeSession();
-            }
-        }
-        baseRequest.setHandled(true);
-
+        return param;
     }
 
     /**

@@ -16,16 +16,24 @@
  */
 package fr.ybonnel.simpleweb4j.handlers;
 
+import fr.ybonnel.simpleweb4j.entities.SimpleEntity;
 import fr.ybonnel.simpleweb4j.exception.HttpErrorException;
+import fr.ybonnel.simpleweb4j.model.SimpleEntityManager;
 import org.junit.Before;
 import org.junit.Test;
+import org.mortbay.jetty.HttpConnection;
 import org.mortbay.jetty.Request;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
+import static fr.ybonnel.simpleweb4j.SimpleWeb4j.setEntitiesClasses;
+import static junit.framework.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -37,6 +45,7 @@ public class JsonHandlerUnitTest {
     @Before
     public void setup() {
         handler = new JsonHandler();
+        setEntitiesClasses();
     }
 
     @Test
@@ -73,6 +82,13 @@ public class JsonHandlerUnitTest {
     }
 
     @Test
+    public void testHttpErrorWithEntities() throws IOException, ServletException {
+        setEntitiesClasses(SimpleEntity.class);
+        testHttpError();
+        assertNull(SimpleEntityManager.getCurrentSession());
+    }
+
+    @Test
     public void testFatalError() throws IOException, ServletException {
         handler.addRoute(HttpMethod.GET, new Route<Void, Void>("path", null) {
             @Override
@@ -94,6 +110,34 @@ public class JsonHandlerUnitTest {
 
         verify(response).setStatus(500);
         verify(outputStream).close();
+    }
+
+    @Test
+    public void testFatalErrorWithEntities() throws IOException, ServletException {
+        setEntitiesClasses(SimpleEntity.class);
+        testFatalError();
+        assertNull(SimpleEntityManager.getCurrentSession());
+    }
+
+    @Test
+    public void testHandler() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        Method setCurrentConnection = HttpConnection.class.getDeclaredMethod("setCurrentConnection", HttpConnection.class);
+        setCurrentConnection.setAccessible(true);
+
+        HttpConnection connection = mock(HttpConnection.class);
+        setCurrentConnection.invoke(null, connection);
+
+        Request requestJetty = mock(Request.class);
+
+        when(connection.getRequest()).thenReturn(requestJetty);
+        when(requestJetty.isHandled()).thenReturn(true);
+
+        handler.handle(null, request, null, 0);
+
+        verify(connection).getRequest();
+        verify(requestJetty).isHandled();
     }
 
 }

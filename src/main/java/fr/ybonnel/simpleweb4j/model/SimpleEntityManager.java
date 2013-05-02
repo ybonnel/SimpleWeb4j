@@ -26,7 +26,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
 /**
  * Simple entityManager from SimpleWeb4j.
@@ -128,7 +127,7 @@ public class SimpleEntityManager<T, I extends Serializable> {
      * Get the session factory.
      * @return session factory.
      */
-    private static SessionFactory getSessionFactory() {
+    protected static SessionFactory getSessionFactory() {
         if (oldAnnotatedClasses != null
                 && oldAnnotatedClasses != getAnnotatedClasses()
                 && !Arrays.equals(oldAnnotatedClasses.toArray(), getAnnotatedClasses().toArray())) {
