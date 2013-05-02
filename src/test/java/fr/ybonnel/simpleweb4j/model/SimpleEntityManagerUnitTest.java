@@ -21,11 +21,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class SimpleEntityManagerUnitTest {
@@ -34,24 +35,16 @@ public class SimpleEntityManagerUnitTest {
     public void setup() throws NoSuchFieldException, IllegalAccessException {
         try {
             SimpleEntityManager.closeSession();
+            SimpleEntityManager.setEntitiesClasses(null);
         } catch (Exception ignore){}
-        Field hasHibernateField = SimpleEntityManager.class.getDeclaredField("hasHibernate");
-        hasHibernateField.setAccessible(true);
-        hasHibernateField.set(null, null);
     }
 
     @After
     public void tearDown() throws NoSuchFieldException, IllegalAccessException {
         try {
             SimpleEntityManager.closeSession();
+            SimpleEntityManager.setEntitiesClasses(null);
         } catch (Exception ignore){}
-        Field entityClassNameField = SimpleEntityManager.class.getDeclaredField("entityClassName");
-        entityClassNameField.setAccessible(true);
-        entityClassNameField.set(null, "javax.persistence.Entity");
-
-        Field hasHibernateField = SimpleEntityManager.class.getDeclaredField("hasHibernate");
-        hasHibernateField.setAccessible(true);
-        hasHibernateField.set(null, null);
     }
 
     @Test
@@ -80,27 +73,14 @@ public class SimpleEntityManagerUnitTest {
     }
 
     @Test
-    public void testHasEntitiesWithClassNotFound() throws NoSuchFieldException, IllegalAccessException {
-        Field entityClassNameField = SimpleEntityManager.class.getDeclaredField("entityClassName");
-        entityClassNameField.setAccessible(true);
-        entityClassNameField.set(null, "notexists.Class");
-
-        assertFalse(SimpleEntityManager.hasEntities());
-    }
-
-    @Test
-    public void testHasEntitiesWithNoEntities() throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
-        Object oldAnnotatedClasses;
-        Class<?> clazz = Class.forName("fr.ybonnel.simpleweb4j.model.SimpleEntityManager$AnnotatedClassesHelper");
-        Field annotatedClasses = clazz.getDeclaredField("annotatedClasses");
-        annotatedClasses.setAccessible(true);
-        oldAnnotatedClasses = annotatedClasses.get(null);
-
-        annotatedClasses.set(null, new ArrayList<Class<?>>());
-
+    public void testHasEntities() {
+        SimpleEntityManager.setEntitiesClasses(null);
         assertFalse(SimpleEntityManager.hasEntities());
 
-        annotatedClasses.set(null, oldAnnotatedClasses);
+        SimpleEntityManager.setEntitiesClasses(new ArrayList<Class<?>>());
+        assertFalse(SimpleEntityManager.hasEntities());
 
+        SimpleEntityManager.setEntitiesClasses(Arrays.asList(Object.class, String.class));
+        assertTrue(SimpleEntityManager.hasEntities());
     }
 }

@@ -105,6 +105,7 @@ public final class SimpleWeb4j {
         lessCompilerHandler.setPublicResourcePath(publicResourcesPath);
         initialized = false;
         handlers = new ArrayList<Handler>(simpleWeb4jHandlers);
+        setEntitiesClasses();
     }
 
     /**
@@ -141,6 +142,17 @@ public final class SimpleWeb4j {
             throw new IllegalStateException("You must set hibernate cfg path resources path before settings any route");
         }
         SimpleEntityManager.setCfgPath(hibernateCfgPath);
+    }
+
+    /**
+     * Set entities classes for hibernate configuration.
+     * @param entitiesClasses all entities.
+     */
+    public static void setEntitiesClasses(Class<?> ... entitiesClasses) {
+        if (initialized) {
+            throw new IllegalStateException("You must set entities classes before settings any route");
+        }
+        SimpleEntityManager.setEntitiesClasses(Arrays.asList(entitiesClasses));
     }
 
     /**

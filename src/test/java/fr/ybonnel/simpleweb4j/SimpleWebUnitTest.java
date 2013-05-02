@@ -16,6 +16,7 @@
  */
 package fr.ybonnel.simpleweb4j;
 
+import fr.ybonnel.simpleweb4j.entities.SimpleEntity;
 import fr.ybonnel.simpleweb4j.handlers.LessCompilerHandler;
 import fr.ybonnel.simpleweb4j.server.SimpleWeb4jServer;
 import org.junit.Before;
@@ -81,6 +82,18 @@ public class SimpleWebUnitTest {
         SimpleWeb4j.init();
         try {
             SimpleWeb4j.setHibernateCfgPath("/fr/ybonnel/simpleweb4j/entities/hibernate.cfg.xml");
+            fail("An exception must be throw");
+        } catch (IllegalStateException ignore) {
+        }
+    }
+
+    @Test
+    public void testSetEntitiesClassesAfterInit() {
+        SimpleWeb4j.setEntitiesClasses(SimpleEntity.class);
+        SimpleWeb4j.init();
+        SimpleWeb4j.init();
+        try {
+            SimpleWeb4j.setEntitiesClasses(SimpleEntity.class);
             fail("An exception must be throw");
         } catch (IllegalStateException ignore) {
         }

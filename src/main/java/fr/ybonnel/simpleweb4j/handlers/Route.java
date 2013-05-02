@@ -57,7 +57,7 @@ public abstract class Route<P, R> {
         this.routePath = routePath;
         pathInSegments = new ArrayList<>();
         for (String path : routePath.split("\\/")) {
-            if (path != null && path.length() > 0) {
+            if (path.length() > 0) {
                 pathInSegments.add(path);
             }
         }
@@ -82,7 +82,7 @@ public abstract class Route<P, R> {
         }
         List<String> queryPath = new ArrayList<>();
         for (String segment : path.split("\\/")) {
-            if (segment != null && segment.length() > 0) {
+            if (segment.length() > 0) {
                 queryPath.add(segment);
             }
         }
@@ -111,7 +111,7 @@ public abstract class Route<P, R> {
         Map<String, String> params = new HashMap<>();
         List<String> queryPath = new ArrayList<>();
         for (String segment : pathInfo.split("\\/")) {
-            if (segment != null && segment.length() > 0) {
+            if (segment.length() > 0) {
                 queryPath.add(segment);
             }
         }

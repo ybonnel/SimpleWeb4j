@@ -25,6 +25,7 @@ public class Computers {
     public static void startServer(int port) {
         setPort(port);
         setPublicResourcesPath("/fr/ybonnel/simpleweb4j/samples/computers");
+        setEntitiesClasses(Computer.class, Company.class);
 
         resource(new CompanyRestResource("/company"));
         resource(new ComputerRestResource("/computer"));

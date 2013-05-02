@@ -16,22 +16,15 @@
  */
 package fr.ybonnel.simpleweb4j.model;
 
-import fr.ybonnel.simpleweb4j.exception.FatalSimpleWeb4jException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.service.ServiceRegistryBuilder;
-import org.scannotation.AnnotationDB;
-import org.scannotation.ClasspathUrlFinder;
 
-import javax.persistence.Entity;
-import java.io.IOException;
 import java.io.Serializable;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Set;
 
 /**
  * Simple entityManager from SimpleWeb4j.
@@ -42,11 +35,6 @@ import java.util.Set;
  * @param <I> The id type.
  */
 public class SimpleEntityManager<T, I extends Serializable> {
-
-    /**
-     * Entity class.
-     */
-    private static String entityClassName = "javax.persistence.Entity";
 
     /**
      * Class of the entity.
@@ -75,24 +63,24 @@ public class SimpleEntityManager<T, I extends Serializable> {
     }
 
     /**
-     * Bypass if no hibernate dependency.
+     * List of entities.
      */
-    private static Boolean hasHibernate = null;
+    private static Collection<Class<?>> entitiesClasses = null;
+
+    /**
+     * Change the list of entities classes.
+     * @param newEntitiesClasses new list of entities classes.
+     */
+    public static void setEntitiesClasses(Collection<Class<?>> newEntitiesClasses) {
+        entitiesClasses = newEntitiesClasses;
+    }
 
     /**
      * Method used to know if the current application have entities to manage.
      * @return true is there's entities to manage.
      */
     public static boolean hasEntities() {
-        if (hasHibernate == null) {
-            try {
-                Class.forName(entityClassName);
-                hasHibernate = true;
-            } catch (ClassNotFoundException e) {
-                hasHibernate = false;
-            }
-        }
-        return hasHibernate && !getAnnotatedClasses().isEmpty();
+        return !getAnnotatedClasses().isEmpty();
     }
 
     /**
@@ -103,7 +91,7 @@ public class SimpleEntityManager<T, I extends Serializable> {
          * Session factory.
          */
         //CHECKSTYLE:OFF
-        public static final SessionFactory sessionFactory = init();
+        public static SessionFactory sessionFactory = init();
         //CHECKSTYLE:ON
 
         /**
@@ -120,13 +108,31 @@ public class SimpleEntityManager<T, I extends Serializable> {
                     configuration.getProperties()).buildServiceRegistry();
             return configuration.buildSessionFactory(serviceRegistry);
         }
+
+        /**
+         * Reset the session factory, used for tests.
+         */
+        protected static void reset() {
+            sessionFactory = init();
+        }
     }
+
+    /**
+     * Save state of annotated classes to allow changes for tests.
+     */
+    private static Collection<Class<?>> oldAnnotatedClasses = null;
 
     /**
      * Get the session factory.
      * @return session factory.
      */
     private static SessionFactory getSessionFactory() {
+        if (oldAnnotatedClasses == null) {
+            oldAnnotatedClasses = getAnnotatedClasses();
+        } else if (oldAnnotatedClasses != getAnnotatedClasses()) {
+            SessionFactoryHelper.reset();
+            oldAnnotatedClasses = getAnnotatedClasses();
+        }
         return SessionFactoryHelper.sessionFactory;
     }
 
@@ -168,40 +174,6 @@ public class SimpleEntityManager<T, I extends Serializable> {
         return currentSessions.get();
     }
 
-    /**
-     * Helper to have lazy initialize of annotatedClasses.
-     */
-    private static class AnnotatedClassesHelper {
-        /**
-         * Session factory.
-         */
-        //CHECKSTYLE:OFF
-        private static Collection<Class<?>> annotatedClasses = init();
-        //CHECKSTYLE:ON
-
-        /**
-         * Initialize of Session factory.
-         * @return the session factory initialized.
-         */
-        private static Collection<Class<?>> init() {
-            try {
-                URL[] urls = ClasspathUrlFinder.findClassPaths();
-                AnnotationDB db = new AnnotationDB();
-                db.scanArchives(urls);
-                Collection<Class<?>> annotatedClassesTmp = new ArrayList<>();
-                Set<String> annotatedClassesName = db.getAnnotationIndex().get(Entity.class.getName());
-                if (annotatedClassesName != null) {
-                    for (String className : annotatedClassesName) {
-                        annotatedClassesTmp.add(Class.forName(className));
-                    }
-                }
-                return annotatedClassesTmp;
-            } catch (IOException|ClassNotFoundException exception) {
-                throw new FatalSimpleWeb4jException(exception);
-            }
-        }
-    }
-
 
     /**
      * Get the annotated classes (entities).
@@ -209,7 +181,10 @@ public class SimpleEntityManager<T, I extends Serializable> {
      * @return the list of annotated classes.
      */
     private static Collection<Class<?>> getAnnotatedClasses() {
-        return AnnotatedClassesHelper.annotatedClasses;
+        if (entitiesClasses == null) {
+            entitiesClasses = new ArrayList<>();
+        }
+        return entitiesClasses;
     }
 
     /**

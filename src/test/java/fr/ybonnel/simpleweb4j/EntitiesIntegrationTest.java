@@ -28,6 +28,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Random;
 
@@ -49,6 +50,7 @@ public class EntitiesIntegrationTest {
         setPort(port);
         testUtil = new SimpleWebTestUtil(port);
         setHibernateCfgPath("/fr/ybonnel/simpleweb4j/entities/hibernate.cfg.xml");
+        setEntitiesClasses(SimpleEntity.class);
 
         resource(new RestResource<SimpleEntity>("entity", SimpleEntity.class) {
             @Override
@@ -97,6 +99,22 @@ public class EntitiesIntegrationTest {
         stop();
     }
 
+    private <T> T parseJson(String response, Class<T> clazz) {
+        try {
+            return new GsonBuilder().create().fromJson(response, clazz);
+        } catch (Exception exception) {
+            throw new RuntimeException(response, exception);
+        }
+    }
+
+    private <T> T parseJson(String response, Type clazz) {
+        try {
+            return new GsonBuilder().create().fromJson(response, clazz);
+        } catch (Exception exception) {
+            throw new RuntimeException(response, exception);
+        }
+    }
+
     @Test
     public void should_manage_an_entity() throws Exception {
 
@@ -107,21 +125,21 @@ public class EntitiesIntegrationTest {
         assertEquals(200, response.status);
 
         response = testUtil.doMethod("POST", "/entity", "{name:\"nom\"}");
-        SimpleEntity simpleEntity = new GsonBuilder().create().fromJson(response.body, SimpleEntity.class);
+        SimpleEntity simpleEntity = parseJson(response.body, SimpleEntity.class);
         assertNotNull(simpleEntity.id);
         assertEquals("nom", simpleEntity.name);
         assertEquals(201, response.status);
 
         response = testUtil.doMethod("GET", "/entity");
         assertEquals(200, response.status);
-        Collection<SimpleEntity> entities = new GsonBuilder().create().fromJson(response.body, new TypeToken<Collection<SimpleEntity>>(){}.getType());
+        Collection<SimpleEntity> entities = parseJson(response.body, new TypeToken<Collection<SimpleEntity>>(){}.getType());
         assertEquals(1, entities.size());
         SimpleEntity entity = entities.iterator().next();
         assertEquals("nom", entity.name);
 
         response = testUtil.doMethod("GET", "/entity/" + entity.id);
         assertEquals(200, response.status);
-        SimpleEntity newEntity = new GsonBuilder().create().fromJson(response.body, SimpleEntity.class);
+        SimpleEntity newEntity = parseJson(response.body, SimpleEntity.class);
         assertEquals(entity.id, newEntity.id);
         assertEquals(entity.name, newEntity.name);
 
@@ -130,7 +148,7 @@ public class EntitiesIntegrationTest {
 
         response = testUtil.doMethod("GET", "/entity/" + entity.id);
         assertEquals(200, response.status);
-        newEntity = new GsonBuilder().create().fromJson(response.body, SimpleEntity.class);
+        newEntity = parseJson(response.body, SimpleEntity.class);
         assertEquals(entity.id, newEntity.id);
         assertEquals("newName", newEntity.name);
 
@@ -140,7 +158,7 @@ public class EntitiesIntegrationTest {
 
         response = testUtil.doMethod("GET", "/entity");
         assertEquals(200, response.status);
-        entities = new GsonBuilder().create().fromJson(response.body, new TypeToken<Collection<SimpleEntity>>(){}.getType());
+        entities = parseJson(response.body, new TypeToken<Collection<SimpleEntity>>(){}.getType());
         assertTrue(entities.isEmpty());
     }
 }
