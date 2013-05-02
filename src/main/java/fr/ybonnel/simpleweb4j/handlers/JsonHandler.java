@@ -215,7 +215,7 @@ public class JsonHandler extends AbstractHandler {
      * @param pathInfo path.
      * @return the route found (null if no route found).
      */
-    private Route findRoute(String httpMethod, String pathInfo) {
+    protected Route findRoute(String httpMethod, String pathInfo) {
         if (!routes.containsKey(HttpMethod.fromValue(httpMethod))) {
             return null;
         }

@@ -33,7 +33,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import static fr.ybonnel.simpleweb4j.SimpleWeb4j.setEntitiesClasses;
-import static junit.framework.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -138,6 +139,26 @@ public class JsonHandlerUnitTest {
 
         verify(connection).getRequest();
         verify(requestJetty).isHandled();
+    }
+
+    @Test
+    public void testLimitOfFindRoute() {
+        JsonHandler jsonHandler = new JsonHandler();
+
+        assertNull(jsonHandler.findRoute("GET", "/test"));
+
+        jsonHandler.addRoute(HttpMethod.POST, new Route<Void, Void>("/test", Void.class) {
+            @Override
+            public Response<Void> handle(Void param, RouteParameters routeParams) throws HttpErrorException {
+                return null;
+            }
+        });
+
+        assertNull(jsonHandler.findRoute("GET", "/test"));
+
+        assertNull(jsonHandler.findRoute("POST", "/tutu"));
+
+        assertNotNull(jsonHandler.findRoute("POST", "/test"));
     }
 
 }
