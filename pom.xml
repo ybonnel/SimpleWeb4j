@@ -90,7 +90,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.13</version>
+                <version>2.14.1</version>
                 <configuration>
                     <argLine>${jacoco.agent.argLine} -Dtest.http.port=${test.http.port}</argLine>
                 </configuration>
