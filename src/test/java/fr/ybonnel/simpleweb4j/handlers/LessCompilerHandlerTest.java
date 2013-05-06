@@ -16,19 +16,14 @@
  */
 package fr.ybonnel.simpleweb4j.handlers;
 
+import org.eclipse.jetty.server.Request;
 import org.junit.Test;
-import org.mortbay.jetty.HttpConnection;
-import org.mortbay.jetty.Request;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class LessCompilerHandlerTest {
 
@@ -45,22 +40,12 @@ public class LessCompilerHandlerTest {
     public void testHandler() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         LessCompilerHandler handler = new LessCompilerHandler();
 
-        HttpServletRequest request = mock(HttpServletRequest.class);
-
-        Method setCurrentConnection = HttpConnection.class.getDeclaredMethod("setCurrentConnection", HttpConnection.class);
-        setCurrentConnection.setAccessible(true);
-
-        HttpConnection connection = mock(HttpConnection.class);
-        setCurrentConnection.invoke(null, connection);
-
         Request requestJetty = mock(Request.class);
 
-        when(connection.getRequest()).thenReturn(requestJetty);
         when(requestJetty.isHandled()).thenReturn(true);
 
-        handler.handle(null, request, null, 0);
+        handler.handle(null, requestJetty, requestJetty, null);
 
-        verify(connection).getRequest();
         verify(requestJetty).isHandled();
     }
 }

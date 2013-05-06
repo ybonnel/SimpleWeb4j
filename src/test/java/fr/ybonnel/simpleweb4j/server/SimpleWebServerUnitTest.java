@@ -17,9 +17,9 @@
 package fr.ybonnel.simpleweb4j.server;
 
 import fr.ybonnel.simpleweb4j.exception.FatalSimpleWeb4jException;
+import org.eclipse.jetty.server.Server;
 import org.junit.Before;
 import org.junit.Test;
-import org.mortbay.jetty.Server;
 
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -28,7 +28,6 @@ import static org.mockito.Mockito.verify;
 public class SimpleWebServerUnitTest {
 
     private SimpleWeb4jServer simpleWeb4jServer;
-    private Server jettyServer;
     private ServerInterface serverInterface;
 
     private static interface ServerInterface {
@@ -40,7 +39,7 @@ public class SimpleWebServerUnitTest {
     @Before
     public void setup() {
         serverInterface = mock(ServerInterface.class);
-        jettyServer = new Server(){
+        Server jettyServer = new Server() {
             @Override
             protected void doStart() throws Exception {
                 serverInterface.start();

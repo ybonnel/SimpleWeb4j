@@ -17,9 +17,8 @@
 package fr.ybonnel.simpleweb4j.handlers;
 
 import fr.ybonnel.simpleweb4j.exception.CompileErrorException;
-import org.mortbay.jetty.HttpConnection;
-import org.mortbay.jetty.Request;
-import org.mortbay.jetty.handler.AbstractHandler;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,21 +73,18 @@ public abstract class AbstractCompilerHandler extends AbstractHandler {
      */
     protected abstract String getContentType();
 
-    /**
-     * Handle a request.
+    /** Handle a request.
      * @param target The target of the request - either a URI or a name.
-     * @param request The request either as the {@link org.mortbay.jetty.Request}
-     * object or a wrapper of that request. The {@link org.mortbay.jetty.HttpConnection#getCurrentConnection()}
-     * method can be used access the Request object if required.
-     * @param response The response as the {@link org.mortbay.jetty.Response}
-     * object or a wrapper of that request. The {@link org.mortbay.jetty.HttpConnection#getCurrentConnection()}
-     * method can be used access the Response object if required.
-     * @param dispatch The dispatch mode: {@link #REQUEST}, {@link #FORWARD}, {@link #INCLUDE}, {@link #ERROR}
-     * @throws java.io.IOException in case of I/O error.
+     * @param baseRequest The original unwrapped request object.
+     * @param request The request either as the {@link Request}
+     * object or a wrapper of that request.
+     * @param response The response as the {@link org.eclipse.jetty.server.Response}
+     * object or a wrapper of that request.
+     * @throws IOException in case of IO error.
      */
     @Override
-    public void handle(String target, HttpServletRequest request, HttpServletResponse response, int dispatch) throws IOException {
-        Request baseRequest = request instanceof Request ? (Request) request : HttpConnection.getCurrentConnection().getRequest();
+    public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
         if (baseRequest.isHandled() || !"GET".equals(request.getMethod())) {
             return;
         }

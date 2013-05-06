@@ -21,9 +21,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fr.ybonnel.simpleweb4j.exception.HttpErrorException;
 import fr.ybonnel.simpleweb4j.model.SimpleEntityManager;
-import org.mortbay.jetty.HttpConnection;
-import org.mortbay.jetty.Request;
-import org.mortbay.jetty.handler.AbstractHandler;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.handler.AbstractHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -62,22 +61,19 @@ public class JsonHandler extends AbstractHandler {
         routes.get(httpMethod).add(route);
     }
 
-    /**
-     * Handle a request.
+    /** Handle a request.
      * @param target The target of the request - either a URI or a name.
+     * @param baseRequest The original unwrapped request object.
      * @param request The request either as the {@link Request}
-     * object or a wrapper of that request. The {@link HttpConnection#getCurrentConnection()}
-     * method can be used access the Request object if required.
-     * @param response The response as the {@link org.mortbay.jetty.Response}
-     * object or a wrapper of that request. The {@link HttpConnection#getCurrentConnection()}
-     * method can be used access the Response object if required.
-     * @param dispatch The dispatch mode: {@link #REQUEST}, {@link #FORWARD}, {@link #INCLUDE}, {@link #ERROR}
-     * @throws IOException in case of I/O error.
+     * object or a wrapper of that request.
+     * @param response The response as the {@link org.eclipse.jetty.server.Response}
+     * object or a wrapper of that request.
+     * @throws IOException in case of IO error.
      */
     @SuppressWarnings("unchecked")
     @Override
-    public void handle(String target, HttpServletRequest request, HttpServletResponse response, int dispatch) throws IOException {
-        Request baseRequest = request instanceof Request ? (Request) request : HttpConnection.getCurrentConnection().getRequest();
+    public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
         if (baseRequest.isHandled()) {
             return;
         }

@@ -228,8 +228,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.mortbay.jetty</groupId>
-            <artifactId>jetty</artifactId>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -291,9 +291,9 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.mortbay.jetty</groupId>
-                <artifactId>jetty</artifactId>
-                <version>7.0.0.pre5</version>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-server</artifactId>
+                <version>9.0.2.v20130417</version>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>

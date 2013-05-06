@@ -24,8 +24,8 @@ import fr.ybonnel.simpleweb4j.handlers.Route;
 import fr.ybonnel.simpleweb4j.handlers.resource.RestResource;
 import fr.ybonnel.simpleweb4j.model.SimpleEntityManager;
 import fr.ybonnel.simpleweb4j.server.SimpleWeb4jServer;
-import org.mortbay.jetty.Handler;
-import org.mortbay.jetty.handler.AbstractHandler;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.handler.AbstractHandler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
