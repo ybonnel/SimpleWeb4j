@@ -5,7 +5,7 @@
     <groupId>fr.ybonnel</groupId>
     <artifactId>simpleweb4j</artifactId>
     <packaging>jar</packaging>
-    <version>0.0.4-SNAPSHOT</version>
+    <version>0.0.4</version>
     <name>SimpleWeb4j</name>
     <url>https://ybonnel.github.com/SimpleWeb4j</url>
     <description>A very simple web stack.</description>
