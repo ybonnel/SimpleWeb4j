@@ -14,7 +14,6 @@ and on client side create an angular.js app (you can also use others javascript 
 - Jetty : used for http server.
 - slf4j : For the logs.
 - gson : use to serialize/deserialize json objects.
-- scannotation : Use to find entities by reflection.
 - Hibernate : Use for entities managment.
 - H2 : use by default for database (you can exclude it if you use another database or if you don't use databases).
 
@@ -31,7 +30,7 @@ All SimpleWeb4j is under the Apache License, Version 2.0
 <dependency>
     <groupId>fr.ybonnel</groupId>
     <artifactId>simpleweb4j</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
 </dependency>
 ```
 
@@ -66,7 +65,8 @@ public class MyApplication {
             }
 
             @Override
-            public void create(String resource) throws HttpErrorException {
+            public String create(String resource) throws HttpErrorException {
+                return resource;
             }
 
             @Override
