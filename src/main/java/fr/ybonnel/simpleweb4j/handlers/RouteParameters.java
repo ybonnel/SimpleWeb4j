@@ -16,7 +16,6 @@
  */
 package fr.ybonnel.simpleweb4j.handlers;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -27,7 +26,7 @@ public class RouteParameters {
     /**
      * Map of parameters by name.
      */
-    private Map<String, String> params = new HashMap<>();
+    private final Map<String, String> params;
 
     /**
      * Constructor.

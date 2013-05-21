@@ -20,6 +20,7 @@ package fr.ybonnel.simpleweb4j.handlers;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fr.ybonnel.simpleweb4j.exception.HttpErrorException;
+import fr.ybonnel.simpleweb4j.handlers.filter.AbstractFilter;
 import fr.ybonnel.simpleweb4j.model.SimpleEntityManager;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
@@ -30,6 +31,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +45,11 @@ public class JsonHandler extends AbstractHandler {
      * Map of routes by HttpMethod.
      */
     private Map<HttpMethod, List<Route>> routes = new HashMap<>();
+
+    /**
+     * List of filters.
+     */
+    private List<AbstractFilter> filters = new ArrayList<>();
 
     /**
      * Gson used to serialize/deserialize json objects.
@@ -61,6 +68,37 @@ public class JsonHandler extends AbstractHandler {
         routes.get(httpMethod).add(route);
     }
 
+    /**
+     * Add a filter.
+     * Filters are called in added order.
+     * @param filter filter to add.
+     */
+    public void addFilter(AbstractFilter filter) {
+        filters.add(filter);
+    }
+
+    /**
+     * Reset filters to default (for test uses).
+     */
+    public void resetFilters() {
+        filters.clear();
+    }
+
+    /**
+     * Get parameters from query.
+     * @param request the request.
+     * @return map of query parameters.
+     */
+    private Map<String, String> getQueryParameters(HttpServletRequest request) {
+        Map<String, String> queryParameters = new HashMap<>();
+        Enumeration<String> parametersName = request.getParameterNames();
+        while (parametersName.hasMoreElements()) {
+            String name = parametersName.nextElement();
+            queryParameters.put(name, request.getParameter(name));
+        }
+        return queryParameters;
+    }
+
     /** Handle a request.
      * @param target The target of the request - either a URI or a name.
      * @param baseRequest The original unwrapped request object.
@@ -70,22 +108,43 @@ public class JsonHandler extends AbstractHandler {
      * object or a wrapper of that request.
      * @throws IOException in case of IO error.
      */
-    @SuppressWarnings("unchecked")
     @Override
     public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         if (baseRequest.isHandled()) {
             return;
         }
-        Route route = findRoute(request.getMethod(), request.getPathInfo());
+        Route<?, ?> route = findRoute(request.getMethod(), request.getPathInfo());
         if (route == null) {
             return;
         }
 
-        Object param = getRouteParam(request, route);
+        processRoute(request, response, route);
+        baseRequest.setHandled(true);
+
+    }
+
+    /**
+     * Process a route.
+     * @param request The request either as the {@link Request}
+     * object or a wrapper of that request.
+     * @param response The response as the {@link org.eclipse.jetty.server.Response}
+     * object or a wrapper of that request.
+     * @param route route to apply.
+     * @param <P> parameter type of route.
+     * @param <R> return type of route.
+     * @throws IOException in case of IO error.
+     */
+    private <P, R> void processRoute(HttpServletRequest request, HttpServletResponse response, Route<P, R> route) throws IOException {
+        P param = getRouteParam(request, route);
         try {
             beginTransaction();
-            Response<?> handlerResponse = route.handle(param, new RouteParameters(route.getRouteParams(request.getPathInfo())));
+            RouteParameters parameters = new RouteParameters(
+                    route.getRouteParams(request.getPathInfo(), getQueryParameters(request)));
+            for (AbstractFilter filter : filters) {
+                filter.handle(route, parameters);
+            }
+            Response<R> handlerResponse = route.handle(param, parameters);
             commitTransaction();
             writeHttpResponse(request, response, handlerResponse);
         } catch (HttpErrorException httpError) {
@@ -95,8 +154,6 @@ public class JsonHandler extends AbstractHandler {
             rollBackTransaction();
             writeInternalError(response, exception);
         }
-        baseRequest.setHandled(true);
-
     }
 
 
@@ -135,9 +192,10 @@ public class JsonHandler extends AbstractHandler {
      * @param request http request.
      * @param response http response.
      * @param handlerResponse response of route handler.
+     * @param <R> return type of route.
      * @throws IOException in case of IO error.
      */
-    private void writeHttpResponse(HttpServletRequest request, HttpServletResponse response, Response<?> handlerResponse) throws IOException {
+    private <R> void writeHttpResponse(HttpServletRequest request, HttpServletResponse response, Response<R> handlerResponse) throws IOException {
         if (handlerResponse.getStatus() != null) {
             response.setStatus(handlerResponse.getStatus());
         } else if (handlerResponse.getAnswer() == null) {
@@ -194,11 +252,13 @@ public class JsonHandler extends AbstractHandler {
      * Parse the parameter of route (content of request body).
      * @param request http request.
      * @param route the route.
+     * @param <P> parameter type of route.
+     * @param <R> return type of route.
      * @return the parameters parsed.
      * @throws IOException in case of IO error.
      */
-    private Object getRouteParam(HttpServletRequest request, Route route) throws IOException {
-        Object param = null;
+    private <P, R> P getRouteParam(HttpServletRequest request, Route<P, R> route) throws IOException {
+        P param = null;
         if (route.getParamType() != null && route.getParamType() != Void.class) {
             param = gson.fromJson(request.getReader(), route.getParamType());
         }
@@ -211,7 +271,7 @@ public class JsonHandler extends AbstractHandler {
      * @param pathInfo path.
      * @return the route found (null if no route found).
      */
-    protected Route findRoute(String httpMethod, String pathInfo) {
+    protected Route<?, ?> findRoute(String httpMethod, String pathInfo) {
         if (!routes.containsKey(HttpMethod.fromValue(httpMethod))) {
             return null;
         }

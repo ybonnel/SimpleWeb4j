@@ -18,6 +18,9 @@ package fr.ybonnel.simpleweb4j;
 
 
 import fr.ybonnel.simpleweb4j.exception.HttpErrorException;
+import fr.ybonnel.simpleweb4j.handlers.Route;
+import fr.ybonnel.simpleweb4j.handlers.RouteParameters;
+import fr.ybonnel.simpleweb4j.handlers.filter.AbstractFilter;
 import fr.ybonnel.simpleweb4j.handlers.resource.RestResource;
 import fr.ybonnel.simpleweb4j.util.SimpleWebTestUtil;
 import org.junit.After;
@@ -30,6 +33,7 @@ import java.util.Random;
 
 import static fr.ybonnel.simpleweb4j.SimpleWeb4j.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class RestIntegrationTest {
 
@@ -71,6 +75,15 @@ public class RestIntegrationTest {
             @Override
             public void delete(String id) throws HttpErrorException {
                 lastCall = "delete " + id;
+            }
+        });
+
+        addFilter(new AbstractFilter() {
+            @Override
+            public void handle(Route route, RouteParameters routeParams) throws HttpErrorException {
+                if (routeParams.getParam("filter") != null) {
+                    throw new HttpErrorException(417);
+                }
             }
         });
 
@@ -119,5 +132,13 @@ public class RestIntegrationTest {
         SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("DELETE", "/string/123");
         assertEquals(204, response.status);
         assertEquals("delete 123", lastCall);
+    }
+
+    @Test
+    public void should_be_filtered() throws Exception {
+        lastCall = null;
+        SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("DELETE", "/string/123?filter=on");
+        assertEquals(417, response.status);
+        assertNull(lastCall);
     }
 }

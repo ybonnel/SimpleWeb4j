@@ -21,6 +21,7 @@ import fr.ybonnel.simpleweb4j.handlers.HttpMethod;
 import fr.ybonnel.simpleweb4j.handlers.JsonHandler;
 import fr.ybonnel.simpleweb4j.handlers.LessCompilerHandler;
 import fr.ybonnel.simpleweb4j.handlers.Route;
+import fr.ybonnel.simpleweb4j.handlers.filter.AbstractFilter;
 import fr.ybonnel.simpleweb4j.handlers.resource.RestResource;
 import fr.ybonnel.simpleweb4j.model.SimpleEntityManager;
 import fr.ybonnel.simpleweb4j.server.SimpleWeb4jServer;
@@ -105,6 +106,7 @@ public final class SimpleWeb4j {
         lessCompilerHandler.setPublicResourcePath(publicResourcesPath);
         initialized = false;
         handlers = new ArrayList<Handler>(simpleWeb4jHandlers);
+        jsonHandler.resetFilters();
         setEntitiesClasses();
     }
 
@@ -169,6 +171,15 @@ public final class SimpleWeb4j {
             throw new IllegalStateException("You must add your handlers before settings any route");
         }
         handlers.add(handler);
+    }
+
+    /**
+     * Add a filter.
+     * Filters are called in the add order.
+     * @param filter filter to add.
+     */
+    public static void addFilter(AbstractFilter filter) {
+        jsonHandler.addFilter(filter);
     }
 
     /**

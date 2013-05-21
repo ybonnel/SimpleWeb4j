@@ -27,6 +27,8 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Enumeration;
 
 import static fr.ybonnel.simpleweb4j.SimpleWeb4j.setEntitiesClasses;
 import static org.junit.Assert.assertNotNull;
@@ -63,6 +65,7 @@ public class JsonHandlerUnitTest {
         when(request.isHandled()).thenReturn(false);
         when(request.getMethod()).thenReturn("GET");
         when(request.getPathInfo()).thenReturn("path");
+        when(request.getParameterNames()).thenReturn(Collections.<String>emptyEnumeration());
 
         HttpServletResponse response = mock(HttpServletResponse.class);
         ServletOutputStream outputStream = mock(ServletOutputStream.class);

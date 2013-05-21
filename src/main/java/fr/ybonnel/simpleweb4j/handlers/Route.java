@@ -104,10 +104,12 @@ public abstract class Route<P, R> {
 
     /**
      * Get the parameters in route.
+     *
      * @param pathInfo the routePath.
+     * @param queryParameters parameters from query.
      * @return the map of parameters in routePath.
      */
-    protected Map<String, String> getRouteParams(String pathInfo) {
+    protected Map<String, String> getRouteParams(String pathInfo, Map<String, String> queryParameters) {
         Map<String, String> params = new HashMap<>();
         List<String> queryPath = new ArrayList<>();
         for (String segment : pathInfo.split("\\/")) {
@@ -120,6 +122,7 @@ public abstract class Route<P, R> {
                 params.put(pathInSegments.get(index).substring(1), queryPath.get(index));
             }
         }
+        params.putAll(queryParameters);
         return Collections.unmodifiableMap(params);
     }
 
