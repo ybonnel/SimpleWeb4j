@@ -101,9 +101,9 @@ SimpleWeb4j comes with angular, jquery and twitter bootstrap. All the resources 
 
 ### Use maven archetype
 
-In order to create a project very quickly, you can use the archetype fr.ybonnel:simpleweb4j-archetype:0.0.3.
+In order to create a project very quickly, you can use the archetype fr.ybonnel:simpleweb4j-archetype:0.0.4.
 ```
-mvn archetype:generate -DarchetypeGroupId=fr.ybonnel -DarchetypeArtifactId=simpleweb4j-archetype -DarchetypeVersion=0.0.3 -DgroupId=com.exemple -DartifactId=myapp -Dpackage=com.exemple.myapp -DclassName=MyApp -DwithHibernate=true -Dversion=0.0.1-SNAPSHOT
+mvn archetype:generate -DarchetypeGroupId=fr.ybonnel -DarchetypeArtifactId=simpleweb4j-archetype -DarchetypeVersion=0.0.4 -DgroupId=com.exemple -DartifactId=myapp -Dpackage=com.exemple.myapp -DclassName=MyApp -DwithHibernate=true -Dversion=0.0.1-SNAPSHOT
 ```
 
 Archetype parameters :
