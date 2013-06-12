@@ -85,11 +85,12 @@ public class SimpleWebUnitTest {
 
     @Test
     public void testSetExternalPublicResourcesPathWithWrongPath() {
-        SimpleWeb4j.setExternalPublicResourcesPath(":;\\^file://sdjfkl://toto");
+        SimpleWeb4j.setExternalPublicResourcesPath("::^name\0\0name");
         try {
             SimpleWeb4j.init();
             fail("An exception must be throw");
         } catch (FatalSimpleWeb4jException ignore) {
+            ignore.printStackTrace();
         }
     }
 
