@@ -76,6 +76,11 @@ public final class SimpleWeb4j {
     private static String publicResourcesPath = "/public";
 
     /**
+     * Path to public resources in external (filesystem).
+     */
+    private static String externalPublicResourcesPath = null;
+
+    /**
      * Default http port.
      */
     public static final int DEFAULT_PORT = 9999;
@@ -103,6 +108,7 @@ public final class SimpleWeb4j {
     protected static void resetDefaultValues() {
         port = DEFAULT_PORT;
         publicResourcesPath = "/public";
+        externalPublicResourcesPath = null;
         lessCompilerHandler.setPublicResourcePath(publicResourcesPath);
         initialized = false;
         handlers = new ArrayList<Handler>(simpleWeb4jHandlers);
@@ -132,6 +138,18 @@ public final class SimpleWeb4j {
         }
         publicResourcesPath = newPublicResourcesPath;
         lessCompilerHandler.setPublicResourcePath(publicResourcesPath);
+    }
+
+    /**
+     * Change the path to public resources external (in filesystem).<br/>
+     * Use : <code>setPublicResourcesPath("/var/www/mysite");</code>
+     * @param newExternalPublicResourcesPath the path you want.
+     */
+    public static void setExternalPublicResourcesPath(String newExternalPublicResourcesPath) {
+        if (initialized) {
+            throw new IllegalStateException("You must set public resources path before settings any route");
+        }
+        externalPublicResourcesPath = newExternalPublicResourcesPath;
     }
 
     /**
@@ -187,7 +205,7 @@ public final class SimpleWeb4j {
      */
     protected static void init() {
         if (!initialized) {
-            server = new SimpleWeb4jServer(port, publicResourcesPath, handlers);
+            server = new SimpleWeb4jServer(port, publicResourcesPath, externalPublicResourcesPath, handlers);
             initialized = true;
         }
     }

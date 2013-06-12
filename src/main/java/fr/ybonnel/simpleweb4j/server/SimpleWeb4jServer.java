@@ -26,6 +26,8 @@ import org.eclipse.jetty.util.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -60,9 +62,11 @@ public class SimpleWeb4jServer {
      *
      * @param port                Http port to use.
      * @param publicResourcesPath path to public resources.
+     * @param externalPublicResourcesPath path to external public resources.
      * @param specificHandlers    handlers to add to server.
      */
     public SimpleWeb4jServer(int port, String publicResourcesPath,
+                             String externalPublicResourcesPath,
                              List<Handler> specificHandlers) {
         jettyServer = new Server(port);
 
@@ -80,6 +84,18 @@ public class SimpleWeb4jServer {
 
         List<Handler> handlersList = new ArrayList<>(specificHandlers);
         handlersList.add(resourceHandler);
+
+        if (externalPublicResourcesPath != null) {
+            ResourceHandler externalResourceHandler = new ResourceHandler();
+            try {
+                externalResourceHandler.setBaseResource(Resource.newResource(new File(externalPublicResourcesPath)));
+            } catch (IOException e) {
+                throw new FatalSimpleWeb4jException(e);
+            }
+            externalResourceHandler.setWelcomeFiles(new String[]{"index.html"});
+            handlersList.add(externalResourceHandler);
+        }
+
         handlersList.add(internalResourceHandler);
 
         handlers.setHandlers(handlersList.toArray(new Handler[handlersList.size()]));

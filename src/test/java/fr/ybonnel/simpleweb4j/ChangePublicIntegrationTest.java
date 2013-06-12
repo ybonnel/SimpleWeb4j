@@ -22,6 +22,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Random;
 
 import static fr.ybonnel.simpleweb4j.SimpleWeb4j.*;
@@ -31,15 +35,29 @@ public class ChangePublicIntegrationTest {
 
     private Random random = new Random();
     private SimpleWebTestUtil testUtil;
+    private File htmlFile;
 
 
     @Before
-    public void startServer() {
+    public void startServer() throws IOException {
         resetDefaultValues();
         int port = Integer.getInteger("test.http.port", random.nextInt(10000) + 10000);
         setPort(port);
         testUtil = new SimpleWebTestUtil(port);
+
+        htmlFile = File.createTempFile("index", ".html");
+
+        BufferedWriter writer = new BufferedWriter(new FileWriter(htmlFile));
+        writer.write("external html file");
+        writer.flush();
+        writer.close();
+
+        htmlFile.deleteOnExit();
+
+
         setPublicResourcesPath("/otherpublic");
+        System.out.println(htmlFile.getAbsolutePath());
+        setExternalPublicResourcesPath(htmlFile.getParentFile().getAbsolutePath());
 
         start(false);
     }
@@ -54,5 +72,13 @@ public class ChangePublicIntegrationTest {
         SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("GET", "/test.html");
         assertEquals(200, response.status);
         assertEquals("just an other test", response.body);
+    }
+
+    @Test
+    public void should_serve_basic_html_file_from_external_dir() throws Exception {
+        SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("GET", "/" + htmlFile.getName());
+        assertEquals(200, response.status);
+        assertEquals("external html file", response.body);
+
     }
 }

@@ -17,6 +17,7 @@
 package fr.ybonnel.simpleweb4j;
 
 import fr.ybonnel.simpleweb4j.entities.SimpleEntity;
+import fr.ybonnel.simpleweb4j.exception.FatalSimpleWeb4jException;
 import fr.ybonnel.simpleweb4j.handlers.LessCompilerHandler;
 import fr.ybonnel.simpleweb4j.server.SimpleWeb4jServer;
 import org.junit.Before;
@@ -67,6 +68,28 @@ public class SimpleWebUnitTest {
             SimpleWeb4j.setPublicResourcesPath("/other");
             fail("An exception must be throw");
         } catch (IllegalStateException ignore) {
+        }
+    }
+
+    @Test
+    public void testSetExternalPublicResourcesPathAfterInit() {
+        SimpleWeb4j.setExternalPublicResourcesPath("/public");
+        SimpleWeb4j.init();
+        SimpleWeb4j.init();
+        try {
+            SimpleWeb4j.setExternalPublicResourcesPath("/other");
+            fail("An exception must be throw");
+        } catch (IllegalStateException ignore) {
+        }
+    }
+
+    @Test
+    public void testSetExternalPublicResourcesPathWithWrongPath() {
+        SimpleWeb4j.setExternalPublicResourcesPath("file://sdjfkl://toto");
+        try {
+            SimpleWeb4j.init();
+            fail("An exception must be throw");
+        } catch (FatalSimpleWeb4jException ignore) {
         }
     }
 
