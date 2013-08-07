@@ -3,7 +3,7 @@ SimpleWeb4j - A very Simple stack web (inspired by Spark).
 
 ## Why SimpleWeb4j
 
-My current way to create web application is angular.js on client size, with twitter bootstrap for css, and have json resources on server side.
+My current way to create web application is angular.js on client side, with twitter bootstrap for css, and have json resources on server side.
 So I want a very simple framework to help create this kind of web app.
 
 It's why I created SimpleWeb4j, on server side, you can handle http request in order to create quickly json services,
