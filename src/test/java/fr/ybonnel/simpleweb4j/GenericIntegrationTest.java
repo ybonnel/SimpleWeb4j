@@ -42,6 +42,13 @@ public class GenericIntegrationTest {
         setPort(port);
         testUtil = new SimpleWebTestUtil(port);
 
+        jsonp("CALLBACK", new Route<Void, String>("/jsonp", Void.class) {
+            @Override
+            public Response<String> handle(Void param, RouteParameters routeParams) {
+                return new Response<>("Hello World");
+            }
+        });
+
         get(new Route<Void, String>("/resource", Void.class) {
             @Override
             public Response<String> handle(Void param, RouteParameters routeParams) {
@@ -155,5 +162,13 @@ public class GenericIntegrationTest {
         assertEquals(200, response.status);
         assertEquals("application/json", response.contentType);
         assertEquals("\"deleted\"", response.body);
+    }
+
+    @Test
+    public void should_answer_to_simple_get_with_jsonp() throws Exception {
+        SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("GET", "/jsonp?CALLBACK=foo");
+        assertEquals(200, response.status);
+        assertEquals("application/json", response.contentType);
+        assertEquals("foo(\"Hello World\");", response.body);
     }
 }

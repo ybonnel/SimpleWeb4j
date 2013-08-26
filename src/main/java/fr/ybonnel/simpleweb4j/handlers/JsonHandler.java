@@ -47,6 +47,11 @@ public class JsonHandler extends AbstractHandler {
     private Map<HttpMethod, List<Route>> routes = new HashMap<>();
 
     /**
+     * Map of routes for jsonp with callbacks.
+     */
+    private Map<Route, String> jsonpRoutes = new HashMap<>();
+
+    /**
      * List of filters.
      */
     private List<AbstractFilter> filters = new ArrayList<>();
@@ -66,6 +71,15 @@ public class JsonHandler extends AbstractHandler {
             routes.put(httpMethod, new ArrayList<Route>());
         }
         routes.get(httpMethod).add(route);
+    }
+
+    /**
+     * Add a route with jsonp support.
+     * @param callbackName name of query param of callback.
+     * @param route route to add.
+     */
+    public void addJsonpRoute(Route route, String callbackName) {
+        jsonpRoutes.put(route, callbackName);
     }
 
     /**
@@ -115,11 +129,21 @@ public class JsonHandler extends AbstractHandler {
             return;
         }
         Route<?, ?> route = findRoute(request.getMethod(), request.getPathInfo());
+        String callback = null;
+        if (route == null && HttpMethod.fromValue(request.getMethod()) == HttpMethod.GET) {
+            for (Map.Entry<Route, String> entry : jsonpRoutes.entrySet()) {
+                if (entry.getKey().isThisPath(request.getPathInfo())) {
+                    route = entry.getKey();
+                    callback = entry.getValue();
+                }
+            }
+        }
+
         if (route == null) {
             return;
         }
 
-        processRoute(request, response, route);
+        processRoute(request, response, route, callback);
         baseRequest.setHandled(true);
 
     }
@@ -131,11 +155,13 @@ public class JsonHandler extends AbstractHandler {
      * @param response The response as the {@link org.eclipse.jetty.server.Response}
      * object or a wrapper of that request.
      * @param route route to apply.
+     * @param callback callback in case of jsonp.
      * @param <P> parameter type of route.
      * @param <R> return type of route.
      * @throws IOException in case of IO error.
      */
-    private <P, R> void processRoute(HttpServletRequest request, HttpServletResponse response, Route<P, R> route) throws IOException {
+    private <P, R> void processRoute(HttpServletRequest request, HttpServletResponse response,
+                                     Route<P, R> route, String callback) throws IOException {
         P param = getRouteParam(request, route);
         try {
             beginTransaction();
@@ -146,7 +172,7 @@ public class JsonHandler extends AbstractHandler {
             }
             Response<R> handlerResponse = route.handle(param, parameters);
             commitTransaction();
-            writeHttpResponse(request, response, handlerResponse);
+            writeHttpResponse(request, response, handlerResponse, callback, parameters);
         } catch (HttpErrorException httpError) {
             commitTransaction();
             writeHttpError(response, httpError);
@@ -189,13 +215,17 @@ public class JsonHandler extends AbstractHandler {
 
     /**
      * Write http response.
+     *
      * @param request http request.
      * @param response http response.
      * @param handlerResponse response of route handler.
+     * @param callback callback in case of jsonp.
+     * @param parameters parameters in the routePath.
      * @param <R> return type of route.
      * @throws IOException in case of IO error.
      */
-    private <R> void writeHttpResponse(HttpServletRequest request, HttpServletResponse response, Response<R> handlerResponse) throws IOException {
+    private <R> void writeHttpResponse(HttpServletRequest request, HttpServletResponse response, Response<R> handlerResponse,
+                                       String callback, RouteParameters parameters) throws IOException {
         if (handlerResponse.getStatus() != null) {
             response.setStatus(handlerResponse.getStatus());
         } else if (handlerResponse.getAnswer() == null) {
@@ -205,7 +235,14 @@ public class JsonHandler extends AbstractHandler {
         }
         if (handlerResponse.getAnswer() != null) {
             response.setContentType("application/json");
+            if (callback != null) {
+                response.getOutputStream().print(parameters.getParam(callback));
+                response.getOutputStream().print('(');
+            }
             response.getOutputStream().print(gson.toJson(handlerResponse.getAnswer()));
+            if (callback != null) {
+                response.getOutputStream().print(");");
+            }
             response.getOutputStream().close();
         }
     }

@@ -256,6 +256,23 @@ public final class SimpleWeb4j {
         jsonHandler.addRoute(HttpMethod.GET, route);
     }
 
+    /**
+     * Add a new route for GET method with jsonp support.
+     * Use :
+     * <p><blockquote><pre>
+     * jsonp("CALLBACK", new Route&lt;Void, String&gt;("/resource", Void.class) {
+     *     public Response&lt;String&gt; handle(Void param, RouteParameters routeParams) {
+     *         return new Response&lt;&gt;("Hello World");
+     *     }
+     * });
+     * </pre></blockquote></p>
+     * @param callbackName name of query param with callback function name
+     * @param route your route.
+     */
+    public static void jsonp(String callbackName, Route route) {
+        jsonHandler.addJsonpRoute(route, callbackName);
+    }
+
 
 
     /**
