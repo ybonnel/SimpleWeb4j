@@ -120,6 +120,7 @@ Archetype parameters :
 An other way to quickly create a SimpleWeb4j is to use clickstart.
 
 All clickstart contain a sample of Beers CRUD with :
+
     - Git repository
     - Jenkins instance.
     - Database support.
@@ -127,6 +128,7 @@ All clickstart contain a sample of Beers CRUD with :
     - Test of GUI with fluentlenium.
 
 Clickstart with mysql : [github.com/ybonnel/simpleweb4j-clickstart](https://github.com/ybonnel/simpleweb4j-clickstart)
+
 Clickstart with mongo : [github.com/ybonnel/simpleweb4j-mongo-clickstart](https://github.com/ybonnel/simpleweb4j-mongo-clickstart)
 
 
