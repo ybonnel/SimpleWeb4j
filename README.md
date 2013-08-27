@@ -115,6 +115,20 @@ Archetype parameters :
 - withHibernate (default = "true") : true if you want the entity managment, false otherwize.
 - version : your version.
 
+## Cloudbees clickstart
+
+An other way to quickly create a SimpleWeb4j is to use clickstart.
+
+All clickstart contain a sample of Beers CRUD with :
+    - Git repository
+    - Jenkins instance.
+    - Database support.
+    - Test of REST services
+    - Test of GUI with fluentlenium.
+
+Clickstart with mysql : [github.com/ybonnel/simpleweb4j-clickstart](https://github.com/ybonnel/simpleweb4j-clickstart)
+Clickstart with mongo : [github.com/ybonnel/simpleweb4j-mongo-clickstart](https://github.com/ybonnel/simpleweb4j-mongo-clickstart)
+
 
 ## Samples
 
