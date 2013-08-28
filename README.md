@@ -1,6 +1,6 @@
 ![logo](https://raw.github.com/ybonnel/SimpleWeb4j/master/images/logo-simpleweb4j-140.png)
 
-SimpleWeb4j - A very Simple stack web.
+SimpleWeb4j - A very Simple web stack.
 ==============================================
 
 ## Why SimpleWeb4j
