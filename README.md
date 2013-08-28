@@ -1,5 +1,7 @@
-SimpleWeb4j - A very Simple stack web (inspired by Spark).
+SimpleWeb4j - A very Simple stack web.
 ==============================================
+
+![logo](https://raw.github.com/ybonnel/SimpleWeb4j/master/images/logo-simpleweb4j-140.png)
 
 ## Why SimpleWeb4j
 
@@ -145,4 +147,10 @@ All samples are directly inspired by play framework, which is a great web framew
 ## Other documentation
 
 You can find all the generated maven site in [jenkins](https://simpleweb4j.ci.cloudbees.com/job/SimpleWeb4j-build/site/)
+
+## Contributors
+
+ - [Yan Bonnel](https://twitter.com/ybonnel) (principal maintainer)
+ - [Nicolas De Loof](https://twitter.com/ndeloof) (first creation of clickstart)
+ - [Pierre Leresteux](https://twitter.com/pierreLeresteux) (creation of logo)
 
