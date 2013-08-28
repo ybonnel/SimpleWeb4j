@@ -1,7 +1,7 @@
+![logo](https://raw.github.com/ybonnel/SimpleWeb4j/master/images/logo-simpleweb4j-140.png)
+
 SimpleWeb4j - A very Simple stack web.
 ==============================================
-
-![logo](https://raw.github.com/ybonnel/SimpleWeb4j/master/images/logo-simpleweb4j-140.png)
 
 ## Why SimpleWeb4j
 
@@ -9,14 +9,14 @@ My current way to create web application is angular.js on client side, with twit
 So I want a very simple framework to help create this kind of web app.
 
 It's why I created SimpleWeb4j, on server side, you can handle http request in order to create quickly json services,
-and on client side create an angular.js app (you can also use others javascript framework, but I perfer angular).
+and on client side create an angular.js app (you can also use others javascript framework, but I prefer angular).
 
 ## Dependencies
 
 - Jetty : used for http server.
 - slf4j : For the logs.
 - gson : use to serialize/deserialize json objects.
-- Hibernate : Use for entities managment.
+- Hibernate : Use for entities management.
 - H2 : use by default for database (you can exclude it if you use another database or if you don't use databases).
 
 ## Licence
