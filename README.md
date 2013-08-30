@@ -36,7 +36,7 @@ All SimpleWeb4j is under the Apache License, Version 2.0
 </dependency>
 ```
 
-## Cloudbees clickstart
+### Cloudbees clickstart
 
 The fastest way to create a SimpleWeb4j application is to use clickstart.
 
