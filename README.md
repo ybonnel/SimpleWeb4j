@@ -36,6 +36,27 @@ All SimpleWeb4j is under the Apache License, Version 2.0
 </dependency>
 ```
 
+## Cloudbees clickstart
+
+The fastest way to create a SimpleWeb4j application is to use clickstart.
+
+All clickstart contain a sample of Beers CRUD with :
+
+    - Git repository
+    - Jenkins instance.
+    - Database support.
+    - Test of REST services
+    - Test of GUI with fluentlenium.
+
+Clickstart with mysql : [github.com/CloudBees-community/simpleweb4j-clickstart](https://github.com/CloudBees-community/simpleweb4j-clickstart)
+
+<a href="https://grandcentral.cloudbees.com/?CB_clickstart=https://raw.github.com/CloudBees-community/simpleweb4j-clickstart/master/clickstart.json"><img src="https://d3ko533tu1ozfq.cloudfront.net/clickstart/deployInstantly.png"/></a>
+
+Clickstart with mongo : [github.com/CloudBees-community/simpleweb4j-mongo-clickstart](https://github.com/CloudBees-community/simpleweb4j-mongo-clickstart)
+
+<a href="https://grandcentral.cloudbees.com/?CB_clickstart=https://raw.github.com/CloudBees-community/simpleweb4j-mongo-clickstart/master/clickstart.json"><img src="https://d3ko533tu1ozfq.cloudfront.net/clickstart/deployInstantly.png"/></a>
+
+
 ### Your first application
 
 Create you main class :
@@ -116,22 +137,6 @@ Archetype parameters :
 - className (default = "HelloWorld") : the name of your main class.
 - withHibernate (default = "true") : true if you want the entity managment, false otherwize.
 - version : your version.
-
-## Cloudbees clickstart
-
-An other way to quickly create a SimpleWeb4j is to use clickstart.
-
-All clickstart contain a sample of Beers CRUD with :
-
-    - Git repository
-    - Jenkins instance.
-    - Database support.
-    - Test of REST services
-    - Test of GUI with fluentlenium.
-
-Clickstart with mysql : [github.com/ybonnel/simpleweb4j-clickstart](https://github.com/ybonnel/simpleweb4j-clickstart)
-
-Clickstart with mongo : [github.com/ybonnel/simpleweb4j-mongo-clickstart](https://github.com/ybonnel/simpleweb4j-mongo-clickstart)
 
 
 ## Samples
