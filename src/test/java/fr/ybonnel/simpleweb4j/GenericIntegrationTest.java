@@ -24,6 +24,7 @@ import fr.ybonnel.simpleweb4j.handlers.RouteParameters;
 import fr.ybonnel.simpleweb4j.util.SimpleWebTestUtil;
 import org.junit.*;
 
+import java.nio.charset.Charset;
 import java.util.Random;
 
 import static fr.ybonnel.simpleweb4j.SimpleWeb4j.*;
@@ -31,6 +32,7 @@ import static org.junit.Assert.assertEquals;
 
 public class GenericIntegrationTest {
 
+    public static final String CONTENT_TYPE = "application/json;charset=" + Charset.defaultCharset().displayName();
     private Random random = new Random();
     private SimpleWebTestUtil testUtil;
 
@@ -114,7 +116,7 @@ public class GenericIntegrationTest {
     public void should_answer_to_simple_get() throws Exception {
         SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("GET", "/resource");
         assertEquals(200, response.status);
-        assertEquals("application/json", response.contentType);
+        assertEquals(CONTENT_TYPE, response.contentType);
         assertEquals("\"Hello World\"", response.body);
     }
 
@@ -122,7 +124,7 @@ public class GenericIntegrationTest {
     public void should_answer_to_get_with_param() throws Exception {
         SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("GET", "/resource/myName");
         assertEquals(200, response.status);
-        assertEquals("application/json", response.contentType);
+        assertEquals(CONTENT_TYPE, response.contentType);
         assertEquals("\"Hello myName\"", response.body);
     }
 
@@ -136,7 +138,7 @@ public class GenericIntegrationTest {
     public void can_post_json() throws Exception {
         SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("POST", "/resource", "\"myName\"");
         assertEquals(201, response.status);
-        assertEquals("application/json", response.contentType);
+        assertEquals(CONTENT_TYPE, response.contentType);
         assertEquals("\"Hello myName\"", response.body);
     }
 
@@ -144,7 +146,7 @@ public class GenericIntegrationTest {
     public void can_answer_specific_http_code() throws Exception {
         SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("GET", "/othercode");
         assertEquals(418, response.status);
-        assertEquals("application/json", response.contentType);
+        assertEquals(CONTENT_TYPE, response.contentType);
         assertEquals("\"I m a teapot\"", response.body);
     }
 
@@ -152,7 +154,7 @@ public class GenericIntegrationTest {
     public void can_answer_to_put_method() throws Exception {
         SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("PUT", "/resource/put", "\"myName\"");
         assertEquals(200, response.status);
-        assertEquals("application/json", response.contentType);
+        assertEquals(CONTENT_TYPE, response.contentType);
         assertEquals("\"Hello myName\"", response.body);
     }
 
@@ -160,7 +162,7 @@ public class GenericIntegrationTest {
     public void can_answer_to_delete_method() throws Exception {
         SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("DELETE", "/resource/delete");
         assertEquals(200, response.status);
-        assertEquals("application/json", response.contentType);
+        assertEquals(CONTENT_TYPE, response.contentType);
         assertEquals("\"deleted\"", response.body);
     }
 
@@ -168,7 +170,7 @@ public class GenericIntegrationTest {
     public void should_answer_to_simple_get_with_jsonp() throws Exception {
         SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("GET", "/jsonp?CALLBACK=foo");
         assertEquals(200, response.status);
-        assertEquals("application/json", response.contentType);
+        assertEquals(CONTENT_TYPE, response.contentType);
         assertEquals("foo(\"Hello World\");", response.body);
     }
 }

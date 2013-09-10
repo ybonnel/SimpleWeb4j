@@ -22,6 +22,7 @@ import com.google.gson.GsonBuilder;
 import fr.ybonnel.simpleweb4j.exception.HttpErrorException;
 import fr.ybonnel.simpleweb4j.handlers.filter.AbstractFilter;
 import fr.ybonnel.simpleweb4j.model.SimpleEntityManager;
+import org.apache.commons.lang3.CharSet;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
@@ -30,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -207,7 +209,7 @@ public class JsonHandler extends AbstractHandler {
     private void writeHttpError(HttpServletResponse response, HttpErrorException httpError) throws IOException {
         response.setStatus(httpError.getStatus());
         if (httpError.getAnswer() != null) {
-            response.setContentType("application/json");
+            response.setContentType("application/json;charset=" + Charset.defaultCharset().displayName());
             response.getOutputStream().print(gson.toJson(httpError.getAnswer()));
             response.getOutputStream().close();
         }
@@ -234,7 +236,7 @@ public class JsonHandler extends AbstractHandler {
             response.setStatus(HttpMethod.fromValue(request.getMethod()).getDefaultStatus());
         }
         if (handlerResponse.getAnswer() != null) {
-            response.setContentType("application/json");
+            response.setContentType("application/json;charset=" + Charset.defaultCharset().displayName());
             if (callback != null) {
                 response.getOutputStream().print(parameters.getParam(callback));
                 response.getOutputStream().print('(');
