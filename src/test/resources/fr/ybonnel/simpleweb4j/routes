@@ -1,0 +1,4 @@
+GET     java.lang.Void            /test/empty              test.TestController.testEmpty
+POST    java.lang.Integer         /test/integer            test.TestController.testInteger
+PUT     java.lang.String          /test/string             test.TestController.testString
+DELETE  java.lang.Long            /test/delete/long        test.TestController.testDeleteLong

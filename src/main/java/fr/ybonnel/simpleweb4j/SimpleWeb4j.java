@@ -28,6 +28,8 @@ import fr.ybonnel.simpleweb4j.server.SimpleWeb4jServer;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -238,6 +240,20 @@ public final class SimpleWeb4j {
         server.stop();
         initialized = false;
         started = false;
+    }
+
+    /**
+     * Adds the routes defined in the specified input stream. Each route is defined by a line with the following format:
+     *
+     * [HttpMethod] [ParamType] [routePath] [controllerMethod]\n
+     *
+     * @param inputStream Input that contains the route definitions.
+     * @throws NoSuchMethodException If the controller method does not exist.
+     * @throws IOException If an I/O error occurs
+     * @throws ClassNotFoundException In the controller class does not exist.
+     */
+    public static void loadRoutes(InputStream inputStream) throws NoSuchMethodException, IOException, ClassNotFoundException {
+        jsonHandler.loadRoutes(inputStream);
     }
 
     /**
