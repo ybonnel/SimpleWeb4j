@@ -22,14 +22,14 @@ import com.google.gson.GsonBuilder;
 import fr.ybonnel.simpleweb4j.exception.HttpErrorException;
 import fr.ybonnel.simpleweb4j.handlers.filter.AbstractFilter;
 import fr.ybonnel.simpleweb4j.model.SimpleEntityManager;
+import fr.ybonnel.simpleweb4j.router.ControllerRoute;
+import fr.ybonnel.simpleweb4j.util.StringUtils;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -62,6 +62,47 @@ public class JsonHandler extends AbstractHandler {
      */
     private Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXX").create();
 
+    /**
+     *
+     * @param inputStream
+     * @throws IOException
+     * @throws NoSuchMethodException
+     * @throws ClassNotFoundException
+     */
+    public void loadRoutes(InputStream inputStream) throws IOException, NoSuchMethodException, ClassNotFoundException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        String line = null;
+        while ((line = reader.readLine()) != null){
+            HttpMethod httpMethod = null;
+            Class<?> paramType = null;
+            String routePath = null;
+            String controller = null;
+
+            // Read Http Method
+            line = line.trim();
+            int firstBlankCharacterIndex = StringUtils.getIndexOfBlank(line);
+            httpMethod = HttpMethod.valueOf(line.substring(0, firstBlankCharacterIndex).toUpperCase());
+
+            // Read Parameter type
+            line = line.substring(firstBlankCharacterIndex).trim();
+            firstBlankCharacterIndex = StringUtils.getIndexOfBlank(line);
+            paramType = Class.forName(line.substring(0, firstBlankCharacterIndex));
+
+            // Read route routePath
+            line = line.substring(firstBlankCharacterIndex).trim();
+            firstBlankCharacterIndex = StringUtils.getIndexOfBlank(line);
+            routePath = line.substring(0, firstBlankCharacterIndex);
+
+            // Read controller method
+            line = line.substring(firstBlankCharacterIndex).trim();
+            controller = line;
+
+            // Create and add route.
+            ControllerRoute<?,?> route = new ControllerRoute(routePath, paramType, controller);
+            addRoute(httpMethod, route);
+        }
+
+    }
     /**
      * Add a route.
      * @param httpMethod http method of the route.

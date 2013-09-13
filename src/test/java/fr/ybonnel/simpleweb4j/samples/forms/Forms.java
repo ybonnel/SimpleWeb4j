@@ -22,27 +22,34 @@ import fr.ybonnel.simpleweb4j.handlers.Route;
 import fr.ybonnel.simpleweb4j.handlers.RouteParameters;
 import fr.ybonnel.simpleweb4j.samples.forms.model.Countries;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import static fr.ybonnel.simpleweb4j.SimpleWeb4j.*;
 
 public class Forms {
 
-    public static void startServer(int port) {
+    public static void startServer(int port) throws Exception {
         setPort(port);
         setPublicResourcesPath("/fr/ybonnel/simpleweb4j/samples/forms/public");
 
-        get(new Route<Void, List<String>>("countries", Void.class) {
-            @Override
-            public Response<List<String>> handle(Void param, RouteParameters routeParams) throws HttpErrorException {
-                return new Response<>(Countries.list());
+        InputStream inputStream = null;
+        try {
+            inputStream = Forms.class.getResourceAsStream("/fr/ybonnel/simpleweb4j/samples/forms/routes");
+            loadRoutes(inputStream);
+        }
+        finally {
+            if (inputStream != null) {
+                try { inputStream.close(); }
+                catch (Exception e) { }
             }
-        });
+        }
 
         start();
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         startServer(9999);
 
     }

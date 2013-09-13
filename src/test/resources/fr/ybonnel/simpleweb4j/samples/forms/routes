@@ -1,0 +1,1 @@
+GET java.lang.Void countries  fr.ybonnel.simpleweb4j.samples.forms.controllers.CountryController.getAll

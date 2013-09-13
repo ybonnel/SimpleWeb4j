@@ -19,7 +19,9 @@ package fr.ybonnel.simpleweb4j.handlers;
 import fr.ybonnel.simpleweb4j.entities.SimpleEntity;
 import fr.ybonnel.simpleweb4j.exception.HttpErrorException;
 import fr.ybonnel.simpleweb4j.model.SimpleEntityManager;
+import fr.ybonnel.simpleweb4j.router.ControllerRoute;
 import org.eclipse.jetty.server.Request;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,6 +29,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -46,6 +49,38 @@ public class JsonHandlerUnitTest {
     public void setup() {
         handler = new JsonHandler();
         setEntitiesClasses();
+    }
+
+    @Test
+    public void testLoadRoutes() throws NoSuchMethodException, IOException, ClassNotFoundException {
+        InputStream inputStream = null;
+
+        try {
+            inputStream = getClass().getResourceAsStream("/fr/ybonnel/simpleweb4j/routes");
+            handler.loadRoutes(inputStream);
+
+            Route route = handler.findRoute("GET", "/test/empty");
+            Assert.assertNotNull(route);
+            Assert.assertTrue(route instanceof ControllerRoute);
+
+            route = handler.findRoute("POST", "/test/integer");
+            Assert.assertNotNull(route);
+            Assert.assertTrue(route instanceof ControllerRoute);
+
+            route = handler.findRoute("PUT", "/test/string");
+            Assert.assertNotNull(route);
+            Assert.assertTrue(route instanceof ControllerRoute);
+
+            route = handler.findRoute("DELETE", "/test/delete/long");
+            Assert.assertNotNull(route);
+            Assert.assertTrue(route instanceof ControllerRoute);
+        }
+        finally {
+            if (inputStream != null) {
+                try { inputStream.close(); }
+                catch (Exception e) {}
+            }
+        }
     }
 
     @Test
