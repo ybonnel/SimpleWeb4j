@@ -141,6 +141,16 @@ public final class SimpleWeb4j {
     }
 
     /**
+     * Set annotated classes to use by SimpleWeb4j.
+     * List of annotation {@link fr.ybonnel.simpleweb4j.annotations}
+     * @param annotatedClasses list of classes with annotations.
+     *
+     */
+    public static void setAnnotatedClasses(Class<?> ... annotatedClasses) {
+
+    }
+
+    /**
      * Change the path to public resources external (in filesystem).<br/>
      * Use : <code>setPublicResourcesPath("/var/www/mysite");</code>
      * @param newExternalPublicResourcesPath the path you want.
