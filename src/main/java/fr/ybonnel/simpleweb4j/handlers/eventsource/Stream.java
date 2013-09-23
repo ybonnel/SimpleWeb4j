@@ -16,10 +16,22 @@
  */
 package fr.ybonnel.simpleweb4j.handlers.eventsource;
 
+/**
+ * Stream interface, useful for EventSource.
+ * @param <T> Type of one element.
+ */
 public interface Stream<T> {
 
+    /**
+     * Next event.
+     * @return next event;
+     */
     T next();
 
+    /**
+     * Has next event?
+     * @return false if there's no more event.
+     */
     boolean hasNext();
 
 

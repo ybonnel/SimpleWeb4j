@@ -256,7 +256,10 @@ public class JsonHandler extends AbstractHandler {
      * @param <R> return type of route.
      * @throws IOException in case of IO error.
      */
-    private <R> void writeHttpResponseForNormalJson(HttpServletResponse response, Response<R> handlerResponse, String callback, RouteParameters parameters) throws IOException {
+    private <R> void writeHttpResponseForNormalJson(HttpServletResponse response,
+                                                    Response<R> handlerResponse,
+                                                    String callback,
+                                                    RouteParameters parameters) throws IOException {
         response.setContentType("application/json;charset=" + Charset.defaultCharset().displayName());
         if (callback != null) {
             response.getOutputStream().print(parameters.getParam(callback));
