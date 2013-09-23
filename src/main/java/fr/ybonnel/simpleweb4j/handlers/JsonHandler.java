@@ -20,6 +20,7 @@ package fr.ybonnel.simpleweb4j.handlers;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fr.ybonnel.simpleweb4j.exception.HttpErrorException;
+import fr.ybonnel.simpleweb4j.handlers.eventsource.Stream;
 import fr.ybonnel.simpleweb4j.handlers.filter.AbstractFilter;
 import fr.ybonnel.simpleweb4j.model.SimpleEntityManager;
 import org.eclipse.jetty.server.Request;
@@ -225,6 +226,7 @@ public class JsonHandler extends AbstractHandler {
      * @param <R> return type of route.
      * @throws IOException in case of IO error.
      */
+    @SuppressWarnings("unchecked")
     private <R> void writeHttpResponse(HttpServletRequest request, HttpServletResponse response, Response<R> handlerResponse,
                                        String callback, RouteParameters parameters) throws IOException {
         if (handlerResponse.getStatus() != null) {
@@ -235,17 +237,55 @@ public class JsonHandler extends AbstractHandler {
             response.setStatus(HttpMethod.fromValue(request.getMethod()).getDefaultStatus());
         }
         if (handlerResponse.getAnswer() != null) {
-            response.setContentType("application/json;charset=" + Charset.defaultCharset().displayName());
-            if (callback != null) {
-                response.getOutputStream().print(parameters.getParam(callback));
-                response.getOutputStream().print('(');
+            if (handlerResponse.getAnswer() instanceof Stream) {
+                Response<Stream> streamResponse = (Response<Stream>) handlerResponse;
+                writeHttpResponseForEventSource(response, streamResponse);
+            } else {
+                writeHttpResponseForNormalJson(response, handlerResponse, callback, parameters);
             }
-            response.getOutputStream().print(gson.toJson(handlerResponse.getAnswer()));
-            if (callback != null) {
-                response.getOutputStream().print(");");
-            }
-            response.getOutputStream().close();
         }
+    }
+
+    /**
+     * Write http response.
+     *
+     * @param response http response.
+     * @param handlerResponse response of route handler.
+     * @param callback callback in case of jsonp.
+     * @param parameters parameters in the routePath.
+     * @param <R> return type of route.
+     * @throws IOException in case of IO error.
+     */
+    private <R> void writeHttpResponseForNormalJson(HttpServletResponse response, Response<R> handlerResponse, String callback, RouteParameters parameters) throws IOException {
+        response.setContentType("application/json;charset=" + Charset.defaultCharset().displayName());
+        if (callback != null) {
+            response.getOutputStream().print(parameters.getParam(callback));
+            response.getOutputStream().print('(');
+        }
+        response.getOutputStream().print(gson.toJson(handlerResponse.getAnswer()));
+        if (callback != null) {
+            response.getOutputStream().print(");");
+        }
+        response.getOutputStream().close();
+    }
+
+    /**
+     * Write http response for EventSource case.
+     *
+     * @param response http response.
+     * @param handlerResponse response of route handler.
+     * @throws IOException in case of IO error.
+     */
+    private void writeHttpResponseForEventSource(HttpServletResponse response, Response<Stream> handlerResponse) throws IOException {
+        response.setContentType("text/event-stream;charset=" + Charset.defaultCharset().displayName());
+
+        while (handlerResponse.getAnswer().hasNext()) {
+            response.getOutputStream().print("data: ");
+            response.getOutputStream().print(gson.toJson(handlerResponse.getAnswer().next()));
+            response.getOutputStream().print("\n\n");
+        }
+
+        response.getOutputStream().close();
     }
 
     /**
