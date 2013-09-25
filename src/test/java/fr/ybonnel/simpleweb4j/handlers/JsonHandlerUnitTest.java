@@ -27,9 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.Collections;
-import java.util.Enumeration;
 
 import static fr.ybonnel.simpleweb4j.SimpleWeb4j.setEntitiesClasses;
 import static org.junit.Assert.assertNotNull;
@@ -39,8 +37,6 @@ import static org.mockito.Mockito.*;
 public class JsonHandlerUnitTest {
 
     private JsonHandler handler;
-
-    public static final String CONTENT_TYPE = "application/json;charset=" + Charset.defaultCharset().displayName();
 
     @Before
     public void setup() {
@@ -77,7 +73,7 @@ public class JsonHandlerUnitTest {
         handler.handle("target", request, request, response);
 
         verify(response).setStatus(417);
-        verify(response).setContentType(CONTENT_TYPE);
+        verify(response).setContentType(JsonHandler.JSON_CONTENT_TYPE);
         verify(outputStream).print("\"I\\u0027m a tea pot\"");
         verify(outputStream).close();
     }

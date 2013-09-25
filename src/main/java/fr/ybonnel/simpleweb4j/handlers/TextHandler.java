@@ -1,5 +1,6 @@
 package fr.ybonnel.simpleweb4j.handlers;
 
+import com.google.common.annotations.VisibleForTesting;
 import fr.ybonnel.simpleweb4j.exception.HttpErrorException;
 import fr.ybonnel.simpleweb4j.handlers.filter.AbstractFilter;
 import org.eclipse.jetty.server.Request;
@@ -16,7 +17,6 @@ public class TextHandler extends AbstractSimpleHandler {
 
     @Override
     public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-
         Route<?, ?> route = findRoute(request.getMethod(), request.getPathInfo());
         if (baseRequest.isHandled() || route == null) {
             return;
@@ -26,7 +26,8 @@ public class TextHandler extends AbstractSimpleHandler {
 
     }
 
-    private <P, R> void processRoute(HttpServletRequest request, HttpServletResponse response, Route<P, R> route) throws IOException {
+    @VisibleForTesting
+    <P, R> void processRoute(HttpServletRequest request, HttpServletResponse response, Route<P, R> route) throws IOException {
         P param = getRouteParam(request, route);
         try {
             beginTransaction();
@@ -48,7 +49,6 @@ public class TextHandler extends AbstractSimpleHandler {
 
     }
 
-
     /**
      * Parse the parameter of route (content of request body).
      *
@@ -62,12 +62,11 @@ public class TextHandler extends AbstractSimpleHandler {
     private <P, R> P getRouteParam(HttpServletRequest request, Route<P, R> route) throws IOException {
         P param = null;
         if (route.getParamType() != null && route.getParamType() != Void.class) {
-            return  (P) request.getReader();
+            return (P) request.getReader();
             //param = gson.fromJson(request.getReader(), route.getParamType());
         }
         return param;
     }
-
 
     @Override
     public String getContentType() {
@@ -92,7 +91,6 @@ public class TextHandler extends AbstractSimpleHandler {
         }
         return null;
     }
-
 
 }
 
