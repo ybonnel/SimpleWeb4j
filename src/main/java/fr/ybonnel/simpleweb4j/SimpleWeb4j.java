@@ -17,10 +17,8 @@
 package fr.ybonnel.simpleweb4j;
 
 
-import fr.ybonnel.simpleweb4j.handlers.HttpMethod;
-import fr.ybonnel.simpleweb4j.handlers.JsonHandler;
-import fr.ybonnel.simpleweb4j.handlers.LessCompilerHandler;
-import fr.ybonnel.simpleweb4j.handlers.Route;
+import com.google.common.net.MediaType;
+import fr.ybonnel.simpleweb4j.handlers.*;
 import fr.ybonnel.simpleweb4j.handlers.filter.AbstractFilter;
 import fr.ybonnel.simpleweb4j.handlers.resource.RestResource;
 import fr.ybonnel.simpleweb4j.model.SimpleEntityManager;
@@ -34,7 +32,7 @@ import java.util.List;
 
 /**
  * This is the entry point for all your uses of SimpleWeb4j.<br/>
- *
+ * <p/>
  * Sample to use SimpleWeb4j :
  * <p><blockquote><pre>
  * public class HelloWorld {
@@ -43,7 +41,7 @@ import java.util.List;
  *         setPublicResourcesPath("/fr/ybonnel/simpleweb4j/samples/helloworld");
  *         start();
  *     }
- *
+ * <p/>
  *     public static void main(String[] args) {
  *         startServer(9999);
  *     }
@@ -53,23 +51,25 @@ import java.util.List;
 public final class SimpleWeb4j {
 
     /**
-     * Private constructor to avoid instantiation.
+     * Default http port.
      */
-    private SimpleWeb4j() {
-    }
+    public static final int DEFAULT_PORT = 9999;
 
     /**
      * Used to know if SimpleWeb4j is already initialized.
      */
     private static boolean initialized = false;
+
     /**
      * Used to know if SimpleWeb4jServer is started.
      */
     private static boolean started = false;
+
     /**
      * The server.
      */
     private static SimpleWeb4jServer server;
+
     /**
      * Path to public resources in classPath.
      */
@@ -81,10 +81,6 @@ public final class SimpleWeb4j {
     private static String externalPublicResourcesPath = null;
 
     /**
-     * Default http port.
-     */
-    public static final int DEFAULT_PORT = 9999;
-    /**
      * Http port.
      */
     private static int port = DEFAULT_PORT;
@@ -93,14 +89,32 @@ public final class SimpleWeb4j {
      * Handler for all request others than static files.
      */
     private static JsonHandler jsonHandler = new JsonHandler();
+
+    /**
+     * Handler for all request producing text/plain
+     */
+    private static TextHandler textHandler = new TextHandler();
+
     /**
      * Handler to compile less.
      */
     private static LessCompilerHandler lessCompilerHandler = new LessCompilerHandler();
+
     /**
      * List of all internal handlers.
      */
-    private static List<AbstractHandler> simpleWeb4jHandlers = Arrays.asList(jsonHandler, lessCompilerHandler);
+    private static List<AbstractHandler> simpleWeb4jHandlers = Arrays.asList(textHandler,jsonHandler, lessCompilerHandler);
+
+    /**
+     * Handlers for jetty server.
+     */
+    private static List<Handler> handlers = new ArrayList<Handler>(simpleWeb4jHandlers);
+
+    /**
+     * Private constructor to avoid instantiation.
+     */
+    private SimpleWeb4j() {
+    }
 
     /**
      * Test usage.
@@ -118,6 +132,7 @@ public final class SimpleWeb4j {
 
     /**
      * Change the port of SimpleWeb4j (default port is 9999).
+     *
      * @param newPort the port you want.
      */
     public static void setPort(int newPort) {
@@ -130,6 +145,7 @@ public final class SimpleWeb4j {
     /**
      * Change the path to public resources in classPath.<br/>
      * Use : <code>setPublicResourcesPath("/fr/simpleweb4j/mypublicresources");</code>
+     *
      * @param newPublicResourcesPath the path you want.
      */
     public static void setPublicResourcesPath(String newPublicResourcesPath) {
@@ -143,6 +159,7 @@ public final class SimpleWeb4j {
     /**
      * Change the path to public resources external (in filesystem).<br/>
      * Use : <code>setPublicResourcesPath("/var/www/mysite");</code>
+     *
      * @param newExternalPublicResourcesPath the path you want.
      */
     public static void setExternalPublicResourcesPath(String newExternalPublicResourcesPath) {
@@ -155,6 +172,7 @@ public final class SimpleWeb4j {
     /**
      * Change the path to your hibernate config file.
      * Simple web have his default hibernate config file which is "fr/ybonnel/simpleweb4j/model/hibernate.cfg.xml".
+     *
      * @param hibernateCfgPath the path you want.
      */
     public static void setHibernateCfgPath(String hibernateCfgPath) {
@@ -166,9 +184,10 @@ public final class SimpleWeb4j {
 
     /**
      * Set entities classes for hibernate configuration.
+     *
      * @param entitiesClasses all entities.
      */
-    public static void setEntitiesClasses(Class<?> ... entitiesClasses) {
+    public static void setEntitiesClasses(Class<?>... entitiesClasses) {
         if (initialized) {
             throw new IllegalStateException("You must set entities classes before settings any route");
         }
@@ -176,12 +195,8 @@ public final class SimpleWeb4j {
     }
 
     /**
-     * Handlers for jetty server.
-     */
-    private static List<Handler> handlers = new ArrayList<Handler>(simpleWeb4jHandlers);
-
-    /**
      * Add you specific handler.
+     *
      * @param handler your handler.
      */
     public static void addSpecificHandler(Handler handler) {
@@ -194,6 +209,7 @@ public final class SimpleWeb4j {
     /**
      * Add a filter.
      * Filters are called in the add order.
+     *
      * @param filter filter to add.
      */
     public static void addFilter(AbstractFilter filter) {
@@ -220,6 +236,7 @@ public final class SimpleWeb4j {
 
     /**
      * Start the server.
+     *
      * @param waitStop true if you want wait the stop of server, false otherwise.
      */
     public static void start(boolean waitStop) {
@@ -250,10 +267,15 @@ public final class SimpleWeb4j {
      *     }
      * });
      * </pre></blockquote></p>
+     *
      * @param route your route.
      */
     public static void get(Route route) {
-        jsonHandler.addRoute(HttpMethod.GET, route);
+        if (route.getMediaType().is(MediaType.ANY_TEXT_TYPE)) {
+            textHandler.addRoute(HttpMethod.GET, route);
+        } else {
+            jsonHandler.addRoute(HttpMethod.GET, route);
+        }
     }
 
     /**
@@ -266,14 +288,13 @@ public final class SimpleWeb4j {
      *     }
      * });
      * </pre></blockquote></p>
+     *
      * @param callbackName name of query param with callback function name
-     * @param route your route.
+     * @param route        your route.
      */
     public static void jsonp(String callbackName, Route route) {
         jsonHandler.addJsonpRoute(route, callbackName);
     }
-
-
 
     /**
      * Add a new route for POST method.
@@ -286,6 +307,7 @@ public final class SimpleWeb4j {
      *     }
      * });
      * </pre></blockquote></p>
+     *
      * @param route your route.
      */
     public static void post(Route route) {
@@ -303,12 +325,12 @@ public final class SimpleWeb4j {
      *     }
      * });
      * </pre></blockquote></p>
+     *
      * @param route your route.
      */
     public static void put(Route route) {
         jsonHandler.addRoute(HttpMethod.PUT, route);
     }
-
 
     /**
      * Add a new route for DELETE method.
@@ -321,6 +343,7 @@ public final class SimpleWeb4j {
      *     }
      * });
      * </pre></blockquote></p>
+     *
      * @param route your route.
      */
     public static void delete(Route route) {
@@ -336,20 +359,20 @@ public final class SimpleWeb4j {
      *     public String getById(String id) throws HttpErrorException {
      *         return "myResource";
      *     }
-     *
+     * <p/>
      *     {@literal @Override}
      *     public List&lt;String&gt; getAll() throws HttpErrorException {
      *         return new ArrayList&lt;String&gt;();
      *     }
-     *
+     * <p/>
      *     {@literal @Override}
      *     public void update(String id, String resource) throws HttpErrorException {
      *     }
-     *
+     * <p/>
      *     {@literal @Override}
      *     public void create(String resource) throws HttpErrorException {
      *     }
-     *
+     * <p/>
      *     {@literal @Override}
      *     public void delete(String id) throws HttpErrorException {
      *     }

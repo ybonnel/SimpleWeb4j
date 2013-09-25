@@ -16,6 +16,7 @@
  */
 package fr.ybonnel.simpleweb4j.handlers;
 
+import com.google.common.net.MediaType;
 import fr.ybonnel.simpleweb4j.exception.HttpErrorException;
 
 import java.util.ArrayList;
@@ -49,12 +50,37 @@ public abstract class Route<P, R> {
     private Class<P> paramType;
 
     /**
+     * Produce mediaType
+     */
+    private MediaType mediaType;
+
+    /**
+     * Constructor of a route.
+     * @param routePath routePath of the route.
+     * @param paramType class of the object in request's body.
+     * @param mediaType mediaType of the object in request's body.
+     */
+    public Route(String routePath, Class<P> paramType, MediaType mediaType) {
+        this.routePath = routePath;
+        this.mediaType = mediaType;
+        pathInSegments = new ArrayList<>();
+        for (String path : routePath.split("\\/")) {
+            if (path.length() > 0) {
+                pathInSegments.add(path);
+            }
+        }
+        this.paramType = paramType;
+    }
+
+
+    /**
      * Constructor of a route.
      * @param routePath routePath of the route.
      * @param paramType class of the object in request's body.
      */
     public Route(String routePath, Class<P> paramType) {
         this.routePath = routePath;
+        this.mediaType = MediaType.JSON_UTF_8;
         pathInSegments = new ArrayList<>();
         for (String path : routePath.split("\\/")) {
             if (path.length() > 0) {
@@ -69,6 +95,14 @@ public abstract class Route<P, R> {
      */
     public Class<P> getParamType() {
         return paramType;
+    }
+
+    /**
+     * @return the mediaType associated to the route
+     * @return
+     */
+    public MediaType getMediaType() {
+        return mediaType;
     }
 
     /**
