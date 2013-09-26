@@ -17,8 +17,10 @@
 package fr.ybonnel.simpleweb4j;
 
 
-import com.google.common.net.MediaType;
-import fr.ybonnel.simpleweb4j.handlers.*;
+import fr.ybonnel.simpleweb4j.handlers.HttpMethod;
+import fr.ybonnel.simpleweb4j.handlers.LessCompilerHandler;
+import fr.ybonnel.simpleweb4j.handlers.Route;
+import fr.ybonnel.simpleweb4j.handlers.SimpleWeb4jHandler;
 import fr.ybonnel.simpleweb4j.handlers.filter.AbstractFilter;
 import fr.ybonnel.simpleweb4j.handlers.resource.RestResource;
 import fr.ybonnel.simpleweb4j.model.SimpleEntityManager;
@@ -88,12 +90,7 @@ public final class SimpleWeb4j {
     /**
      * Handler for all request others than static files.
      */
-    private static JsonHandler jsonHandler = new JsonHandler();
-
-    /**
-     * Handler for all request producing text/plain
-     */
-    private static TextHandler textHandler = new TextHandler();
+    private static SimpleWeb4jHandler simpleWeb4jHandler = new SimpleWeb4jHandler();
 
     /**
      * Handler to compile less.
@@ -103,7 +100,7 @@ public final class SimpleWeb4j {
     /**
      * List of all internal handlers.
      */
-    private static List<AbstractHandler> simpleWeb4jHandlers = Arrays.asList(textHandler,jsonHandler, lessCompilerHandler);
+    private static List<AbstractHandler> simpleWeb4jHandlers = Arrays.asList(simpleWeb4jHandler, lessCompilerHandler);
 
     /**
      * Handlers for jetty server.
@@ -126,7 +123,7 @@ public final class SimpleWeb4j {
         lessCompilerHandler.setPublicResourcePath(publicResourcesPath);
         initialized = false;
         handlers = new ArrayList<Handler>(simpleWeb4jHandlers);
-        jsonHandler.resetFilters();
+        simpleWeb4jHandler.resetFilters();
         setEntitiesClasses();
     }
 
@@ -213,7 +210,7 @@ public final class SimpleWeb4j {
      * @param filter filter to add.
      */
     public static void addFilter(AbstractFilter filter) {
-        jsonHandler.addFilter(filter);
+        simpleWeb4jHandler.addFilter(filter);
     }
 
     /**
@@ -271,11 +268,7 @@ public final class SimpleWeb4j {
      * @param route your route.
      */
     public static void get(Route route) {
-        if (route.getMediaType().is(MediaType.ANY_TEXT_TYPE)) {
-            textHandler.addRoute(HttpMethod.GET, route);
-        } else {
-            jsonHandler.addRoute(HttpMethod.GET, route);
-        }
+        simpleWeb4jHandler.addRoute(HttpMethod.GET, route);
     }
 
     /**
@@ -293,7 +286,7 @@ public final class SimpleWeb4j {
      * @param route        your route.
      */
     public static void jsonp(String callbackName, Route route) {
-        jsonHandler.addJsonpRoute(route, callbackName);
+        simpleWeb4jHandler.addJsonpRoute(route, callbackName);
     }
 
     /**
@@ -311,7 +304,7 @@ public final class SimpleWeb4j {
      * @param route your route.
      */
     public static void post(Route route) {
-        jsonHandler.addRoute(HttpMethod.POST, route);
+        simpleWeb4jHandler.addRoute(HttpMethod.POST, route);
     }
 
     /**
@@ -329,7 +322,7 @@ public final class SimpleWeb4j {
      * @param route your route.
      */
     public static void put(Route route) {
-        jsonHandler.addRoute(HttpMethod.PUT, route);
+        simpleWeb4jHandler.addRoute(HttpMethod.PUT, route);
     }
 
     /**
@@ -347,7 +340,7 @@ public final class SimpleWeb4j {
      * @param route your route.
      */
     public static void delete(Route route) {
-        jsonHandler.addRoute(HttpMethod.DELETE, route);
+        simpleWeb4jHandler.addRoute(HttpMethod.DELETE, route);
     }
 
     /**
