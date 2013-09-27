@@ -17,6 +17,7 @@
 package fr.ybonnel.simpleweb4j.samples.computers;
 
 import fr.ybonnel.simpleweb4j.model.SimpleEntityManager;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -25,11 +26,23 @@ import javax.persistence.Id;
 @Entity
 public class Company {
 
+    public static SimpleEntityManager<Company, Long> simpleEntityManager = new SimpleEntityManager<>(Company.class);
+
     @Id
     @GeneratedValue
     public Long id;
 
     public String name;
 
-    public static SimpleEntityManager<Company, Long> simpleEntityManager = new SimpleEntityManager<>(Company.class);
+    public Company(String name) {
+        this.name = name;
+    }
+
+    public Company() {
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
 }

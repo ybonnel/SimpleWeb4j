@@ -184,7 +184,7 @@ public class SimpleWeb4jHandler extends AbstractHandler {
      * @param <R>      return type of route.
      * @throws IOException in case of IO error.
      */
-    private <P, R> void processRoute(HttpServletRequest request, HttpServletResponse response,
+    <P, R> void processRoute(HttpServletRequest request, HttpServletResponse response,
                                      Route<P, R> route, String callback) throws IOException {
         P param = getRouteParam(request, route);
         try {

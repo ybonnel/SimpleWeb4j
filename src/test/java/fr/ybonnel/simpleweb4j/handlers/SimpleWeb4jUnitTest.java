@@ -17,15 +17,21 @@
 
 package fr.ybonnel.simpleweb4j.handlers;
 
+import com.google.gson.Gson;
 import fr.ybonnel.simpleweb4j.entities.SimpleEntity;
 import fr.ybonnel.simpleweb4j.exception.HttpErrorException;
 import fr.ybonnel.simpleweb4j.model.SimpleEntityManager;
+import fr.ybonnel.simpleweb4j.samples.computers.Company;
 import org.eclipse.jetty.server.Request;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Spy;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
@@ -33,25 +39,83 @@ import java.util.Collections;
 import static fr.ybonnel.simpleweb4j.SimpleWeb4j.setEntitiesClasses;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class SimpleWeb4jUnitTest {
 
+    @Spy
     private SimpleWeb4jHandler handler;
 
     @Before
     public void setup() {
-        handler = new SimpleWeb4jHandler();
         setEntitiesClasses();
     }
 
     @Test
     public void testHandleAlreadyHandle() throws IOException, ServletException {
-        Request request = mock(Request.class);
-        when(request.isHandled()).thenReturn(true);
+        Request request = makeMockedRequest(true, HttpMethod.GET, "path");
+
         handler.handle(null, request, request, null);
+
+        verify(handler, never()).processRoute(any(HttpServletRequest.class), any(HttpServletResponse.class), any(Route.class), anyString());
+    }
+
+    @Test
+    public void testHandleJsonContentType() throws IOException, ServletException {
+        final Company expectedCompany = new Company("Github");
+        handler.addRoute(HttpMethod.GET, new Route<Void, Void>("path", null, ContentType.JSON) {
+            @Override
+            public Response<Void> handle(Void param, RouteParameters routeParams) throws HttpErrorException {
+                return new Response(expectedCompany);
+            }
+        });
+
+        Request request = makeMockedRequest(false, HttpMethod.GET, "path");
+
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        ServletOutputStream outputStream = mock(ServletOutputStream.class);
+        when(response.getOutputStream()).thenReturn(outputStream);
+
+        handler.handle("target", request, request, response);
+
+        verify(response).setStatus(200);
+        verify(response).setContentType(ContentType.JSON.getValue());
+        verify(outputStream).print(new Gson().toJson(expectedCompany));
+        verify(outputStream).close();
+    }
+
+    @Test
+    public void testHandlePlainTextContentType() throws IOException, ServletException {
+        final Company expectedCompany = new Company("Github");
+        handler.addRoute(HttpMethod.GET, new Route<Void, Void>("path", null, ContentType.PLAIN_TEXT) {
+            @Override
+            public Response<Void> handle(Void param, RouteParameters routeParams) throws HttpErrorException {
+                return new Response(expectedCompany);
+            }
+        });
+
+        Request request = makeMockedRequest(false, HttpMethod.GET, "path");
+
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        ServletOutputStream outputStream = mock(ServletOutputStream.class);
+        when(response.getOutputStream()).thenReturn(outputStream);
+
+        handler.handle("target", request, request, response);
+
+        verify(response).setStatus(200);
+        verify(response).setContentType(ContentType.PLAIN_TEXT.getValue());
+        verify(outputStream).print(expectedCompany.toString());
+        verify(outputStream).close();
+    }
+
+    private Request makeMockedRequest(boolean handled, HttpMethod httpMethod, String path) {
+        Request request = mock(Request.class);
+        when(request.isHandled()).thenReturn(handled);
+        when(request.getMethod()).thenReturn(httpMethod.name());
+        when(request.getPathInfo()).thenReturn(path);
+        when(request.getParameterNames()).thenReturn(Collections.<String>emptyEnumeration());
+        return request;
     }
 
     @Test
@@ -63,11 +127,7 @@ public class SimpleWeb4jUnitTest {
             }
         });
 
-        Request request = mock(Request.class);
-        when(request.isHandled()).thenReturn(false);
-        when(request.getMethod()).thenReturn("GET");
-        when(request.getPathInfo()).thenReturn("path");
-        when(request.getParameterNames()).thenReturn(Collections.<String>emptyEnumeration());
+        Request request = makeMockedRequest(false, HttpMethod.GET, "path");
 
         HttpServletResponse response = mock(HttpServletResponse.class);
         ServletOutputStream outputStream = mock(ServletOutputStream.class);
