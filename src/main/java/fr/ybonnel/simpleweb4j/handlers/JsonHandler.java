@@ -286,6 +286,8 @@ public class JsonHandler extends AbstractHandler {
             response.getOutputStream().print("data: ");
             response.getOutputStream().print(gson.toJson(handlerResponse.getAnswer().next()));
             response.getOutputStream().print("\n\n");
+            response.getOutputStream().flush();
+            response.flushBuffer();
         }
 
         response.getOutputStream().close();
