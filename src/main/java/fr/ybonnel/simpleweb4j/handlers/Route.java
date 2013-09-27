@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package fr.ybonnel.simpleweb4j.handlers;
 
 import fr.ybonnel.simpleweb4j.exception.HttpErrorException;
@@ -26,12 +27,13 @@ import java.util.Map;
 
 /**
  * Route for SimpleWeb4j.
+ *
+ * @param <P> type of the object in request's body.
+ * @param <R> type of the object to serialize in response body.
  * @see fr.ybonnel.simpleweb4j.SimpleWeb4j#get(Route)
  * @see fr.ybonnel.simpleweb4j.SimpleWeb4j#post(Route)
  * @see fr.ybonnel.simpleweb4j.SimpleWeb4j#put(Route)
  * @see fr.ybonnel.simpleweb4j.SimpleWeb4j#delete(Route)
- * @param <P> type of the object in request's body.
- * @param <R> type of the object to serialize in response body.
  */
 public abstract class Route<P, R> {
 
@@ -39,22 +41,50 @@ public abstract class Route<P, R> {
      * Path of the route.
      */
     private String routePath;
+
     /**
      * Path in segment (split on '/').
      */
     private List<String> pathInSegments;
+
     /**
      * Class of the parameter (object in request's body).
      */
     private Class<P> paramType;
 
     /**
+     * Produce contentType
+     */
+    private ContentType contentType;
+
+    /**
      * Constructor of a route.
+     *
      * @param routePath routePath of the route.
      * @param paramType class of the object in request's body.
      */
     public Route(String routePath, Class<P> paramType) {
         this.routePath = routePath;
+        this.contentType = ContentType.JSON;
+        pathInSegments = new ArrayList<>();
+        for (String path : routePath.split("\\/")) {
+            if (path.length() > 0) {
+                pathInSegments.add(path);
+            }
+        }
+        this.paramType = paramType;
+    }
+
+    /**
+     * Constructor of a route.
+     *
+     * @param routePath   routePath of the route.
+     * @param paramType   class of the object in request's body.
+     * @param contentType contentType of the object in request's body.
+     */
+    public Route(String routePath, Class<P> paramType, ContentType contentType) {
+        this.routePath = routePath;
+        this.contentType = contentType;
         pathInSegments = new ArrayList<>();
         for (String path : routePath.split("\\/")) {
             if (path.length() > 0) {
@@ -73,6 +103,7 @@ public abstract class Route<P, R> {
 
     /**
      * Used to know is a route is valid for a routePath.
+     *
      * @param path the routePath.
      * @return true if the route is valid.
      */
@@ -103,9 +134,16 @@ public abstract class Route<P, R> {
     }
 
     /**
+     * @return contentType
+     */
+    public ContentType getContentType() {
+        return contentType;
+    }
+
+    /**
      * Get the parameters in route.
      *
-     * @param pathInfo the routePath.
+     * @param pathInfo        the routePath.
      * @param queryParameters parameters from query.
      * @return the map of parameters in routePath.
      */
@@ -128,7 +166,8 @@ public abstract class Route<P, R> {
 
     /**
      * Method to implement to handle a request on the route.
-     * @param param the parameter object in request's body.
+     *
+     * @param param       the parameter object in request's body.
      * @param routeParams parameters in the routePath.
      * @return the response to send.
      * @throws HttpErrorException use it for any http error, like new HttpErrorException(404) for "not found" error.

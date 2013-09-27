@@ -18,7 +18,7 @@ package fr.ybonnel.simpleweb4j;
 
 
 import fr.ybonnel.simpleweb4j.handlers.HttpMethod;
-import fr.ybonnel.simpleweb4j.handlers.JsonHandler;
+import fr.ybonnel.simpleweb4j.handlers.SimpleWeb4jHandler;
 import fr.ybonnel.simpleweb4j.handlers.LessCompilerHandler;
 import fr.ybonnel.simpleweb4j.handlers.Route;
 import fr.ybonnel.simpleweb4j.handlers.filter.AbstractFilter;
@@ -92,7 +92,7 @@ public final class SimpleWeb4j {
     /**
      * Handler for all request others than static files.
      */
-    private static JsonHandler jsonHandler = new JsonHandler();
+    private static SimpleWeb4jHandler simpleWeb4jHandler = new SimpleWeb4jHandler();
     /**
      * Handler to compile less.
      */
@@ -100,7 +100,7 @@ public final class SimpleWeb4j {
     /**
      * List of all internal handlers.
      */
-    private static List<AbstractHandler> simpleWeb4jHandlers = Arrays.asList(jsonHandler, lessCompilerHandler);
+    private static List<AbstractHandler> simpleWeb4jHandlers = Arrays.asList(simpleWeb4jHandler, lessCompilerHandler);
 
     /**
      * Test usage.
@@ -112,7 +112,7 @@ public final class SimpleWeb4j {
         lessCompilerHandler.setPublicResourcePath(publicResourcesPath);
         initialized = false;
         handlers = new ArrayList<Handler>(simpleWeb4jHandlers);
-        jsonHandler.resetFilters();
+        simpleWeb4jHandler.resetFilters();
         setEntitiesClasses();
     }
 
@@ -197,7 +197,7 @@ public final class SimpleWeb4j {
      * @param filter filter to add.
      */
     public static void addFilter(AbstractFilter filter) {
-        jsonHandler.addFilter(filter);
+        simpleWeb4jHandler.addFilter(filter);
     }
 
     /**
@@ -253,7 +253,7 @@ public final class SimpleWeb4j {
      * @param route your route.
      */
     public static void get(Route route) {
-        jsonHandler.addRoute(HttpMethod.GET, route);
+        simpleWeb4jHandler.addRoute(HttpMethod.GET, route);
     }
 
     /**
@@ -270,7 +270,7 @@ public final class SimpleWeb4j {
      * @param route your route.
      */
     public static void jsonp(String callbackName, Route route) {
-        jsonHandler.addJsonpRoute(route, callbackName);
+        simpleWeb4jHandler.addJsonpRoute(route, callbackName);
     }
 
 
@@ -289,7 +289,7 @@ public final class SimpleWeb4j {
      * @param route your route.
      */
     public static void post(Route route) {
-        jsonHandler.addRoute(HttpMethod.POST, route);
+        simpleWeb4jHandler.addRoute(HttpMethod.POST, route);
     }
 
     /**
@@ -306,7 +306,7 @@ public final class SimpleWeb4j {
      * @param route your route.
      */
     public static void put(Route route) {
-        jsonHandler.addRoute(HttpMethod.PUT, route);
+        simpleWeb4jHandler.addRoute(HttpMethod.PUT, route);
     }
 
 
@@ -324,7 +324,7 @@ public final class SimpleWeb4j {
      * @param route your route.
      */
     public static void delete(Route route) {
-        jsonHandler.addRoute(HttpMethod.DELETE, route);
+        simpleWeb4jHandler.addRoute(HttpMethod.DELETE, route);
     }
 
     /**
