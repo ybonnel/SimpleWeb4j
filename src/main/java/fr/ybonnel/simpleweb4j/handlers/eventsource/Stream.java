@@ -16,6 +16,8 @@
  */
 package fr.ybonnel.simpleweb4j.handlers.eventsource;
 
+import java.io.IOException;
+
 /**
  * Stream interface, useful for EventSource.
  * @param <T> Type of one element.
@@ -25,14 +27,15 @@ public interface Stream<T> {
     /**
      * Next event.
      * @return next event;
+     * @throws IOException if you want to close event-source.
      */
-    T next();
+    T next() throws IOException;
 
     /**
-     * Has next event?
-     * @return false if there's no more event.
+     * Time before next event.
+     * @return time before next event in milliseconds.
      */
-    boolean hasNext();
+    int timeBeforeNextEvent();
 
 
 

@@ -16,7 +16,6 @@
  */
 package fr.ybonnel.simpleweb4j;
 
-import fr.ybonnel.simpleweb4j.exception.HttpErrorException;
 import fr.ybonnel.simpleweb4j.handlers.Response;
 import fr.ybonnel.simpleweb4j.handlers.Route;
 import fr.ybonnel.simpleweb4j.handlers.RouteParameters;
@@ -26,6 +25,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Random;
 
@@ -53,13 +53,16 @@ public class EventSourceTest {
                     int index = 0;
 
                     @Override
-                    public String next() {
+                    public String next() throws IOException {
+                        if (index == 10) {
+                            throw new IOException("end of event-source");
+                        }
                         return Integer.toString(index++);
                     }
 
                     @Override
-                    public boolean hasNext() {
-                        return index < 10;
+                    public int timeBeforeNextEvent() {
+                        return 1;
                     }
                 });
             }

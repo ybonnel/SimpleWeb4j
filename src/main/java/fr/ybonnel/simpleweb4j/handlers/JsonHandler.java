@@ -20,9 +20,12 @@ package fr.ybonnel.simpleweb4j.handlers;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fr.ybonnel.simpleweb4j.exception.HttpErrorException;
+import fr.ybonnel.simpleweb4j.handlers.eventsource.EventSourceTask;
 import fr.ybonnel.simpleweb4j.handlers.eventsource.Stream;
 import fr.ybonnel.simpleweb4j.handlers.filter.AbstractFilter;
 import fr.ybonnel.simpleweb4j.model.SimpleEntityManager;
+import org.eclipse.jetty.continuation.Continuation;
+import org.eclipse.jetty.continuation.ContinuationSupport;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
@@ -37,12 +40,19 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Class use to handler all json services (declared by Route or RestResource).
  */
 public class JsonHandler extends AbstractHandler {
 
+    /**
+     * Size of thread pool for EventSource.
+     */
+    private static final int EVENT_SOURCE_POOL_SIZE = 10;
     /**
      * Map of routes by HttpMethod.
      */
@@ -239,7 +249,7 @@ public class JsonHandler extends AbstractHandler {
         if (handlerResponse.getAnswer() != null) {
             if (handlerResponse.getAnswer() instanceof Stream) {
                 Response<Stream> streamResponse = (Response<Stream>) handlerResponse;
-                writeHttpResponseForEventSource(response, streamResponse);
+                writeHttpResponseForEventSource(request, response, streamResponse);
             } else {
                 writeHttpResponseForNormalJson(response, handlerResponse, callback, parameters);
             }
@@ -273,24 +283,31 @@ public class JsonHandler extends AbstractHandler {
     }
 
     /**
+     * Thread pool for event-source.
+     */
+    private ScheduledExecutorService executorServiceForEventSource = Executors.newScheduledThreadPool(EVENT_SOURCE_POOL_SIZE);
+
+    /**
      * Write http response for EventSource case.
      *
+     * @param request http request.
      * @param response http response.
      * @param handlerResponse response of route handler.
      * @throws IOException in case of IO error.
      */
-    private void writeHttpResponseForEventSource(HttpServletResponse response, Response<Stream> handlerResponse) throws IOException {
+    private void writeHttpResponseForEventSource(HttpServletRequest request, HttpServletResponse response,
+                                                 final Response<Stream> handlerResponse) throws IOException {
         response.setContentType("text/event-stream;charset=" + Charset.defaultCharset().displayName());
+        response.addHeader("Connection", "close");
+        response.flushBuffer();
+        final Continuation continuation = ContinuationSupport.getContinuation(request);
+        // Infinite timeout because the continuation is never resumed,
+        // but only completed on close
+        continuation.setTimeout(0L);
+        continuation.suspend(response);
 
-        while (handlerResponse.getAnswer().hasNext()) {
-            response.getOutputStream().print("data: ");
-            response.getOutputStream().print(gson.toJson(handlerResponse.getAnswer().next()));
-            response.getOutputStream().print("\n\n");
-            response.getOutputStream().flush();
-            response.flushBuffer();
-        }
-
-        response.getOutputStream().close();
+        executorServiceForEventSource.scheduleAtFixedRate(new EventSourceTask(gson, handlerResponse, continuation),
+                0, handlerResponse.getAnswer().timeBeforeNextEvent(), TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -344,6 +361,7 @@ public class JsonHandler extends AbstractHandler {
         P param = null;
         if (route.getParamType() != null && route.getParamType() != Void.class) {
             param = gson.fromJson(request.getReader(), route.getParamType());
+            request.getReader().close();
         }
         return param;
     }
