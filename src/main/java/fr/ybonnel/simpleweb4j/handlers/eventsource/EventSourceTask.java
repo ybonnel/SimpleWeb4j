@@ -16,7 +16,7 @@
  */
 package fr.ybonnel.simpleweb4j.handlers.eventsource;
 
-import com.google.gson.Gson;
+import fr.ybonnel.simpleweb4j.handlers.ContentType;
 import fr.ybonnel.simpleweb4j.handlers.Response;
 import org.eclipse.jetty.continuation.Continuation;
 
@@ -27,9 +27,9 @@ import java.io.IOException;
  */
 public class EventSourceTask implements Runnable {
     /**
-     * gson object for json transforms.
+     * Content type of response.
      */
-    private final Gson gson;
+    private final ContentType contentType;
     /**
      * response of route.
      */
@@ -42,12 +42,12 @@ public class EventSourceTask implements Runnable {
     /**
      * Constructor.
      *
-     * @param gson            gson object for json transforms.
+     * @param contentType     Content type of response.
      * @param handlerResponse response of route.
      * @param continuation    continuation object for async responses.
      */
-    public EventSourceTask(Gson gson, Response<Stream> handlerResponse, Continuation continuation) {
-        this.gson = gson;
+    public EventSourceTask(ContentType contentType, Response<Stream> handlerResponse, Continuation continuation) {
+        this.contentType = contentType;
         this.handlerResponse = handlerResponse;
         this.continuation = continuation;
     }
@@ -60,8 +60,11 @@ public class EventSourceTask implements Runnable {
         synchronized (handlerResponse) {
             try {
                 Object data = handlerResponse.getAnswer().next();
+                if (data == null) {
+                    return;
+                }
                 continuation.getServletResponse().getOutputStream().print("data: ");
-                continuation.getServletResponse().getOutputStream().print(gson.toJson(data));
+                continuation.getServletResponse().getOutputStream().print(contentType.convertObject(data));
                 continuation.getServletResponse().getOutputStream().print("\n\n");
                 continuation.getServletResponse().getOutputStream().flush();
                 continuation.getServletResponse().flushBuffer();

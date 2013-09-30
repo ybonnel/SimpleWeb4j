@@ -65,15 +65,7 @@ public abstract class Route<P, R> {
      * @param paramType class of the object in request's body.
      */
     public Route(String routePath, Class<P> paramType) {
-        this.routePath = routePath;
-        this.contentType = ContentType.JSON;
-        pathInSegments = new ArrayList<>();
-        for (String path : routePath.split("\\/")) {
-            if (path.length() > 0) {
-                pathInSegments.add(path);
-            }
-        }
-        this.paramType = paramType;
+        this(routePath, paramType, ContentType.JSON);
     }
 
     /**

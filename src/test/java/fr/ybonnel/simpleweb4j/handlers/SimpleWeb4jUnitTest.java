@@ -64,10 +64,10 @@ public class SimpleWeb4jUnitTest {
     @Test
     public void testHandleJsonContentType() throws IOException, ServletException {
         final Company expectedCompany = new Company("Github");
-        handler.addRoute(HttpMethod.GET, new Route<Void, Void>("path", null, ContentType.JSON) {
+        handler.addRoute(HttpMethod.GET, new Route<Void, Company>("path", null, ContentType.JSON) {
             @Override
-            public Response<Void> handle(Void param, RouteParameters routeParams) throws HttpErrorException {
-                return new Response(expectedCompany);
+            public Response<Company> handle(Void param, RouteParameters routeParams) throws HttpErrorException {
+                return new Response<>(expectedCompany);
             }
         });
 
@@ -88,10 +88,10 @@ public class SimpleWeb4jUnitTest {
     @Test
     public void testHandlePlainTextContentType() throws IOException, ServletException {
         final Company expectedCompany = new Company("Github");
-        handler.addRoute(HttpMethod.GET, new Route<Void, Void>("path", null, ContentType.PLAIN_TEXT) {
+        handler.addRoute(HttpMethod.GET, new Route<Void, Company>("path", null, ContentType.PLAIN_TEXT) {
             @Override
-            public Response<Void> handle(Void param, RouteParameters routeParams) throws HttpErrorException {
-                return new Response(expectedCompany);
+            public Response<Company> handle(Void param, RouteParameters routeParams) throws HttpErrorException {
+                return new Response<>(expectedCompany);
             }
         });
 
@@ -197,6 +197,23 @@ public class SimpleWeb4jUnitTest {
         assertNull(simpleWeb4jHandler.findRoute("POST", "/tutu"));
 
         assertNotNull(simpleWeb4jHandler.findRoute("POST", "/test"));
+    }
+
+    @Test
+    public void testLimitOfHandle() throws IOException {
+        Request request = mock(Request.class);
+        when(request.isHandled()).thenReturn(false);
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getPathInfo()).thenReturn("path");
+
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        ServletOutputStream outputStream = mock(ServletOutputStream.class);
+        when(response.getOutputStream()).thenReturn(outputStream);
+
+        handler.handle("target", request, request, response);
+
+        verify(response, times(0)).setStatus(500);
+        verify(outputStream, times(0)).close();
     }
 
 }

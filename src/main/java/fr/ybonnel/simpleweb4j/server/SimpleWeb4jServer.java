@@ -86,14 +86,12 @@ public class SimpleWeb4jServer {
         handlersList.add(resourceHandler);
 
         if (externalPublicResourcesPath != null) {
-            ResourceHandler externalResourceHandler = new ResourceHandler();
             try {
-                externalResourceHandler.setBaseResource(Resource.newResource(new File(externalPublicResourcesPath)));
+                ResourceHandler externalResourceHandler = contructExternalResourceHandler(externalPublicResourcesPath);
+                handlersList.add(externalResourceHandler);
             } catch (IOException e) {
                 throw new FatalSimpleWeb4jException(e);
             }
-            externalResourceHandler.setWelcomeFiles(new String[]{"index.html"});
-            handlersList.add(externalResourceHandler);
         }
 
         handlersList.add(internalResourceHandler);
@@ -101,6 +99,19 @@ public class SimpleWeb4jServer {
         handlers.setHandlers(handlersList.toArray(new Handler[handlersList.size()]));
 
         jettyServer.setHandler(handlers);
+    }
+
+    /**
+     * Contruct the external resource handler.
+     * @param externalPublicResourcesPath path to external public resources.
+     * @return the resource handler.
+     * @throws IOException in case of I/O error.
+     */
+    protected ResourceHandler contructExternalResourceHandler(String externalPublicResourcesPath) throws IOException {
+        ResourceHandler externalResourceHandler = new ResourceHandler();
+        externalResourceHandler.setBaseResource(Resource.newResource(new File(externalPublicResourcesPath)));
+        externalResourceHandler.setWelcomeFiles(new String[]{"index.html"});
+        return externalResourceHandler;
     }
 
     /**

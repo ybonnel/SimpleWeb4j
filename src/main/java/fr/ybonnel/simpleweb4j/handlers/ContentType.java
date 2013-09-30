@@ -1,5 +1,8 @@
 package fr.ybonnel.simpleweb4j.handlers;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.nio.charset.Charset;
 
 /**
@@ -9,12 +12,26 @@ public enum ContentType {
     /**
      * Use it for a json output (default Content type).
      */
-    JSON("application/json;charset=" + Charset.defaultCharset().displayName()),
+    JSON("application/json;charset=" + Charset.defaultCharset().displayName()) {
+        @Override
+        public String convertObject(Object object) {
+            return GSON.toJson(object);
+        }
+    },
     /**
      * Plain text (use toString method to do the output).
      */
-    PLAIN_TEXT("text/plain;charset=" + Charset.defaultCharset().displayName()),
-    EVENT_STREAM("text/event-stream;charset=" + Charset.defaultCharset().displayName()),;
+    PLAIN_TEXT("text/plain;charset=" + Charset.defaultCharset().displayName()) {
+        @Override
+        public String convertObject(Object object) {
+            return object.toString();
+        }
+    };
+
+    /**
+     * Gson used to serialize/deserialize json objects.
+     */
+    public static final Gson GSON = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXX").create();
 
     /**
      * Value of content type.
@@ -35,4 +52,11 @@ public enum ContentType {
     public String getValue() {
         return value;
     }
+
+    /**
+     * Method use for conversion of return object with right content type.
+     * @param object object to convert.
+     * @return object converted into String.
+     */
+    public abstract String convertObject(Object object);
 }

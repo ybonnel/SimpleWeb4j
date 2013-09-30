@@ -54,6 +54,10 @@ public class EventSourceTest {
 
                     @Override
                     public String next() throws IOException {
+                        if (index == 5) {
+                            index++;
+                            return null;
+                        }
                         if (index == 10) {
                             throw new IOException("end of event-source");
                         }
@@ -82,9 +86,11 @@ public class EventSourceTest {
         assertEquals("text/event-stream;charset=" + Charset.defaultCharset().displayName(), response.contentType);
         StringBuilder expectedResponse = new StringBuilder();
         for (int index = 0; index < 10; index++) {
-            expectedResponse.append("data: \"");
-            expectedResponse.append(index);
-            expectedResponse.append("\"\n\n");
+            if (index != 5) {
+                expectedResponse.append("data: \"");
+                expectedResponse.append(index);
+                expectedResponse.append("\"\n\n");
+            }
         }
         assertEquals(expectedResponse.toString(), response.body);
     }

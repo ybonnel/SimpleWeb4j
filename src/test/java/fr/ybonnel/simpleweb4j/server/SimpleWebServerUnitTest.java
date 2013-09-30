@@ -17,9 +17,14 @@
 package fr.ybonnel.simpleweb4j.server;
 
 import fr.ybonnel.simpleweb4j.exception.FatalSimpleWeb4jException;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.IOException;
+import java.util.ArrayList;
 
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -84,6 +89,16 @@ public class SimpleWebServerUnitTest {
         doThrow(new NullPointerException()).when(serverInterface).stop();
 
         simpleWeb4jServer.stop();
+    }
+
+    @Test(expected = FatalSimpleWeb4jException.class)
+    public void testFatalErrorOnExternalResourceHandler() {
+        new SimpleWeb4jServer(9999, "public", "/external/public", new ArrayList<Handler>()) {
+            @Override
+            protected ResourceHandler contructExternalResourceHandler(String externalPublicResourcesPath) throws IOException {
+                throw new IOException();
+            }
+        };
     }
 
 }

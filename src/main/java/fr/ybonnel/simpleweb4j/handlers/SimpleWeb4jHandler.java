@@ -17,8 +17,6 @@
 
 package fr.ybonnel.simpleweb4j.handlers;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import fr.ybonnel.simpleweb4j.exception.HttpErrorException;
 import fr.ybonnel.simpleweb4j.handlers.eventsource.EventSourceTask;
 import fr.ybonnel.simpleweb4j.handlers.eventsource.Stream;
@@ -68,11 +66,6 @@ public class SimpleWeb4jHandler extends AbstractHandler {
      * List of filters.
      */
     private List<AbstractFilter> filters = new ArrayList<>();
-
-    /**
-     * Gson used to serialize/deserialize json objects.
-     */
-    private Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXX").create();
 
     /**
      * Thread pool for event-source.
@@ -235,7 +228,7 @@ public class SimpleWeb4jHandler extends AbstractHandler {
         response.setStatus(httpError.getStatus());
         if (httpError.getAnswer() != null) {
             response.setContentType(contentType.getValue());
-            response.getOutputStream().print(gson.toJson(httpError.getAnswer()));
+            response.getOutputStream().print(contentType.convertObject(httpError.getAnswer()));
             response.getOutputStream().close();
         }
     }
@@ -265,7 +258,7 @@ public class SimpleWeb4jHandler extends AbstractHandler {
         if (handlerResponse.getAnswer() != null) {
             if (handlerResponse.getAnswer() instanceof Stream) {
                 Response<Stream> streamResponse = (Response<Stream>) handlerResponse;
-                writeHttpResponseForEventSource(request, response, streamResponse);
+                writeHttpResponseForEventSource(request, response, contentType, streamResponse);
             } else {
                 writeHttpResponse(response, handlerResponse, callback, parameters, contentType);
             }
@@ -293,13 +286,7 @@ public class SimpleWeb4jHandler extends AbstractHandler {
             response.getOutputStream().print('(');
         }
 
-        switch (contentType) {
-            case PLAIN_TEXT:
-                response.getOutputStream().print(handlerResponse.getAnswer().toString());
-                break;
-            default:
-                response.getOutputStream().print(gson.toJson(handlerResponse.getAnswer()));
-        }
+        response.getOutputStream().print(contentType.convertObject(handlerResponse.getAnswer()));
 
         if (callback != null) {
             response.getOutputStream().print(");");
@@ -317,10 +304,12 @@ public class SimpleWeb4jHandler extends AbstractHandler {
      *
      * @param request         http request.
      * @param response        http response.
+     * @param contentType     content type of response.
      * @param handlerResponse response of route handler.
      * @throws IOException in case of IO error.
      */
     private void writeHttpResponseForEventSource(HttpServletRequest request, HttpServletResponse response,
+                                                 ContentType contentType,
                                                  final Response<Stream> handlerResponse) throws IOException {
         response.setContentType(EVENT_STREAM_CONTENT_TYPE);
         response.addHeader("Connection", "close");
@@ -331,7 +320,7 @@ public class SimpleWeb4jHandler extends AbstractHandler {
         continuation.setTimeout(0L);
         continuation.suspend(response);
 
-        executorServiceForEventSource.scheduleAtFixedRate(new EventSourceTask(gson, handlerResponse, continuation),
+        executorServiceForEventSource.scheduleAtFixedRate(new EventSourceTask(contentType, handlerResponse, continuation),
                 0, handlerResponse.getAnswer().timeBeforeNextEvent(), TimeUnit.MILLISECONDS);
     }
 
@@ -387,7 +376,7 @@ public class SimpleWeb4jHandler extends AbstractHandler {
     private <P, R> P getRouteParam(HttpServletRequest request, Route<P, R> route) throws IOException {
         P param = null;
         if (route.getParamType() != null && route.getParamType() != Void.class) {
-            param = gson.fromJson(request.getReader(), route.getParamType());
+            param = ContentType.GSON.fromJson(request.getReader(), route.getParamType());
             request.getReader().close();
         }
         return param;
