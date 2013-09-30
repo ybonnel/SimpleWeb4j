@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -225,8 +226,9 @@ public class SimpleWeb4jHandler extends AbstractHandler {
     /**
      * Write http response with HttpError details.
      *
-     * @param response  http response.
-     * @param httpError http error.
+     * @param response    http response.
+     * @param httpError   http error.
+     * @param contentType content type of response.
      * @throws IOException in case of IO error.
      */
     private void writeHttpError(HttpServletResponse response, HttpErrorException httpError, ContentType contentType) throws IOException {
@@ -246,7 +248,8 @@ public class SimpleWeb4jHandler extends AbstractHandler {
      * @param handlerResponse response of route handler.
      * @param callback        callback in case of jsonp.
      * @param parameters      parameters in the routePath.
-     * @param contentType
+     * @param contentType     content type of response.
+     * @param <R>             return type of route.
      * @throws IOException in case of IO error.
      */
     @SuppressWarnings("unchecked")
@@ -276,6 +279,7 @@ public class SimpleWeb4jHandler extends AbstractHandler {
      * @param handlerResponse response of route handler.
      * @param callback        callback in case of jsonp.
      * @param parameters      parameters in the routePath.
+     * @param contentType     content type of response.
      * @param <R>             return type of route.
      * @throws IOException in case of IO error.
      */
@@ -304,6 +308,11 @@ public class SimpleWeb4jHandler extends AbstractHandler {
     }
 
     /**
+     * Content type of event-stream.
+     */
+    private static final String EVENT_STREAM_CONTENT_TYPE = "text/event-stream;charset=" + Charset.defaultCharset().displayName();
+
+    /**
      * Write http response for EventSource case.
      *
      * @param request         http request.
@@ -313,7 +322,7 @@ public class SimpleWeb4jHandler extends AbstractHandler {
      */
     private void writeHttpResponseForEventSource(HttpServletRequest request, HttpServletResponse response,
                                                  final Response<Stream> handlerResponse) throws IOException {
-        response.setContentType(ContentType.EVENT_STREAM.getValue());
+        response.setContentType(EVENT_STREAM_CONTENT_TYPE);
         response.addHeader("Connection", "close");
         response.flushBuffer();
         final Continuation continuation = ContinuationSupport.getContinuation(request);

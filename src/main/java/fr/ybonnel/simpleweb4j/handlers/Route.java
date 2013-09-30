@@ -53,12 +53,13 @@ public abstract class Route<P, R> {
     private Class<P> paramType;
 
     /**
-     * Produce contentType
+     * Produce content type.
      */
     private ContentType contentType;
 
     /**
      * Constructor of a route.
+     * By default the content type is JSON.
      *
      * @param routePath routePath of the route.
      * @param paramType class of the object in request's body.
