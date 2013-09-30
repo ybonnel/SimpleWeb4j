@@ -158,4 +158,5 @@ You can find all the generated maven site in [jenkins](https://simpleweb4j.ci.cl
  - [Yan Bonnel](https://twitter.com/ybonnel) (principal maintainer)
  - [Nicolas De Loof](https://twitter.com/ndeloof) (first creation of clickstart)
  - [Pierre Leresteux](https://twitter.com/pierreLeresteux) (creation of logo)
+ - [Damien Gouyette](https://twitter.com/cpasdur) (creation of ContentType logic)
 
