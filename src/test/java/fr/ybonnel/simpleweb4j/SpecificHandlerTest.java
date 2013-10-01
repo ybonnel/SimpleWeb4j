@@ -63,8 +63,8 @@ public class SpecificHandlerTest extends AbstractHandler {
     @Override
     public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         response.setStatus(HttpServletResponse.SC_OK);
-        response.getOutputStream().print("OK");
-        response.getOutputStream().flush();
-        response.getOutputStream().close();
+        response.getWriter().print("OK");
+        response.getWriter().flush();
+        response.getWriter().close();
     }
 }

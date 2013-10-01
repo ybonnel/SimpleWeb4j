@@ -29,6 +29,11 @@ public enum ContentType {
     };
 
     /**
+     * Current charset.
+     */
+    public static final String CURRENT_CHARSET = Charset.defaultCharset().displayName();
+
+    /**
      * Gson used to serialize/deserialize json objects.
      */
     public static final Gson GSON = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXX").create();

@@ -30,10 +30,12 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +43,7 @@ import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * Class use to handler all json services (declared by Route or RestResource).
@@ -212,8 +215,8 @@ public class SimpleWeb4jHandler extends AbstractHandler {
         StringWriter writer = new StringWriter();
         PrintWriter printWriter = new PrintWriter(writer);
         exception.printStackTrace(printWriter);
-        response.getOutputStream().print(writer.toString());
-        response.getOutputStream().close();
+        response.getWriter().print(writer.toString());
+        response.getWriter().close();
     }
 
     /**
@@ -228,8 +231,8 @@ public class SimpleWeb4jHandler extends AbstractHandler {
         response.setStatus(httpError.getStatus());
         if (httpError.getAnswer() != null) {
             response.setContentType(contentType.getValue());
-            response.getOutputStream().print(contentType.convertObject(httpError.getAnswer()));
-            response.getOutputStream().close();
+            response.getWriter().print(contentType.convertObject(httpError.getAnswer()));
+            response.getWriter().close();
         }
     }
 
@@ -260,9 +263,27 @@ public class SimpleWeb4jHandler extends AbstractHandler {
                 Response<Stream> streamResponse = (Response<Stream>) handlerResponse;
                 writeHttpResponseForEventSource(request, response, contentType, streamResponse);
             } else {
-                writeHttpResponse(response, handlerResponse, callback, parameters, contentType);
+                writeHttpResponse(response, handlerResponse, callback, parameters, contentType, request.getHeaders("Accept-Encoding"));
             }
         }
+    }
+
+    /**
+     * Does the answer support gzip?
+     * @param acceptEncodings all Accept-Encoding headers received.
+     * @return true is gzip is supported.
+     */
+    private boolean supportGzip(Enumeration<String> acceptEncodings) {
+        if (acceptEncodings != null) {
+            for (String acceptEncoding : Collections.list(acceptEncodings)) {
+                for (String encoding : acceptEncoding.split(",")) {
+                    if (encoding.equals("gzip")) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -273,25 +294,39 @@ public class SimpleWeb4jHandler extends AbstractHandler {
      * @param callback        callback in case of jsonp.
      * @param parameters      parameters in the routePath.
      * @param contentType     content type of response.
+     * @param acceptEncodings value of header accept-encoding.
      * @param <R>             return type of route.
      * @throws IOException in case of IO error.
      */
     private <R> void writeHttpResponse(HttpServletResponse response,
                                        Response<R> handlerResponse,
                                        String callback,
-                                       RouteParameters parameters, ContentType contentType) throws IOException {
+                                       RouteParameters parameters, ContentType contentType,
+                                       Enumeration<String> acceptEncodings) throws IOException {
         response.setContentType(contentType.getValue());
-        if (callback != null) {
-            response.getOutputStream().print(parameters.getParam(callback));
-            response.getOutputStream().print('(');
+
+
+        PrintWriter writer;
+        if (supportGzip(acceptEncodings)) {
+            response.addHeader("Content-Encoding", "gzip");
+            writer = new PrintWriter(new OutputStreamWriter(
+                    new GZIPOutputStream(response.getOutputStream()),
+                    ContentType.CURRENT_CHARSET));
+        } else {
+            writer = response.getWriter();
         }
 
-        response.getOutputStream().print(contentType.convertObject(handlerResponse.getAnswer()));
+        if (callback != null) {
+            writer.print(parameters.getParam(callback));
+            writer.print('(');
+        }
+
+        writer.print(contentType.convertObject(handlerResponse.getAnswer()));
 
         if (callback != null) {
-            response.getOutputStream().print(");");
+            writer.print(");");
         }
-        response.getOutputStream().close();
+        writer.close();
     }
 
     /**

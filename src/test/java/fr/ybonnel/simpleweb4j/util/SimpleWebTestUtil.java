@@ -23,6 +23,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 public class SimpleWebTestUtil {
 
@@ -33,14 +34,28 @@ public class SimpleWebTestUtil {
     }
 
     public UrlResponse doMethod(String requestMethod, String path) throws Exception {
-        return doMethod(requestMethod, path, null);
+        return doMethod(requestMethod, path, null, null);
     }
 
-    public UrlResponse doMethod(String requestMethod, String path, String body)
+    public UrlResponse doMethod(String requestMethod, String path, Map<String, String> headers) throws Exception {
+        return doMethod(requestMethod, path, null, headers);
+    }
+
+    public UrlResponse doMethod(String requestMethod, String path, String body) throws Exception {
+        return doMethod(requestMethod, path, body, null);
+    }
+
+    public UrlResponse doMethod(String requestMethod, String path, String body, Map<String, String> headers)
             throws Exception {
         URL url = new URL("http://localhost:" + port + path);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod(requestMethod);
+
+        if (headers != null) {
+            for (Map.Entry<String, String> header : headers.entrySet()) {
+                connection.addRequestProperty(header.getKey(), header.getValue());
+            }
+        }
 
         if (body != null) {
             connection.setDoOutput(true);
@@ -60,7 +75,13 @@ public class SimpleWebTestUtil {
             }
         } else {
             if (connection.getInputStream() != null) {
-                response.body = IOUtils.toString(connection.getInputStream());
+                if (response.headers.containsKey("Content-Encoding")
+                        && response.headers.get("Content-Encoding").get(0).equals("gzip")) {
+                    response.body = IOUtils.toString(new GZIPInputStream(connection.getInputStream()));
+                    response.isGzipped = true;
+                } else {
+                    response.body = IOUtils.toString(connection.getInputStream());
+                }
             }
         }
         return response;
@@ -72,5 +93,6 @@ public class SimpleWebTestUtil {
         public String body;
         public int status;
         public String contentType;
+        public boolean isGzipped = false;
     }
 }

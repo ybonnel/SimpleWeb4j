@@ -30,10 +30,10 @@ import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Collections;
 
 import static fr.ybonnel.simpleweb4j.SimpleWeb4j.setEntitiesClasses;
@@ -74,15 +74,15 @@ public class SimpleWeb4jUnitTest {
         Request request = makeMockedRequest(false, HttpMethod.GET, "path");
 
         HttpServletResponse response = mock(HttpServletResponse.class);
-        ServletOutputStream outputStream = mock(ServletOutputStream.class);
-        when(response.getOutputStream()).thenReturn(outputStream);
+        PrintWriter writer = mock(PrintWriter.class);
+        when(response.getWriter()).thenReturn(writer);
 
         handler.handle("target", request, request, response);
 
         verify(response).setStatus(200);
         verify(response).setContentType(ContentType.JSON.getValue());
-        verify(outputStream).print(new Gson().toJson(expectedCompany));
-        verify(outputStream).close();
+        verify(writer).print(new Gson().toJson(expectedCompany));
+        verify(writer).close();
     }
 
     @Test
@@ -98,15 +98,15 @@ public class SimpleWeb4jUnitTest {
         Request request = makeMockedRequest(false, HttpMethod.GET, "path");
 
         HttpServletResponse response = mock(HttpServletResponse.class);
-        ServletOutputStream outputStream = mock(ServletOutputStream.class);
-        when(response.getOutputStream()).thenReturn(outputStream);
+        PrintWriter writer = mock(PrintWriter.class);
+        when(response.getWriter()).thenReturn(writer);
 
         handler.handle("target", request, request, response);
 
         verify(response).setStatus(200);
         verify(response).setContentType(ContentType.PLAIN_TEXT.getValue());
-        verify(outputStream).print(expectedCompany.toString());
-        verify(outputStream).close();
+        verify(writer).print(expectedCompany.toString());
+        verify(writer).close();
     }
 
     private Request makeMockedRequest(boolean handled, HttpMethod httpMethod, String path) {
@@ -130,15 +130,15 @@ public class SimpleWeb4jUnitTest {
         Request request = makeMockedRequest(false, HttpMethod.GET, "path");
 
         HttpServletResponse response = mock(HttpServletResponse.class);
-        ServletOutputStream outputStream = mock(ServletOutputStream.class);
-        when(response.getOutputStream()).thenReturn(outputStream);
+        PrintWriter writer = mock(PrintWriter.class);
+        when(response.getWriter()).thenReturn(writer);
 
         handler.handle("target", request, request, response);
 
         verify(response).setStatus(417);
         verify(response).setContentType(ContentType.JSON.getValue());
-        verify(outputStream).print("\"I\\u0027m a tea pot\"");
-        verify(outputStream).close();
+        verify(writer).print("\"I\\u0027m a tea pot\"");
+        verify(writer).close();
     }
 
     @Test
@@ -163,13 +163,13 @@ public class SimpleWeb4jUnitTest {
         when(request.getPathInfo()).thenReturn("path");
 
         HttpServletResponse response = mock(HttpServletResponse.class);
-        ServletOutputStream outputStream = mock(ServletOutputStream.class);
-        when(response.getOutputStream()).thenReturn(outputStream);
+        PrintWriter writer = mock(PrintWriter.class);
+        when(response.getWriter()).thenReturn(writer);
 
         handler.handle("target", request, request, response);
 
         verify(response).setStatus(500);
-        verify(outputStream).close();
+        verify(writer).close();
     }
 
     @Test
@@ -207,13 +207,13 @@ public class SimpleWeb4jUnitTest {
         when(request.getPathInfo()).thenReturn("path");
 
         HttpServletResponse response = mock(HttpServletResponse.class);
-        ServletOutputStream outputStream = mock(ServletOutputStream.class);
-        when(response.getOutputStream()).thenReturn(outputStream);
+        PrintWriter writer = mock(PrintWriter.class);
+        when(response.getWriter()).thenReturn(writer);
 
         handler.handle("target", request, request, response);
 
         verify(response, times(0)).setStatus(500);
-        verify(outputStream, times(0)).close();
+        verify(writer, times(0)).close();
     }
 
 }

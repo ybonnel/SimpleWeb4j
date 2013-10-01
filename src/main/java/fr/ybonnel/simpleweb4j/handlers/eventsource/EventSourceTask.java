@@ -63,10 +63,10 @@ public class EventSourceTask implements Runnable {
                 if (data == null) {
                     return;
                 }
-                continuation.getServletResponse().getOutputStream().print("data: ");
-                continuation.getServletResponse().getOutputStream().print(contentType.convertObject(data));
-                continuation.getServletResponse().getOutputStream().print("\n\n");
-                continuation.getServletResponse().getOutputStream().flush();
+                continuation.getServletResponse().getWriter().print("data: ");
+                continuation.getServletResponse().getWriter().print(contentType.convertObject(data));
+                continuation.getServletResponse().getWriter().print("\n\n");
+                continuation.getServletResponse().getWriter().flush();
                 continuation.getServletResponse().flushBuffer();
             } catch (IOException ioException) {
                 continuation.complete();

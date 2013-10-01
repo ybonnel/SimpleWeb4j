@@ -25,10 +25,14 @@ import fr.ybonnel.simpleweb4j.util.SimpleWebTestUtil;
 import org.junit.*;
 
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.Random;
 
 import static fr.ybonnel.simpleweb4j.SimpleWeb4j.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
 
 public class GenericIntegrationTest {
 
@@ -172,5 +176,29 @@ public class GenericIntegrationTest {
         assertEquals(200, response.status);
         assertEquals(CONTENT_TYPE, response.contentType);
         assertEquals("foo(\"Hello World\");", response.body);
+    }
+
+    @Test
+    public void should_answer_with_gzip_response_when_its_possible() throws Exception {
+        SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("GET", "/resource", new HashMap<String, String>() {{
+            put("Accept-Encoding", "deflate,gzip,sdch");
+        }});
+        assertEquals(200, response.status);
+        assertEquals("gzip", response.headers.get("Content-Encoding").get(0));
+        assertEquals(CONTENT_TYPE, response.contentType);
+        assertEquals("\"Hello World\"", response.body);
+        assertTrue(response.isGzipped);
+    }
+
+    @Test
+    public void should_not_answer_with_gzip_response_when_its_not_possible() throws Exception {
+        SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("GET", "/resource", new HashMap<String, String>() {{
+            put("Accept-Encoding", "deflate,sdch");
+        }});
+        assertEquals(200, response.status);
+        assertNull(response.headers.get("Content-Encoding"));
+        assertEquals(CONTENT_TYPE, response.contentType);
+        assertEquals("\"Hello World\"", response.body);
+        assertFalse(response.isGzipped);
     }
 }

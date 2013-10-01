@@ -115,8 +115,8 @@ public abstract class AbstractCompilerHandler extends AbstractHandler {
             StringWriter writer = new StringWriter();
             PrintWriter printWriter = new PrintWriter(writer);
             exception.getCause().printStackTrace(printWriter);
-            response.getOutputStream().print(writer.toString());
-            response.getOutputStream().close();
+            response.getWriter().print(writer.toString());
+            response.getWriter().close();
             baseRequest.setHandled(true);
         }
 
