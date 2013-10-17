@@ -14,26 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.ybonnel.simpleweb4j.exception;
+package fr.ybonnel.simpleweb4j.handlers.eventsource;
 
 /**
- * Fatal exception, this exception is thrown in case of non previewed errors.
+ * Reactive stream.
+ * Can be use to have a reactive stream.
+ * @param <T> Type of one element.
  */
-public class FatalSimpleWeb4jException extends RuntimeException {
+public interface ReactiveStream<T> {
 
     /**
-     * Constructor.
-     * @param cause the root exception.
+     * Method called by SimpleWeb4J to pass the handler.
+     * You must call {@link ReactiveHandler#next(Object)} to send next event.
+     * You can call {@link ReactiveHandler#close()} to close the stream.
+     * @param reactiveHandler the handler.
      */
-    public FatalSimpleWeb4jException(Throwable cause) {
-        super(cause);
-    }
+    void setReactiveHandler(ReactiveHandler<T> reactiveHandler);
 
-    /**
-     * Constructor.
-     * @param message message.
-     */
-    public FatalSimpleWeb4jException(String message) {
-        super(message);
-    }
 }

@@ -16,9 +16,13 @@
  */
 package fr.ybonnel.simpleweb4j;
 
+import fr.ybonnel.simpleweb4j.exception.HttpErrorException;
 import fr.ybonnel.simpleweb4j.handlers.Response;
 import fr.ybonnel.simpleweb4j.handlers.Route;
 import fr.ybonnel.simpleweb4j.handlers.RouteParameters;
+import fr.ybonnel.simpleweb4j.handlers.eventsource.EndOfStreamException;
+import fr.ybonnel.simpleweb4j.handlers.eventsource.ReactiveHandler;
+import fr.ybonnel.simpleweb4j.handlers.eventsource.ReactiveStream;
 import fr.ybonnel.simpleweb4j.handlers.eventsource.Stream;
 import fr.ybonnel.simpleweb4j.util.SimpleWebTestUtil;
 import org.junit.After;
@@ -48,7 +52,7 @@ public class EventSourceTest {
         get(new Route<Void, Stream<String>>("/eventsource", Void.class) {
             @Override
             public Response<Stream<String>> handle(Void param, RouteParameters routeParams) {
-                return new Response<Stream<String>>(new Stream<String>(){
+                return new Response<Stream<String>>(new Stream<String>() {
 
                     int index = 0;
 
@@ -67,6 +71,26 @@ public class EventSourceTest {
                     @Override
                     public int timeBeforeNextEvent() {
                         return 1;
+                    }
+                });
+            }
+        });
+
+        get(new Route<Void, ReactiveStream<String>>("/reactive", Void.class) {
+
+            @Override
+            public Response<ReactiveStream<String>> handle(Void param, RouteParameters routeParams) throws HttpErrorException {
+                return new Response<ReactiveStream<String>>(new ReactiveStream<String>() {
+
+                    @Override
+                    public void setReactiveHandler(ReactiveHandler<String> reactiveHandler) {
+                        for (int index = 0; index < 10; index++) {
+                            try {
+                                reactiveHandler.next(Integer.toString(index));
+                            } catch (EndOfStreamException ignore) {
+                            }
+                        }
+                        reactiveHandler.close();
                     }
                 });
             }
@@ -91,6 +115,20 @@ public class EventSourceTest {
                 expectedResponse.append(index);
                 expectedResponse.append("\"\n\n");
             }
+        }
+        assertEquals(expectedResponse.toString(), response.body);
+    }
+
+    @Test
+    public void should_serve_reactive_event_source() throws Exception {
+        SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("GET", "/reactive");
+        assertEquals("text/event-stream;charset=" + Charset.defaultCharset().displayName(), response.contentType);
+
+        StringBuilder expectedResponse = new StringBuilder();
+        for (int index = 0; index < 10; index++) {
+            expectedResponse.append("data: \"");
+            expectedResponse.append(index);
+            expectedResponse.append("\"\n\n");
         }
         assertEquals(expectedResponse.toString(), response.body);
     }

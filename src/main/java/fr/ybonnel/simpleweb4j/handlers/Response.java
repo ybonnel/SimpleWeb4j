@@ -16,6 +16,9 @@
  */
 package fr.ybonnel.simpleweb4j.handlers;
 
+import fr.ybonnel.simpleweb4j.handlers.eventsource.ReactiveStream;
+import fr.ybonnel.simpleweb4j.handlers.eventsource.Stream;
+
 /**
  * Response for a route.
  * @param <T> type of the object to serialize in response's body.
@@ -33,7 +36,10 @@ public class Response<T> {
 
     /**
      * Constructor.
+     *
      * @param answer object to serialize in response's body.
+     *               You can use {@link Stream} and {@link ReactiveStream} if you want to do some event-source.
+     *
      */
     public Response(T answer) {
         this(answer, null);
@@ -61,5 +67,14 @@ public class Response<T> {
      */
     public Integer getStatus() {
         return status;
+    }
+
+    /**
+     * Method use to know if the answer is a stream.
+     * @return true if this response is a stream (must be transform to a stream).
+     */
+    protected boolean isStream() {
+        return answer instanceof Stream
+                || answer instanceof ReactiveStream;
     }
 }

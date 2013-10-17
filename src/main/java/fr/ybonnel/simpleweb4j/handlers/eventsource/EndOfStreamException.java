@@ -14,26 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.ybonnel.simpleweb4j.exception;
+package fr.ybonnel.simpleweb4j.handlers.eventsource;
 
 /**
- * Fatal exception, this exception is thrown in case of non previewed errors.
+ * Exception used to inform the and of a stream.
  */
-public class FatalSimpleWeb4jException extends RuntimeException {
+public class EndOfStreamException extends Exception {
 
     /**
      * Constructor.
-     * @param cause the root exception.
+     * @param cause root cause.
      */
-    public FatalSimpleWeb4jException(Throwable cause) {
+    public EndOfStreamException(Throwable cause) {
         super(cause);
-    }
-
-    /**
-     * Constructor.
-     * @param message message.
-     */
-    public FatalSimpleWeb4jException(String message) {
-        super(message);
     }
 }

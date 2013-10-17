@@ -17,8 +17,11 @@
 
 package fr.ybonnel.simpleweb4j.handlers;
 
+import fr.ybonnel.simpleweb4j.exception.FatalSimpleWeb4jException;
 import fr.ybonnel.simpleweb4j.exception.HttpErrorException;
 import fr.ybonnel.simpleweb4j.handlers.eventsource.EventSourceTask;
+import fr.ybonnel.simpleweb4j.handlers.eventsource.ReactiveEventSourceTask;
+import fr.ybonnel.simpleweb4j.handlers.eventsource.ReactiveStream;
 import fr.ybonnel.simpleweb4j.handlers.eventsource.Stream;
 import fr.ybonnel.simpleweb4j.handlers.filter.AbstractFilter;
 import fr.ybonnel.simpleweb4j.model.SimpleEntityManager;
@@ -182,7 +185,7 @@ public class SimpleWeb4jHandler extends AbstractHandler {
      * @throws IOException in case of IO error.
      */
     <P, R> void processRoute(HttpServletRequest request, HttpServletResponse response,
-                                     Route<P, R> route, String callback) throws IOException {
+                             Route<P, R> route, String callback) throws IOException {
         P param = getRouteParam(request, route);
         try {
             beginTransaction();
@@ -248,7 +251,6 @@ public class SimpleWeb4jHandler extends AbstractHandler {
      * @param <R>             return type of route.
      * @throws IOException in case of IO error.
      */
-    @SuppressWarnings("unchecked")
     private <R> void writeHttpResponse(HttpServletRequest request, HttpServletResponse response, Response<R> handlerResponse,
                                        String callback, RouteParameters parameters, ContentType contentType) throws IOException {
         if (handlerResponse.getStatus() != null) {
@@ -259,9 +261,8 @@ public class SimpleWeb4jHandler extends AbstractHandler {
             response.setStatus(HttpMethod.fromValue(request.getMethod()).getDefaultStatus());
         }
         if (handlerResponse.getAnswer() != null) {
-            if (handlerResponse.getAnswer() instanceof Stream) {
-                Response<Stream> streamResponse = (Response<Stream>) handlerResponse;
-                writeHttpResponseForEventSource(request, response, contentType, streamResponse);
+            if (handlerResponse.isStream()) {
+                writeHttpResponseForEventSource(request, response, contentType, handlerResponse);
             } else {
                 writeHttpResponse(response, handlerResponse, callback, parameters, contentType, request.getHeaders("Accept-Encoding"));
             }
@@ -270,6 +271,7 @@ public class SimpleWeb4jHandler extends AbstractHandler {
 
     /**
      * Does the answer support gzip?
+     *
      * @param acceptEncodings all Accept-Encoding headers received.
      * @return true is gzip is supported.
      */
@@ -343,9 +345,10 @@ public class SimpleWeb4jHandler extends AbstractHandler {
      * @param handlerResponse response of route handler.
      * @throws IOException in case of IO error.
      */
+    @SuppressWarnings("unchecked")
     private void writeHttpResponseForEventSource(HttpServletRequest request, HttpServletResponse response,
                                                  ContentType contentType,
-                                                 final Response<Stream> handlerResponse) throws IOException {
+                                                 final Response<?> handlerResponse) throws IOException {
         response.setContentType(EVENT_STREAM_CONTENT_TYPE);
         response.addHeader("Connection", "close");
         response.flushBuffer();
@@ -355,8 +358,16 @@ public class SimpleWeb4jHandler extends AbstractHandler {
         continuation.setTimeout(0L);
         continuation.suspend(response);
 
-        executorServiceForEventSource.scheduleAtFixedRate(new EventSourceTask(contentType, handlerResponse, continuation),
-                0, handlerResponse.getAnswer().timeBeforeNextEvent(), TimeUnit.MILLISECONDS);
+        if (handlerResponse.getAnswer() instanceof Stream) {
+            Response<Stream> streamResponse = (Response<Stream>) handlerResponse;
+            executorServiceForEventSource.scheduleAtFixedRate(new EventSourceTask(contentType, streamResponse, continuation),
+                    0, streamResponse.getAnswer().timeBeforeNextEvent(), TimeUnit.MILLISECONDS);
+        } else if (handlerResponse.getAnswer() instanceof ReactiveStream) {
+            ((Response<ReactiveStream>) handlerResponse).getAnswer().setReactiveHandler(
+                    new ReactiveEventSourceTask(contentType, continuation));
+        } else {
+            throw new FatalSimpleWeb4jException("Your answer is an unknown stream");
+        }
     }
 
     /**
