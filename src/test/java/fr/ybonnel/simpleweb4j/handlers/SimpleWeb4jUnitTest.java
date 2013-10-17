@@ -19,6 +19,7 @@ package fr.ybonnel.simpleweb4j.handlers;
 
 import com.google.gson.Gson;
 import fr.ybonnel.simpleweb4j.entities.SimpleEntity;
+import fr.ybonnel.simpleweb4j.exception.FatalSimpleWeb4jException;
 import fr.ybonnel.simpleweb4j.exception.HttpErrorException;
 import fr.ybonnel.simpleweb4j.model.SimpleEntityManager;
 import fr.ybonnel.simpleweb4j.samples.computers.Company;
@@ -29,6 +30,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import javax.servlet.AsyncContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -214,6 +216,23 @@ public class SimpleWeb4jUnitTest {
 
         verify(response, times(0)).setStatus(500);
         verify(writer, times(0)).close();
+    }
+
+    @Test( expected = FatalSimpleWeb4jException.class)
+    public void testLimitOfWriteHttpResponseForEventSource() throws IOException {
+        Request request = mock(Request.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        AsyncContext asyncContext = mock(AsyncContext.class);
+        when(request.startAsync()).thenReturn(asyncContext);
+
+        handler.writeHttpResponseForEventSource(request, response, ContentType.PLAIN_TEXT, new Response<String>("string"){
+            @Override
+            protected boolean isStream() {
+                return true;
+            }
+        });
+
     }
 
 }

@@ -346,7 +346,7 @@ public class SimpleWeb4jHandler extends AbstractHandler {
      * @throws IOException in case of IO error.
      */
     @SuppressWarnings("unchecked")
-    private void writeHttpResponseForEventSource(HttpServletRequest request, HttpServletResponse response,
+    protected void writeHttpResponseForEventSource(HttpServletRequest request, HttpServletResponse response,
                                                  ContentType contentType,
                                                  final Response<?> handlerResponse) throws IOException {
         response.setContentType(EVENT_STREAM_CONTENT_TYPE);
