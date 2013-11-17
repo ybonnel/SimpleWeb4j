@@ -29,6 +29,7 @@ import org.eclipse.jetty.continuation.Continuation;
 import org.eclipse.jetty.continuation.ContinuationSupport;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.eclipse.jetty.util.MultiPartInputStreamParser;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -151,6 +152,9 @@ public class SimpleWeb4jHandler extends AbstractHandler {
         if (baseRequest.isHandled()) {
             return;
         }
+        if (request.getContentType() != null && request.getContentType().startsWith("multipart/form-data")) {
+            baseRequest.setAttribute(Request.__MULTIPART_CONFIG_ELEMENT, MultiPartInputStreamParser.__DEFAULT_MULTIPART_CONFIG);
+        }
         Route<?, ?> route = findRoute(request.getMethod(), request.getPathInfo());
         String callback = null;
         if (route == null && HttpMethod.fromValue(request.getMethod()) == HttpMethod.GET) {
@@ -186,7 +190,7 @@ public class SimpleWeb4jHandler extends AbstractHandler {
      */
     <P, R> void processRoute(HttpServletRequest request, HttpServletResponse response,
                              Route<P, R> route, String callback) throws IOException {
-        P param = getRouteParam(request, route);
+        P param = route.getRouteParam(request);
         try {
             beginTransaction();
             RouteParameters parameters = new RouteParameters(
@@ -407,25 +411,6 @@ public class SimpleWeb4jHandler extends AbstractHandler {
         if (SimpleEntityManager.hasEntities()) {
             SimpleEntityManager.openSession().beginTransaction();
         }
-    }
-
-    /**
-     * Parse the parameter of route (content of request body).
-     *
-     * @param request http request.
-     * @param route   the route.
-     * @param <P>     parameter type of route.
-     * @param <R>     return type of route.
-     * @return the parameters parsed.
-     * @throws IOException in case of IO error.
-     */
-    private <P, R> P getRouteParam(HttpServletRequest request, Route<P, R> route) throws IOException {
-        P param = null;
-        if (route.getParamType() != null && route.getParamType() != Void.class) {
-            param = ContentType.GSON.fromJson(request.getReader(), route.getParamType());
-            request.getReader().close();
-        }
-        return param;
     }
 
     /**
