@@ -19,6 +19,8 @@ package fr.ybonnel.simpleweb4j.handlers;
 
 import fr.ybonnel.simpleweb4j.exception.HttpErrorException;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -131,6 +133,22 @@ public abstract class Route<P, R> {
      */
     public ContentType getContentType() {
         return contentType;
+    }
+
+    /**
+     * Parse the parameter of route (content of request body).
+     *
+     * @param request http request.
+     * @return the parameters parsed.
+     * @throws java.io.IOException in case of IO error.
+     */
+    protected P getRouteParam(HttpServletRequest request) throws IOException {
+        P param = null;
+        if (getParamType() != null && getParamType() != Void.class) {
+            param = ContentType.GSON.fromJson(request.getReader(), getParamType());
+            request.getReader().close();
+        }
+        return param;
     }
 
     /**
