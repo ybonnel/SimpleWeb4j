@@ -38,6 +38,7 @@ import javax.servlet.http.Part;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -59,14 +60,12 @@ public class MultipartIntegrationTest {
     private static TestUploadImage lastCall = null;
     private int port;
     private Random random = new Random();
-    private SimpleWebTestUtil testUtil;
 
     @Before
     public void startServer() {
         resetDefaultValues();
         port = Integer.getInteger("test.http.port", random.nextInt(10000) + 10000);
         setPort(port);
-        testUtil = new SimpleWebTestUtil(port);
 
         resource(new RestResource<TestUploadImage>("multipart", TestUploadImage.class) {
             @Override
@@ -163,11 +162,18 @@ public class MultipartIntegrationTest {
         stop();
     }
 
+    private static String getProjectPath() {
+        URL resource = MultipartIntegrationTest.class.getClassLoader().getResource("");
+        assert resource != null;
+        String path = resource.getPath();
+        return path.substring(0, path.indexOf("target"));
+    }
+
     @Test
     public void should_servet_create() throws Exception {
         lastCall = null;
 
-        File image = new File("images/logo-simpleweb4j-140.png");
+        File image = new File(getProjectPath() + "images/logo-simpleweb4j-140.png");
 
         MultipartUtility multipart = new MultipartUtility("POST", "http://localhost:" + port + "/multipart");
         multipart.addFormField("data", "{'other':'multipartTest'}");
@@ -185,7 +191,7 @@ public class MultipartIntegrationTest {
     public void should_servet_update() throws Exception {
         lastCall = null;
 
-        File image = new File("images/logo-simpleweb4j-140.png");
+        File image = new File(getProjectPath() + "images/logo-simpleweb4j-140.png");
 
         MultipartUtility multipart = new MultipartUtility("PUT", "http://localhost:" + port +  "/multipart/123");
         multipart.addFormField("data", "{'other':'updateTest'}");
