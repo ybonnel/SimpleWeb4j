@@ -17,6 +17,8 @@
 package fr.ybonnel.simpleweb4j;
 
 
+import fr.ybonnel.simpleweb4j.handlers.FunctionnalRoute;
+import fr.ybonnel.simpleweb4j.handlers.FunctionnalRouteUtil;
 import fr.ybonnel.simpleweb4j.handlers.HttpMethod;
 import fr.ybonnel.simpleweb4j.handlers.SimpleWeb4jHandler;
 import fr.ybonnel.simpleweb4j.handlers.LessCompilerHandler;
@@ -110,7 +112,7 @@ public final class SimpleWeb4j {
         externalPublicResourcesPath = null;
         lessCompilerHandler.setPublicResourcePath(publicResourcesPath);
         initialized = false;
-        handlers = new ArrayList<Handler>(simpleWeb4jHandlers);
+        handlers = new ArrayList<>(simpleWeb4jHandlers);
         simpleWeb4jHandler.resetFilters();
         setEntitiesClasses();
     }
@@ -177,7 +179,7 @@ public final class SimpleWeb4j {
     /**
      * Handlers for jetty server.
      */
-    private static List<Handler> handlers = new ArrayList<Handler>(simpleWeb4jHandlers);
+    private static List<Handler> handlers = new ArrayList<>(simpleWeb4jHandlers);
 
     /**
      * Add you specific handler.
@@ -254,6 +256,21 @@ public final class SimpleWeb4j {
         simpleWeb4jHandler.addRoute(HttpMethod.GET, route);
     }
 
+
+    /**
+     * Add a new route for GET method.
+     * Use :
+     * <pre>{@code
+     * get("/resource", (param, routeParams) -> new Response&lt;&gt;("Hello World"));
+     * }</pre>
+     * @param routePath path of route.
+     * @param route your handle method.
+     * @param <R> type of the object to serialize in response body.
+     */
+    public static <R> void get(String routePath, FunctionnalRoute<Void, R> route) {
+        get(FunctionnalRouteUtil.functionnalRouteToRoute(route, routePath, Void.class));
+    }
+
     /**
      * Add a new route for GET method with jsonp support.
      * Use :
@@ -271,6 +288,21 @@ public final class SimpleWeb4j {
     }
 
 
+    /**
+     * Add a new route for GET method with jsonp support.
+     * Use :
+     * <pre>{@code
+     * jsonp("CALLBACK", "/resource", (param, routeParams) -> new Response&lt;&gt;("Hello World"));
+     * }</pre>
+     * @param callbackName name of query param with callback function name
+     * @param routePath path of route.
+     * @param route your handle method.
+     * @param <R> type of the object to serialize in response body.
+     */
+    public static <R> void jsonp(String callbackName, String routePath, FunctionnalRoute<Void, R> route) {
+        jsonp(callbackName, FunctionnalRouteUtil.functionnalRouteToRoute(route, routePath, Void.class));
+    }
+
 
     /**
      * Add a new route for POST method.
@@ -286,6 +318,37 @@ public final class SimpleWeb4j {
      */
     public static void post(Route route) {
         simpleWeb4jHandler.addRoute(HttpMethod.POST, route);
+    }
+
+    /**
+     * Add a new route for POST method.
+     * The request body is transform from json to object and path to param.
+     * Use :
+     * <pre>{@code
+     * post("/resource", String.class, (param, routeParams) -> new Response&lt;&gt;(param));
+     * }</pre>
+     * @param routePath routePath of the route.
+     * @param paramType class of the object in request's body.
+     * @param route your handle method.
+     * @param <P> type of the object in request's body.
+     * @param <R> type of the object to serialize in response body.
+     */
+    public static <P, R> void post(String routePath, Class<P> paramType, FunctionnalRoute<P, R> route) {
+        post(FunctionnalRouteUtil.functionnalRouteToRoute(route, routePath, paramType));
+    }
+
+    /**
+     * Add a new route for POST method.
+     * Use :
+     * <pre>{@code
+     * post("/resource", (param, routeParams) -> new Response&lt;&gt;("Hello World"));
+     * }</pre>
+     * @param routePath routePath of the route.
+     * @param route your handle method.
+     * @param <R> type of the object to serialize in response body.
+     */
+    public static <R> void post(String routePath, FunctionnalRoute<Void, R> route) {
+        post(FunctionnalRouteUtil.functionnalRouteToRoute(route, routePath, Void.class));
     }
 
     /**
@@ -306,6 +369,38 @@ public final class SimpleWeb4j {
 
 
     /**
+     * Add a new route for PUT method.
+     * The request body is transform from json to object and path to param.
+     * Use :
+     * <pre>{@code
+     * put("/resource", String.class, (param, routeParams) -> new Response&lt;&gt;(param));
+     * }</pre>
+     * @param routePath routePath of the route.
+     * @param paramType class of the object in request's body.
+     * @param route your handle method.
+     * @param <P> type of the object in request's body.
+     * @param <R> type of the object to serialize in response body.
+     */
+    public static <P, R> void put(String routePath, Class<P> paramType, FunctionnalRoute<P, R> route) {
+        put(FunctionnalRouteUtil.functionnalRouteToRoute(route, routePath, paramType));
+    }
+
+    /**
+     * Add a new route for PUT method.
+     * Use :
+     * <pre>{@code
+     * put("/resource", (param, routeParams) -> new Response&lt;&gt;("Hello world"));
+     * }</pre>
+     * @param routePath routePath of the route.
+     * @param route your handle method.
+     * @param <R> type of the object to serialize in response body.
+     */
+    public static <R> void put(String routePath, FunctionnalRoute<Void, R> route) {
+        put(FunctionnalRouteUtil.functionnalRouteToRoute(route, routePath, Void.class));
+    }
+
+
+    /**
      * Add a new route for DELETE method.
      * The request body is transform from json to object and path to param.
      * Use :
@@ -319,6 +414,37 @@ public final class SimpleWeb4j {
      */
     public static void delete(Route route) {
         simpleWeb4jHandler.addRoute(HttpMethod.DELETE, route);
+    }
+
+    /**
+     * Add a new route for DELETE method.
+     * The request body is transform from json to object and path to param.
+     * Use :
+     * <pre>{@code
+     * delete("/resource", String.class, (param, routeParams) -> new Response&lt;&gt;(param));
+     * }</pre>
+     * @param routePath routePath of the route.
+     * @param paramType class of the object in request's body.
+     * @param route your handle method.
+     * @param <P> type of the object in request's body.
+     * @param <R> type of the object to serialize in response body.
+     */
+    public static <P, R> void delete(String routePath, Class<P> paramType, FunctionnalRoute<P, R> route) {
+        delete(FunctionnalRouteUtil.functionnalRouteToRoute(route, routePath, paramType));
+    }
+
+    /**
+     * Add a new route for DELETE method.
+     * Use :
+     * <pre>{@code
+     * delete("/resource", String.class, (param, routeParams) -> new Response&lt;&gt;(param));
+     * }</pre>
+     * @param routePath routePath of the route.
+     * @param route your handle method.
+     * @param <R> type of the object to serialize in response body.
+     */
+    public static <R> void delete(String routePath, FunctionnalRoute<Void, R> route) {
+        delete(FunctionnalRouteUtil.functionnalRouteToRoute(route, routePath, Void.class));
     }
 
     /**
