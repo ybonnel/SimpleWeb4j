@@ -53,7 +53,7 @@ public abstract class RestResource<T> {
 
     /**
      * Method to implement for the get by id.
-     * This method will be invoked when a GET on "/<resourceRoute>/<id>" is detected.
+     * This method will be invoked when a GET on <code>/&lt;resourceRoute&gt;/&lt;id&gt;</code> is detected.
      * @param id id of the resource.
      * @return the resource.
      * @throws HttpErrorException any error you want to throw, for example, you can throw a new HttpErrorException(404) if resource is not found.
@@ -62,7 +62,7 @@ public abstract class RestResource<T> {
 
     /**
      * Method to implement for the get all.
-     * This method will be invoked when a GET on "/<resourceRoute>" is detected.
+     * This method will be invoked when a GET on <code>/&lt;resourceRoute&gt;</code> is detected.
      * @return the list of all resources.
      * @throws HttpErrorException any error you want to throw, for example,
      * you can throw a new HttpErrorException(204) if there is no resources (no content).
@@ -71,7 +71,7 @@ public abstract class RestResource<T> {
 
     /**
      * Method to implement for the update method.
-     * This method will be invoked when a PUT on "/<resourceRoute>/<id>" is detected.
+     * This method will be invoked when a PUT on <code>/&lt;resourceRoute&gt;/&lt;id&gt;</code> is detected.
      * @param id the id of the resource to update.
      * @param resource the resource.
      * @throws HttpErrorException any error you want to throw, for example, you can throw a new HttpErrorException(404) if resource is not found.
@@ -80,7 +80,7 @@ public abstract class RestResource<T> {
 
     /**
      * Method to implement to create of a resource.
-     * This method will be invoked when a POST on "/<resourceRoute>" is detected.
+     * This method will be invoked when a POST on <code>/&lt;resourceRoute&gt;</code> is detected.
      * @param resource resource to create.
      * @return result of creation.
      * @throws HttpErrorException any error you want to throw, for example,
@@ -90,7 +90,7 @@ public abstract class RestResource<T> {
 
     /**
      * Method to implement to delete a resource.
-     * This method will be invoked when a DELETE on "/<resourceRoute>/<id>" is detected.
+     * This method will be invoked when a DELETE on <code>/&lt;resourceRoute&gt;/&lt;id&gt;</code> is detected.
      * @param id id of the resource to delete.
      * @throws HttpErrorException any error you want to throw, for example, you can throw a new HttpErrorException(404) if resource is not found.
      */

@@ -44,8 +44,8 @@ import java.util.List;
 import java.util.Random;
 
 import static fr.ybonnel.simpleweb4j.SimpleWeb4j.*;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.TestCase.assertNull;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
 
 public class MultipartIntegrationTest {

@@ -55,6 +55,7 @@ public class SimpleWeb4jUnitTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testHandleAlreadyHandle() throws IOException, ServletException {
         Request request = makeMockedRequest(true, HttpMethod.GET, "path");
 

@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 /**
- * SimpleWeb4j is a simple web framework for java.<br/>
- * On server side, you can have json resource.<br/>
- * On client side, you can use angular.js (or any other MVC javascript framework).<br/>
- * On can have a look on samples in package fr.ybonnel.simpleweb4j.samples in test resources.<br/>
+ * <p>SimpleWeb4j is a simple web framework for java.</p>
+ * <p>On server side, you can have json resource.</p>
+ * <p>On client side, you can use angular.js (or any other MVC javascript framework).</p>
+ * <p>On can have a look on samples in package fr.ybonnel.simpleweb4j.samples in test resources.</p>
  *
  * The entry class is {@link fr.ybonnel.simpleweb4j.SimpleWeb4j} :
  * <ul>

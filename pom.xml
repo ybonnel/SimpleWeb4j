@@ -17,7 +17,7 @@
     </parent>
 
     <properties>
-        <project.java.version>1.7</project.java.version>
+        <project.java.version>1.8</project.java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
@@ -53,6 +53,7 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                     <source>${project.java.version}</source>
                     <target>${project.java.version}</target>
+					<compilerArgument>-Xlint:unchecked</compilerArgument>
                 </configuration>
             </plugin>
             <plugin>
@@ -67,6 +68,9 @@
                         </goals>
                     </execution>
                 </executions>
+				<configuration>
+					<finalName>${project.artifactId}-${project.version}-jdk8</finalName>
+				</configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -82,23 +86,25 @@
                 <configuration>
                     <encoding>${project.reporting.outputEncoding}</encoding>
                     <links>
-                        <link>http://docs.oracle.com/javase/7/docs/api/</link>
+                        <link>http://download.java.net/jdk8/docs/api/</link>
                     </links>
                     <version>true</version>
                     <show>public</show>
+					<finalName>${project.artifactId}-${project.version}-jdk8</finalName>
                 </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.14.1</version>
                 <configuration>
-                    <argLine>${jacoco.agent.argLine} -Dtest.http.port=${test.http.port}</argLine>
+                    <!--argLine>${jacoco.agent.argLine} -Dtest.http.port=${test.http.port}</argLine-->
+					<argLine>-Dtest.http.port=${test.http.port}</argLine>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.6.2.201302030002</version>
+                <version>0.6.4.201312101107</version>
                 <executions>
                     <execution>
                         <id>pre-test</id>
@@ -165,6 +171,14 @@
                 <version>3.2</version>
             </plugin>
 
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<classifier>jdk8</classifier>
+				</configuration>
+			</plugin>
+
         </plugins>
 
     </build>
@@ -215,7 +229,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.6.2.201302030002</version>
+                <version>0.6.4.201312101107</version>
             </plugin>
 
             <plugin>

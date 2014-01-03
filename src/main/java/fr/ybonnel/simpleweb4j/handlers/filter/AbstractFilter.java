@@ -21,10 +21,11 @@ import fr.ybonnel.simpleweb4j.handlers.Route;
 import fr.ybonnel.simpleweb4j.handlers.RouteParameters;
 
 /**
- * This abstract class is the class to implement to add a filter in the request handler.<br/>
- * To add a filter, you must call {@link fr.ybonnel.simpleweb4j.SimpleWeb4j#addFilter(AbstractFilter)}.<br/>
+ * <p>This abstract class is the class to implement to add a filter in the request handler.</p>
+ * <p>To add a filter, you must call {@link fr.ybonnel.simpleweb4j.SimpleWeb4j#addFilter(AbstractFilter)}.</p>
+ *
  * For example, filters can be used to add security based on a token passed throw query param :
- * <p><blockquote><pre>
+ * <pre>{@code
  * addFilter(new AbstractFilter() {
  *     {@literal @Override}
  *     public void handle(Route route, RouteParameters routeParams) throws HttpErrorException {
@@ -33,13 +34,13 @@ import fr.ybonnel.simpleweb4j.handlers.RouteParameters;
  *             throw new HttpErrorException(403, "unauthorized token");
  *         }
  *     }
- * }
- * </pre></blockquote></p>
+ * } }</pre>
  */
 public abstract class AbstractFilter {
 
     /**
-     * Implement this method to handle any request.<br/>
+     * Implement this method to handle any request.
+     *
      * In a filter you can :
      * <ul>
      *     <li>Access parameters of route (routeParams)</li>

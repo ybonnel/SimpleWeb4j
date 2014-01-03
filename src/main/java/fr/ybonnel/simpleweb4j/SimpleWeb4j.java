@@ -33,10 +33,10 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * This is the entry point for all your uses of SimpleWeb4j.<br/>
+ * <p>This is the entry point for all your uses of SimpleWeb4j.</p>
  *
  * Sample to use SimpleWeb4j :
- * <p><blockquote><pre>
+ * <pre>{@code
  * public class HelloWorld {
  *     public static void startServer(int port) {
  *         setPort(port);
@@ -47,8 +47,7 @@ import java.util.List;
  *     public static void main(String[] args) {
  *         startServer(9999);
  *     }
- * }
- * </pre></blockquote></p>
+ * } }</pre>
  */
 public final class SimpleWeb4j {
 
@@ -128,7 +127,7 @@ public final class SimpleWeb4j {
     }
 
     /**
-     * Change the path to public resources in classPath.<br/>
+     * <p>Change the path to public resources in classPath.</p>
      * Use : <code>setPublicResourcesPath("/fr/simpleweb4j/mypublicresources");</code>
      * @param newPublicResourcesPath the path you want.
      */
@@ -141,7 +140,7 @@ public final class SimpleWeb4j {
     }
 
     /**
-     * Change the path to public resources external (in filesystem).<br/>
+     * <p>Change the path to public resources external (in filesystem).</p>
      * Use : <code>setPublicResourcesPath("/var/www/mysite");</code>
      * @param newExternalPublicResourcesPath the path you want.
      */
@@ -243,13 +242,12 @@ public final class SimpleWeb4j {
     /**
      * Add a new route for GET method.
      * Use :
-     * <p><blockquote><pre>
+     * <pre>{@code
      * get(new Route&lt;Void, String&gt;("/resource", Void.class) {
      *     public Response&lt;String&gt; handle(Void param, RouteParameters routeParams) {
      *         return new Response&lt;&gt;("Hello World");
      *     }
-     * });
-     * </pre></blockquote></p>
+     * }); }</pre>
      * @param route your route.
      */
     public static void get(Route route) {
@@ -259,13 +257,12 @@ public final class SimpleWeb4j {
     /**
      * Add a new route for GET method with jsonp support.
      * Use :
-     * <p><blockquote><pre>
+     * <pre>{@code
      * jsonp("CALLBACK", new Route&lt;Void, String&gt;("/resource", Void.class) {
      *     public Response&lt;String&gt; handle(Void param, RouteParameters routeParams) {
      *         return new Response&lt;&gt;("Hello World");
      *     }
-     * });
-     * </pre></blockquote></p>
+     * }); }</pre>
      * @param callbackName name of query param with callback function name
      * @param route your route.
      */
@@ -279,13 +276,12 @@ public final class SimpleWeb4j {
      * Add a new route for POST method.
      * The request body is transform from json to object and path to param.
      * Use :
-     * <p><blockquote><pre>
+     * <pre>{@code
      * post(new Route&lt;String, String&gt;("/resource", String.class) {
      *     public Response&lt;String&gt; handle(String param, RouteParameters routeParams) {
      *         return new Response&lt;&gt;(param);
      *     }
-     * });
-     * </pre></blockquote></p>
+     * }); }</pre>
      * @param route your route.
      */
     public static void post(Route route) {
@@ -296,13 +292,12 @@ public final class SimpleWeb4j {
      * Add a new route for PUT method.
      * The request body is transform from json to object and path to param.
      * Use :
-     * <p><blockquote><pre>
+     * <pre>{@code
      * put(new Route&lt;String, String&gt;("/resource", String.class) {
      *     public Response&lt;String&gt; handle(String param, RouteParameters routeParams) {
      *         return new Response&lt;&gt;(param);
      *     }
-     * });
-     * </pre></blockquote></p>
+     * }); }</pre>
      * @param route your route.
      */
     public static void put(Route route) {
@@ -314,13 +309,12 @@ public final class SimpleWeb4j {
      * Add a new route for DELETE method.
      * The request body is transform from json to object and path to param.
      * Use :
-     * <p><blockquote><pre>
+     * <pre>{@code
      * delete(new Route&lt;Void, String&gt;("/resource", Void.class) {
      *     public Response&lt;String&gt; handle(Void param, RouteParameters routeParams) {
      *         return new Response&lt;&gt;("deleted");
      *     }
-     * });
-     * </pre></blockquote></p>
+     * }); }</pre>
      * @param route your route.
      */
     public static void delete(Route route) {
@@ -330,7 +324,7 @@ public final class SimpleWeb4j {
     /**
      * Add a new RestResource.
      * Use :
-     * <p><blockquote><pre>
+     * <pre>{@code
      * resource(new RestResource&lt;String&gt;("string", String.class) {
      *     {@literal @Override}
      *     public String getById(String id) throws HttpErrorException {
@@ -353,8 +347,7 @@ public final class SimpleWeb4j {
      *     {@literal @Override}
      *     public void delete(String id) throws HttpErrorException {
      *     }
-     * });
-     * </pre></blockquote></p>
+     * }); }</pre>
      *
      * @param restResource your REST resource.
      */
