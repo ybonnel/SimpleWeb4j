@@ -18,6 +18,7 @@
 package fr.ybonnel.simpleweb4j.handlers;
 
 import com.google.gson.Gson;
+import fr.ybonnel.simpleweb4j.SimpleWeb4j;
 import fr.ybonnel.simpleweb4j.entities.SimpleEntity;
 import fr.ybonnel.simpleweb4j.exception.FatalSimpleWeb4jException;
 import fr.ybonnel.simpleweb4j.exception.HttpErrorException;
@@ -36,6 +37,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Collections;
 
 import static fr.ybonnel.simpleweb4j.SimpleWeb4j.setEntitiesClasses;
@@ -50,7 +53,10 @@ public class SimpleWeb4jUnitTest {
     private SimpleWeb4jHandler handler;
 
     @Before
-    public void setup() {
+    public void setup() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        Method resetDefaultValues = SimpleWeb4j.class.getDeclaredMethod("resetDefaultValues");
+        resetDefaultValues.setAccessible(true);
+        resetDefaultValues.invoke(null);
         setEntitiesClasses();
     }
 
