@@ -18,6 +18,7 @@ package fr.ybonnel.simpleweb4j.server;
 
 
 import fr.ybonnel.simpleweb4j.exception.FatalSimpleWeb4jException;
+import fr.ybonnel.simpleweb4j.handlers.webjars.WebjarHandler;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
@@ -68,37 +69,34 @@ public class SimpleWeb4jServer {
     public SimpleWeb4jServer(int port, String publicResourcesPath,
                              String externalPublicResourcesPath,
                              List<Handler> specificHandlers) {
-        jettyServer = new Server(port);
 
-        ResourceHandler resourceHandler = new ResourceHandler();
-        resourceHandler.setBaseResource(Resource.newClassPathResource(publicResourcesPath));
-        resourceHandler.setWelcomeFiles(new String[]{"index.html"});
+        try {
+            jettyServer = new Server(port);
 
-        ResourceHandler internalResourceHandler = new ResourceHandler();
-        internalResourceHandler.setBaseResource(Resource.newClassPathResource("/fr/ybonnel/simpleweb4j/public"));
-        internalResourceHandler.setWelcomeFiles(new String[]{"index.html"});
+            ResourceHandler resourceHandler = new ResourceHandler();
+            resourceHandler.setBaseResource(Resource.newClassPathResource(publicResourcesPath));
+            resourceHandler.setWelcomeFiles(new String[]{"index.html"});
 
-        HandlerList handlers = new HandlerList();
+            HandlerList handlers = new HandlerList();
 
-        Collections.reverse(specificHandlers);
+            Collections.reverse(specificHandlers);
 
-        List<Handler> handlersList = new ArrayList<>(specificHandlers);
-        handlersList.add(resourceHandler);
+            List<Handler> handlersList = new ArrayList<>(specificHandlers);
+            handlersList.add(resourceHandler);
 
-        if (externalPublicResourcesPath != null) {
-            try {
+            if (externalPublicResourcesPath != null) {
                 ResourceHandler externalResourceHandler = contructExternalResourceHandler(externalPublicResourcesPath);
                 handlersList.add(externalResourceHandler);
-            } catch (IOException e) {
-                throw new FatalSimpleWeb4jException(e);
             }
+
+            handlersList.add(new WebjarHandler());
+
+            handlers.setHandlers(handlersList.toArray(new Handler[handlersList.size()]));
+
+            jettyServer.setHandler(handlers);
+        } catch (IOException e) {
+            throw new FatalSimpleWeb4jException(e);
         }
-
-        handlersList.add(internalResourceHandler);
-
-        handlers.setHandlers(handlersList.toArray(new Handler[handlersList.size()]));
-
-        jettyServer.setHandler(handlers);
     }
 
     /**
