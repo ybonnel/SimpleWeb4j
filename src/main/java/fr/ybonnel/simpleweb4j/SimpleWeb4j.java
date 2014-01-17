@@ -112,7 +112,7 @@ public final class SimpleWeb4j {
         externalPublicResourcesPath = null;
         lessCompilerHandler.setPublicResourcePath(publicResourcesPath);
         initialized = false;
-        handlers = new ArrayList<>(simpleWeb4jHandlers);
+        handlers = new ArrayList<Handler>(simpleWeb4jHandlers);
         simpleWeb4jHandler.resetFilters();
         setEntitiesClasses();
     }
@@ -179,7 +179,7 @@ public final class SimpleWeb4j {
     /**
      * Handlers for jetty server.
      */
-    private static List<Handler> handlers = new ArrayList<>(simpleWeb4jHandlers);
+    private static List<Handler> handlers = new ArrayList<Handler>(simpleWeb4jHandlers);
 
     /**
      * Add you specific handler.
