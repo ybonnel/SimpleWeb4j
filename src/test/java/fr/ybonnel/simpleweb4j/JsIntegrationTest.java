@@ -17,7 +17,6 @@
 package fr.ybonnel.simpleweb4j;
 
 import fr.ybonnel.simpleweb4j.util.SimpleWebTestUtil;
-import org.apache.commons.lang3.time.DateUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -68,7 +67,7 @@ public class JsIntegrationTest {
     public void should_serve_angular_library() throws Exception {
         SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("GET", "/webjars/angularjs/1.2.8/angular.js");
         assertEquals(200, response.status);
-        assertFalse(response.body.isEmpty());
+        assertFalse(response.body, response.body.isEmpty());
 
         response = testUtil.doMethod("GET", "/webjars/angularjs/1.2.8/angular.min.js");
         assertEquals(200, response.status);

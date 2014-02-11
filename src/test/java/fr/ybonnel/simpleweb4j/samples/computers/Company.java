@@ -17,7 +17,6 @@
 package fr.ybonnel.simpleweb4j.samples.computers;
 
 import fr.ybonnel.simpleweb4j.model.SimpleEntityManager;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -39,10 +38,5 @@ public class Company {
     }
 
     public Company() {
-    }
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this);
     }
 }

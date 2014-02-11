@@ -16,9 +16,10 @@
  */
 package fr.ybonnel.simpleweb4j.handlers;
 
+import com.github.sommeri.less4j.Less4jException;
+import com.github.sommeri.less4j.LessCompiler;
+import com.github.sommeri.less4j.core.DefaultLessCompiler;
 import fr.ybonnel.simpleweb4j.exception.CompileErrorException;
-import org.lesscss.LessCompiler;
-import org.lesscss.LessException;
 
 /**
  * Compiler for less files.
@@ -33,7 +34,7 @@ public class LessCompilerHandler extends AbstractCompilerHandler {
          * Less compiler.
          */
         //CHECKSTYLE:OFF
-        public static final LessCompiler compiler = new LessCompiler();
+        public static final LessCompiler compiler = new DefaultLessCompiler();
         //CHECKSTYLE:ON
     }
 
@@ -55,8 +56,8 @@ public class LessCompilerHandler extends AbstractCompilerHandler {
     @Override
     protected String compile(String source) throws CompileErrorException {
         try {
-            return LessCompilerHelper.compiler.compile(source);
-        } catch (LessException lessException) {
+            return LessCompilerHelper.compiler.compile(source).getCss();
+        } catch (Less4jException lessException) {
             throw new CompileErrorException(lessException);
         }
     }

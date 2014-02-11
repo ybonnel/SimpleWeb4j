@@ -68,7 +68,7 @@ public class LessTest {
     public void should_have_well_compile_error() throws Exception {
         SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("GET", "/testlessError.less");
         assertEquals(500, response.status);
-        assertTrue(response.body.contains("LessException"));
+        assertTrue(response.body.contains("Less4jException"));
     }
 
     @Test

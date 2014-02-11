@@ -17,7 +17,6 @@
 package fr.ybonnel.simpleweb4j.handlers.webjars;
 
 import fr.ybonnel.simpleweb4j.types.ContentTypes;
-import org.apache.commons.lang3.time.DateUtils;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
@@ -28,8 +27,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Handler to support webjars.
@@ -43,27 +42,7 @@ public class WebjarHandler extends AbstractHandler {
     /**
      * Start time.
      */
-    private final Date startTime = new Date();
-
-    /**
-     * Pattern for http dates.
-     */
-    private static final String RFC1123_DATE_PATTERN = "EEE, dd MMM yyyy HH:mm:ss zzz";
-    /**
-     * Formatter in thread local.
-     */
-    private final ThreadLocal<SimpleDateFormat> rfc1123Format = new ThreadLocal<>();
-
-    /**
-     * Get RFC1123 date formatter.
-     * @return date formatter.
-     */
-    public SimpleDateFormat getRfc1123Format() {
-        if (rfc1123Format.get() == null) {
-            rfc1123Format.set(new SimpleDateFormat(RFC1123_DATE_PATTERN));
-        }
-        return rfc1123Format.get();
-    }
+    private final ZonedDateTime startTime = ZonedDateTime.now();
 
 
     /**
@@ -102,8 +81,8 @@ public class WebjarHandler extends AbstractHandler {
              OutputStream out = response.getOutputStream()) {
             response.setContentType(ContentTypes.get(Paths.get(baseRequest.getPathInfo())));
             response.addHeader("cache-control", "public, max-age=31536000");
-            response.addHeader("last-modified", getRfc1123Format().format(startTime));
-            response.addHeader("expires", getRfc1123Format().format(DateUtils.addWeeks(new Date(), 1)));
+            response.addHeader("last-modified", startTime.format(DateTimeFormatter.RFC_1123_DATE_TIME));
+            response.addHeader("expires", ZonedDateTime.now().plusWeeks(1).format(DateTimeFormatter.RFC_1123_DATE_TIME));
 
             int count;
             byte[] buffer = new byte[BUFFER_SIZE];
