@@ -5,7 +5,7 @@
     <groupId>fr.ybonnel</groupId>
     <artifactId>simpleweb4j</artifactId>
     <packaging>jar</packaging>
-    <version>0.0.7-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <name>SimpleWeb4j</name>
     <url>https://ybonnel.github.com/SimpleWeb4j</url>
     <description>A very simple web stack.</description>
@@ -69,7 +69,7 @@
                     </execution>
                 </executions>
 				<configuration>
-					<finalName>${project.artifactId}-${project.version}-jdk8</finalName>
+					<finalName>${project.artifactId}-${project.version}</finalName>
 				</configuration>
             </plugin>
             <plugin>
@@ -90,7 +90,7 @@
                     </links>
                     <version>true</version>
                     <show>public</show>
-					<finalName>${project.artifactId}-${project.version}-jdk8</finalName>
+					<finalName>${project.artifactId}-${project.version}</finalName>
                 </configuration>
             </plugin>
             <plugin>
@@ -174,9 +174,6 @@
 			<plugin>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>2.4</version>
-				<configuration>
-					<classifier>jdk8</classifier>
-				</configuration>
 			</plugin>
 
         </plugins>
