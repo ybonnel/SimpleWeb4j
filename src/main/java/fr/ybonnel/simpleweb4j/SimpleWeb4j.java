@@ -112,7 +112,7 @@ public final class SimpleWeb4j {
         externalPublicResourcesPath = null;
         lessCompilerHandler.setPublicResourcePath(publicResourcesPath);
         initialized = false;
-        handlers = new ArrayList<Handler>(simpleWeb4jHandlers);
+        handlers = new ArrayList<>(simpleWeb4jHandlers);
         simpleWeb4jHandler.resetFilters();
         setEntitiesClasses();
     }
@@ -252,7 +252,7 @@ public final class SimpleWeb4j {
      * }); }</pre>
      * @param route your route.
      */
-    public static void get(Route route) {
+    private static void get(Route route) {
         simpleWeb4jHandler.addRoute(HttpMethod.GET, route);
     }
 
@@ -283,7 +283,7 @@ public final class SimpleWeb4j {
      * @param callbackName name of query param with callback function name
      * @param route your route.
      */
-    public static void jsonp(String callbackName, Route route) {
+    private static void jsonp(String callbackName, Route route) {
         simpleWeb4jHandler.addJsonpRoute(route, callbackName);
     }
 
@@ -316,7 +316,7 @@ public final class SimpleWeb4j {
      * }); }</pre>
      * @param route your route.
      */
-    public static void post(Route route) {
+    private static void post(Route route) {
         simpleWeb4jHandler.addRoute(HttpMethod.POST, route);
     }
 
@@ -363,7 +363,7 @@ public final class SimpleWeb4j {
      * }); }</pre>
      * @param route your route.
      */
-    public static void put(Route route) {
+    private static void put(Route route) {
         simpleWeb4jHandler.addRoute(HttpMethod.PUT, route);
     }
 
@@ -412,7 +412,7 @@ public final class SimpleWeb4j {
      * }); }</pre>
      * @param route your route.
      */
-    public static void delete(Route route) {
+    private static void delete(Route route) {
         simpleWeb4jHandler.addRoute(HttpMethod.DELETE, route);
     }
 

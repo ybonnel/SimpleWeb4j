@@ -16,12 +16,8 @@
  */
 package fr.ybonnel.simpleweb4j;
 
-import fr.ybonnel.simpleweb4j.exception.HttpErrorException;
 import fr.ybonnel.simpleweb4j.handlers.Response;
-import fr.ybonnel.simpleweb4j.handlers.Route;
-import fr.ybonnel.simpleweb4j.handlers.RouteParameters;
 import fr.ybonnel.simpleweb4j.handlers.eventsource.EndOfStreamException;
-import fr.ybonnel.simpleweb4j.handlers.eventsource.ReactiveHandler;
 import fr.ybonnel.simpleweb4j.handlers.eventsource.ReactiveStream;
 import fr.ybonnel.simpleweb4j.handlers.eventsource.Stream;
 import fr.ybonnel.simpleweb4j.util.SimpleWebTestUtil;
@@ -33,7 +29,11 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Random;
 
-import static fr.ybonnel.simpleweb4j.SimpleWeb4j.*;
+import static fr.ybonnel.simpleweb4j.SimpleWeb4j.get;
+import static fr.ybonnel.simpleweb4j.SimpleWeb4j.resetDefaultValues;
+import static fr.ybonnel.simpleweb4j.SimpleWeb4j.setPort;
+import static fr.ybonnel.simpleweb4j.SimpleWeb4j.start;
+import static fr.ybonnel.simpleweb4j.SimpleWeb4j.stop;
 import static org.junit.Assert.assertEquals;
 
 public class EventSourceTest {
@@ -49,10 +49,8 @@ public class EventSourceTest {
         setPort(port);
         testUtil = new SimpleWebTestUtil(port);
 
-        get(new Route<Void, Stream<String>>("/eventsource", Void.class) {
-            @Override
-            public Response<Stream<String>> handle(Void param, RouteParameters routeParams) {
-                return new Response<Stream<String>>(new Stream<String>() {
+        get("/eventsource", (param, routeParams) ->
+                new Response<>(new Stream<String>() {
 
                     int index = 0;
 
@@ -72,29 +70,19 @@ public class EventSourceTest {
                     public int timeBeforeNextEvent() {
                         return 1;
                     }
-                });
-            }
-        });
+                })
+         );
 
-        get(new Route<Void, ReactiveStream<String>>("/reactive", Void.class) {
-
-            @Override
-            public Response<ReactiveStream<String>> handle(Void param, RouteParameters routeParams) throws HttpErrorException {
-                return new Response<ReactiveStream<String>>(new ReactiveStream<String>() {
-
-                    @Override
-                    public void setReactiveHandler(ReactiveHandler<String> reactiveHandler) {
-                        for (int index = 0; index < 10; index++) {
-                            try {
-                                reactiveHandler.next(Integer.toString(index));
-                            } catch (EndOfStreamException ignore) {
-                            }
+        get("/reactive", (param, routeParams) ->
+                new Response<>((ReactiveStream<String>) reactiveHandler -> {
+                    for (int index = 0; index < 10; index++) {
+                        try {
+                            reactiveHandler.next(Integer.toString(index));
+                        } catch (EndOfStreamException ignore) {
                         }
-                        reactiveHandler.close();
                     }
-                });
-            }
-        });
+                    reactiveHandler.close();
+                }));
 
         start(false);
     }

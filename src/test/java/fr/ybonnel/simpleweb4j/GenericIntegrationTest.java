@@ -19,20 +19,17 @@ package fr.ybonnel.simpleweb4j;
 
 import fr.ybonnel.simpleweb4j.exception.HttpErrorException;
 import fr.ybonnel.simpleweb4j.handlers.Response;
-import fr.ybonnel.simpleweb4j.handlers.Route;
-import fr.ybonnel.simpleweb4j.handlers.RouteParameters;
 import fr.ybonnel.simpleweb4j.util.SimpleWebTestUtil;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Random;
 
 import static fr.ybonnel.simpleweb4j.SimpleWeb4j.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 public class GenericIntegrationTest {
 
@@ -48,58 +45,30 @@ public class GenericIntegrationTest {
         setPort(port);
         testUtil = new SimpleWebTestUtil(port);
 
-        jsonp("CALLBACK", new Route<Void, String>("/jsonp", Void.class) {
-            @Override
-            public Response<String> handle(Void param, RouteParameters routeParams) {
-                return new Response<>("Hello World");
+        jsonp("CALLBACK", "/jsonp", (param, routeParams) -> new Response<>("Hello World"));
+
+        get("/resource", (param, routeParams) -> new Response<>("Hello World"));
+
+        get("/resource/:name", (param, routeParams) -> {
+            if (routeParams.getParam("name").equals("notfound")) {
+                throw new HttpErrorException(404);
             }
+            return new Response<>("Hello " + routeParams.getParam("name"));
         });
 
-        get(new Route<Void, String>("/resource", Void.class) {
-            @Override
-            public Response<String> handle(Void param, RouteParameters routeParams) {
-                return new Response<>("Hello World");
-            }
-        });
+        post("/resource", String.class, (param, routeParams) -> new Response<>("Hello " + param));
 
-        get(new Route<Void, String>("/resource/:name", Void.class) {
-            @Override
-            public Response<String> handle(Void param, RouteParameters routeParams) throws HttpErrorException {
-                if (routeParams.getParam("name").equals("notfound")) {
-                    throw new HttpErrorException(404);
-                }
-                return new Response<>("Hello " + routeParams.getParam("name"));
-            }
-        });
+        post("/resource-ss-params", (param, routeParams) -> new Response<>("resource-ss-params"));
 
-        post(new Route<String, String>("/resource", String.class) {
+        get("/othercode", (param, routeParams) -> new Response<>("I m a teapot", 418));
 
-            @Override
-            public Response<String> handle(String param, RouteParameters routeParams) throws HttpErrorException {
-                return new Response<>("Hello " + param);
-            }
-        });
+        put("/resource/put", String.class, (param, routeParams) -> new Response<>("Hello " + param));
 
-        get(new Route<Void, String>("/othercode", Void.class) {
-            @Override
-            public Response<String> handle(Void param, RouteParameters routeParams) {
-                return new Response<>("I m a teapot", 418);
-            }
-        });
+        put("/put-ss-param", (param, routeParams) -> new Response<>("put-ss-param"));
 
-        put(new Route<String, String>("/resource/put", String.class) {
-            @Override
-            public Response<String> handle(String param, RouteParameters routeParams) throws HttpErrorException {
-                return new Response<>("Hello " + param);
-            }
-        });
+        delete("/resource/delete", (param, routeParams) -> new Response<>("deleted"));
 
-        delete(new Route<Void, String>("/resource/delete", Void.class) {
-            @Override
-            public Response<String> handle(Void param, RouteParameters routeParams) throws HttpErrorException {
-                return new Response<>("deleted");
-            }
-        });
+        delete("/resource/delete/param", String.class, (param, routeParams) -> new Response<>("deleted " + param));
 
         start(false);
     }
@@ -147,6 +116,14 @@ public class GenericIntegrationTest {
     }
 
     @Test
+    public void can_post_with_no_param() throws Exception {
+        SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("POST", "/resource-ss-params");
+        assertEquals(201, response.status);
+        assertEquals(CONTENT_TYPE, response.contentType);
+        assertEquals("\"resource-ss-params\"", response.body);
+    }
+
+    @Test
     public void can_answer_specific_http_code() throws Exception {
         SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("GET", "/othercode");
         assertEquals(418, response.status);
@@ -163,11 +140,27 @@ public class GenericIntegrationTest {
     }
 
     @Test
+    public void can_answer_to_put_method_with_no_param() throws Exception {
+        SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("PUT", "/put-ss-param");
+        assertEquals(200, response.status);
+        assertEquals(CONTENT_TYPE, response.contentType);
+        assertEquals("\"put-ss-param\"", response.body);
+    }
+
+    @Test
     public void can_answer_to_delete_method() throws Exception {
         SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("DELETE", "/resource/delete");
         assertEquals(200, response.status);
         assertEquals(CONTENT_TYPE, response.contentType);
         assertEquals("\"deleted\"", response.body);
+    }
+
+    @Test
+    public void can_answer_to_delete_method_with_param() throws Exception {
+        SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("DELETE", "/resource/delete/param", "\"myName\"");
+        assertEquals(200, response.status);
+        assertEquals(CONTENT_TYPE, response.contentType);
+        assertEquals("\"deleted myName\"", response.body);
     }
 
     @Test

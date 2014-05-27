@@ -16,15 +16,13 @@
  */
 package fr.ybonnel.simpleweb4j.samples.forms;
 
-import fr.ybonnel.simpleweb4j.exception.HttpErrorException;
 import fr.ybonnel.simpleweb4j.handlers.Response;
-import fr.ybonnel.simpleweb4j.handlers.Route;
-import fr.ybonnel.simpleweb4j.handlers.RouteParameters;
 import fr.ybonnel.simpleweb4j.samples.forms.model.Countries;
 
-import java.util.List;
-
-import static fr.ybonnel.simpleweb4j.SimpleWeb4j.*;
+import static fr.ybonnel.simpleweb4j.SimpleWeb4j.get;
+import static fr.ybonnel.simpleweb4j.SimpleWeb4j.setPort;
+import static fr.ybonnel.simpleweb4j.SimpleWeb4j.setPublicResourcesPath;
+import static fr.ybonnel.simpleweb4j.SimpleWeb4j.start;
 
 public class Forms {
 
@@ -32,12 +30,7 @@ public class Forms {
         setPort(port);
         setPublicResourcesPath("/fr/ybonnel/simpleweb4j/samples/forms/public");
 
-        get(new Route<Void, List<String>>("countries", Void.class) {
-            @Override
-            public Response<List<String>> handle(Void param, RouteParameters routeParams) throws HttpErrorException {
-                return new Response<>(Countries.list());
-            }
-        });
+        get("countries", (param, routeParams) -> new Response<>(Countries.list()));
 
         start();
     }
