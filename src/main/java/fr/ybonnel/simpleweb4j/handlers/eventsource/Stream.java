@@ -17,6 +17,7 @@
 package fr.ybonnel.simpleweb4j.handlers.eventsource;
 
 import java.io.IOException;
+import java.util.function.Supplier;
 
 /**
  * Stream interface, useful for EventSource.
@@ -36,6 +37,25 @@ public interface Stream<T> {
      * @return time before next event in milliseconds.
      */
     int timeBeforeNextEvent();
+
+    /**
+     * Create a stream.
+     * @param supplier supplier of value.
+     * @param timeBetweenNext time before next event in milliseconds.
+     * @param <T> type of event.
+     * @return constructed stream.
+     */
+    public static <T> Stream<T> newStream(Supplier<T> supplier, int timeBetweenNext) {
+        return new Stream<T>() {
+            @Override public T next() throws IOException {
+                return supplier.get();
+            }
+
+            @Override public int timeBeforeNextEvent() {
+                return timeBetweenNext;
+            }
+        };
+    }
 
 
 
