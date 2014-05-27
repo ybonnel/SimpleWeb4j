@@ -45,7 +45,7 @@ public interface Stream<T> {
      * @param <T> type of event.
      * @return constructed stream.
      */
-    public static <T> Stream<T> newStream(Supplier<T> supplier, int timeBetweenNext) {
+    static <T> Stream<T> newStream(Supplier<T> supplier, int timeBetweenNext) {
         return new Stream<T>() {
             @Override public T next() throws IOException {
                 return supplier.get();
