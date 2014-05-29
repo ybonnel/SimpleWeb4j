@@ -32,7 +32,7 @@ All SimpleWeb4j is under the Apache License, Version 2.0
 <dependency>
     <groupId>fr.ybonnel</groupId>
     <artifactId>simpleweb4j</artifactId>
-    <version>0.0.5</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 
@@ -97,12 +97,7 @@ public class MyApplication {
             }
         });
         // Get sample
-        get(new Route<Void, String>("/hello", Void.class) {
-            @Override
-            public Response<String> handle(Void param, RouteParameters routeParams) {
-                return new Response<>("Hello World");
-            }
-        });
+        get("/hello", () -> new Response<>("Hello World"));
 
         start();
     }
