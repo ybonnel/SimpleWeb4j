@@ -42,11 +42,29 @@ public final class FunctionnalRouteUtil {
      * @return the route converted from functionnal route.
      */
     @SuppressWarnings("unchecked")
-    public static <P, R> Route<P, R> functionnalRouteToRoute(FunctionnalRoute functionnalRoute, String routePath, Class paramType) {
+    public static <P, R> Route<P, R> functionnalRouteToRoute(FunctionnalRoute<P, R> functionnalRoute, String routePath, Class paramType) {
         return new Route<P, R>(routePath, paramType) {
             @Override
             public Response handle(P param, RouteParameters routeParams) throws HttpErrorException {
                 return functionnalRoute.handle(param, routeParams);
+            }
+        };
+    }
+
+    /**
+     * Convert a {@link fr.ybonnel.simpleweb4j.handlers.FunctionnalRouteWithNoParam}
+     * to {@link fr.ybonnel.simpleweb4j.handlers.Route}.
+     * @param functionnalRoute the functionnalRoute to convert.
+     * @param routePath path of route.
+     * @param <R> return type of route.
+     * @return the route converted from functionnal route.
+     */
+    @SuppressWarnings("unchecked")
+    public static <R> Route<Void, R> functionnalRouteToRoute(FunctionnalRouteWithNoParam<R> functionnalRoute, String routePath) {
+        return new Route<Void, R>(routePath, Void.class) {
+            @Override
+            public Response handle(Void param, RouteParameters routeParams) throws HttpErrorException {
+                return functionnalRoute.handle();
             }
         };
     }

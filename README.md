@@ -32,7 +32,7 @@ All SimpleWeb4j is under the Apache License, Version 2.0
 <dependency>
     <groupId>fr.ybonnel</groupId>
     <artifactId>simpleweb4j</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
 </dependency>
 ```
 
