@@ -45,9 +45,9 @@ public class GenericIntegrationTest {
         setPort(port);
         testUtil = new SimpleWebTestUtil(port);
 
-        jsonp("CALLBACK", "/jsonp", (param, routeParams) -> new Response<>("Hello World"));
+        jsonp("CALLBACK", "/jsonp", () -> new Response<>("Hello World"));
 
-        get("/resource", (param, routeParams) -> new Response<>("Hello World"));
+        get("/resource", () -> new Response<>("Hello World"));
 
         get("/resource/:name", (param, routeParams) -> {
             if (routeParams.getParam("name").equals("notfound")) {
@@ -58,15 +58,15 @@ public class GenericIntegrationTest {
 
         post("/resource", String.class, (param, routeParams) -> new Response<>("Hello " + param));
 
-        post("/resource-ss-params", (param, routeParams) -> new Response<>("resource-ss-params"));
+        post("/resource-ss-params", () -> new Response<>("resource-ss-params"));
 
         get("/othercode", (param, routeParams) -> new Response<>("I m a teapot", 418));
 
         put("/resource/put", String.class, (param, routeParams) -> new Response<>("Hello " + param));
 
-        put("/put-ss-param", (param, routeParams) -> new Response<>("put-ss-param"));
+        put("/put-ss-param", () -> new Response<>("put-ss-param"));
 
-        delete("/resource/delete", (param, routeParams) -> new Response<>("deleted"));
+        delete("/resource/delete", () -> new Response<>("deleted"));
 
         delete("/resource/delete/param", String.class, (param, routeParams) -> new Response<>("deleted " + param));
 

@@ -35,14 +35,16 @@ public class WebSocketTest {
         websocket("/websocket/:name", (routeParams) -> new SimpleWebSocketListener<String, String>(String.class){
             @Override
             public void onConnect(WebSocketSession<String> session) {
+                super.onConnect(session);
                 try {
-                    session.sendMessage("Hello " + routeParams.getParam("name"));
+                    session.sendMessage("Hello " + routeParams.getParam("name") + routeParams.getParam("suffixe"));
                 } catch (IOException ignore) {
 
                 }
             }
 
             @Override public void onMessage(String message) {
+                super.onMessage(message);
                 messagesReceived.add(message);
             }
         });
@@ -71,7 +73,7 @@ public class WebSocketTest {
                         clientReceived.add(message);
                     }
                 },
-                new URI("ws://localhost:" + port + "/websocket/world"))
+                new URI("ws://localhost:" + port + "/websocket/world?suffixe=!"))
                 .get();
 
         long timeBeforeWait = System.nanoTime();
@@ -93,7 +95,7 @@ public class WebSocketTest {
         session.close();
 
         assertEquals(1, clientReceived.size());
-        assertEquals("\"Hello world\"", clientReceived.get(0));
+        assertEquals("\"Hello world!\"", clientReceived.get(0));
 
 
         assertEquals(1, messagesReceived.size());
