@@ -21,11 +21,6 @@ import fr.ybonnel.simpleweb4j.exception.HttpErrorException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Route for SimpleWeb4j.
@@ -37,17 +32,7 @@ import java.util.Map;
  * @see fr.ybonnel.simpleweb4j.SimpleWeb4j#put(Route)
  * @see fr.ybonnel.simpleweb4j.SimpleWeb4j#delete(Route)
  */
-public abstract class Route<P, R> {
-
-    /**
-     * Path of the route.
-     */
-    private String routePath;
-
-    /**
-     * Path in segment (split on '/').
-     */
-    private List<String> pathInSegments;
+public abstract class Route<P, R> extends CommonRoute {
 
     /**
      * Class of the parameter (object in request's body).
@@ -78,14 +63,8 @@ public abstract class Route<P, R> {
      * @param contentType contentType of the object in request's body.
      */
     public Route(String routePath, Class<P> paramType, ContentType contentType) {
-        this.routePath = routePath;
+        super(routePath);
         this.contentType = contentType;
-        pathInSegments = new ArrayList<>();
-        for (String path : routePath.split("\\/")) {
-            if (path.length() > 0) {
-                pathInSegments.add(path);
-            }
-        }
         this.paramType = paramType;
     }
 
@@ -94,38 +73,6 @@ public abstract class Route<P, R> {
      */
     public Class<P> getParamType() {
         return paramType;
-    }
-
-    /**
-     * Used to know is a route is valid for a routePath.
-     *
-     * @param path the routePath.
-     * @return true if the route is valid.
-     */
-    protected boolean isThisPath(String path) {
-        if (this.routePath.equals(path)) {
-            return true;
-        }
-        List<String> queryPath = new ArrayList<>();
-        for (String segment : path.split("\\/")) {
-            if (segment.length() > 0) {
-                queryPath.add(segment);
-            }
-        }
-        if (queryPath.size() == pathInSegments.size()) {
-            boolean same = true;
-            for (int index = 0; index < queryPath.size(); index++) {
-                if (!pathInSegments.get(index).startsWith(":")
-                        && !pathInSegments.get(index).equals(queryPath.get(index))) {
-                    same = false;
-                    break;
-                }
-            }
-            return same;
-        } else {
-            return false;
-        }
-
     }
 
     /**
@@ -149,30 +96,6 @@ public abstract class Route<P, R> {
             request.getReader().close();
         }
         return param;
-    }
-
-    /**
-     * Get the parameters in route.
-     *
-     * @param pathInfo        the routePath.
-     * @param queryParameters parameters from query.
-     * @return the map of parameters in routePath.
-     */
-    protected Map<String, String> getRouteParams(String pathInfo, Map<String, String> queryParameters) {
-        Map<String, String> params = new HashMap<>();
-        List<String> queryPath = new ArrayList<>();
-        for (String segment : pathInfo.split("\\/")) {
-            if (segment.length() > 0) {
-                queryPath.add(segment);
-            }
-        }
-        for (int index = 0; index < queryPath.size(); index++) {
-            if (pathInSegments.get(index).startsWith(":")) {
-                params.put(pathInSegments.get(index).substring(1), queryPath.get(index));
-            }
-        }
-        params.putAll(queryParameters);
-        return Collections.unmodifiableMap(params);
     }
 
     /**

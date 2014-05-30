@@ -87,7 +87,7 @@ public class SimpleWeb4jHandler extends AbstractHandler {
      */
     public void addRoute(HttpMethod httpMethod, Route route) {
         if (!routes.containsKey(httpMethod)) {
-            routes.put(httpMethod, new ArrayList<Route>());
+            routes.put(httpMethod, new ArrayList<>());
         }
         routes.get(httpMethod).add(route);
     }

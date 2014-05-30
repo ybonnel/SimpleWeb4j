@@ -21,11 +21,14 @@ import fr.ybonnel.simpleweb4j.handlers.FunctionnalRoute;
 import fr.ybonnel.simpleweb4j.handlers.FunctionnalRouteUtil;
 import fr.ybonnel.simpleweb4j.handlers.FunctionnalRouteWithNoParam;
 import fr.ybonnel.simpleweb4j.handlers.HttpMethod;
+import fr.ybonnel.simpleweb4j.handlers.SimpleWeb4JWSHandler;
 import fr.ybonnel.simpleweb4j.handlers.SimpleWeb4jHandler;
 import fr.ybonnel.simpleweb4j.handlers.LessCompilerHandler;
 import fr.ybonnel.simpleweb4j.handlers.Route;
+import fr.ybonnel.simpleweb4j.handlers.WebSocketRoute;
 import fr.ybonnel.simpleweb4j.handlers.filter.AbstractFilter;
 import fr.ybonnel.simpleweb4j.handlers.resource.RestResource;
+import fr.ybonnel.simpleweb4j.handlers.websocket.WebSocketAdapter;
 import fr.ybonnel.simpleweb4j.model.SimpleEntityManager;
 import fr.ybonnel.simpleweb4j.server.SimpleWeb4jServer;
 import org.eclipse.jetty.server.Handler;
@@ -37,7 +40,7 @@ import java.util.List;
 
 /**
  * <p>This is the entry point for all your uses of SimpleWeb4j.</p>
- *
+ * <p>
  * Sample to use SimpleWeb4j :
  * <pre>{@code
  * public class HelloWorld {
@@ -46,7 +49,7 @@ import java.util.List;
  *         setPublicResourcesPath("/fr/ybonnel/simpleweb4j/samples/helloworld");
  *         start();
  *     }
- *
+ * <p>
  *     public static void main(String[] args) {
  *         startServer(9999);
  *     }
@@ -99,10 +102,15 @@ public final class SimpleWeb4j {
      * Handler to compile less.
      */
     private static LessCompilerHandler lessCompilerHandler = new LessCompilerHandler();
+
+    /**
+     * Handler for websocket.
+     */
+    private static SimpleWeb4JWSHandler webSocketHandler = new SimpleWeb4JWSHandler();
     /**
      * List of all internal handlers.
      */
-    private static List<AbstractHandler> simpleWeb4jHandlers = Arrays.asList(simpleWeb4jHandler, lessCompilerHandler);
+    private static List<AbstractHandler> simpleWeb4jHandlers = Arrays.asList(simpleWeb4jHandler, webSocketHandler, lessCompilerHandler);
 
     /**
      * Test usage.
@@ -120,6 +128,7 @@ public final class SimpleWeb4j {
 
     /**
      * Change the port of SimpleWeb4j (default port is 9999).
+     *
      * @param newPort the port you want.
      */
     public static void setPort(int newPort) {
@@ -132,6 +141,7 @@ public final class SimpleWeb4j {
     /**
      * <p>Change the path to public resources in classPath.</p>
      * Use : <code>setPublicResourcesPath("/fr/simpleweb4j/mypublicresources");</code>
+     *
      * @param newPublicResourcesPath the path you want.
      */
     public static void setPublicResourcesPath(String newPublicResourcesPath) {
@@ -145,6 +155,7 @@ public final class SimpleWeb4j {
     /**
      * <p>Change the path to public resources external (in filesystem).</p>
      * Use : <code>setPublicResourcesPath("/var/www/mysite");</code>
+     *
      * @param newExternalPublicResourcesPath the path you want.
      */
     public static void setExternalPublicResourcesPath(String newExternalPublicResourcesPath) {
@@ -157,6 +168,7 @@ public final class SimpleWeb4j {
     /**
      * Change the path to your hibernate config file.
      * Simple web have his default hibernate config file which is "fr/ybonnel/simpleweb4j/model/hibernate.cfg.xml".
+     *
      * @param hibernateCfgPath the path you want.
      */
     public static void setHibernateCfgPath(String hibernateCfgPath) {
@@ -168,9 +180,10 @@ public final class SimpleWeb4j {
 
     /**
      * Set entities classes for hibernate configuration.
+     *
      * @param entitiesClasses all entities.
      */
-    public static void setEntitiesClasses(Class<?> ... entitiesClasses) {
+    public static void setEntitiesClasses(Class<?>... entitiesClasses) {
         if (initialized) {
             throw new IllegalStateException("You must set entities classes before settings any route");
         }
@@ -184,6 +197,7 @@ public final class SimpleWeb4j {
 
     /**
      * Add you specific handler.
+     *
      * @param handler your handler.
      */
     public static void addSpecificHandler(Handler handler) {
@@ -196,6 +210,7 @@ public final class SimpleWeb4j {
     /**
      * Add a filter.
      * Filters are called in the add order.
+     *
      * @param filter filter to add.
      */
     public static void addFilter(AbstractFilter filter) {
@@ -222,6 +237,7 @@ public final class SimpleWeb4j {
 
     /**
      * Start the server.
+     *
      * @param waitStop true if you want wait the stop of server, false otherwise.
      */
     public static void start(boolean waitStop) {
@@ -251,6 +267,7 @@ public final class SimpleWeb4j {
      *         return new Response&lt;&gt;("Hello World");
      *     }
      * }); }</pre>
+     *
      * @param route your route.
      */
     private static void get(Route route) {
@@ -264,9 +281,10 @@ public final class SimpleWeb4j {
      * <pre>{@code
      * get("/resource", (param, routeParams) -> new Response&lt;&gt;("Hello World"));
      * }</pre>
+     *
      * @param routePath path of route.
-     * @param route your handle method.
-     * @param <R> type of the object to serialize in response body.
+     * @param route     your handle method.
+     * @param <R>       type of the object to serialize in response body.
      */
     public static <R> void get(String routePath, FunctionnalRoute<Void, R> route) {
         get(FunctionnalRouteUtil.functionnalRouteToRoute(route, routePath, Void.class));
@@ -279,9 +297,10 @@ public final class SimpleWeb4j {
      * <pre>{@code
      * get("/resource", () -> new Response&lt;&gt;("Hello World"));
      * }</pre>
+     *
      * @param routePath path of route.
-     * @param route your handle method.
-     * @param <R> type of the object to serialize in response body.
+     * @param route     your handle method.
+     * @param <R>       type of the object to serialize in response body.
      */
     public static <R> void get(String routePath, FunctionnalRouteWithNoParam<R> route) {
         get(FunctionnalRouteUtil.functionnalRouteToRoute(route, routePath));
@@ -296,8 +315,9 @@ public final class SimpleWeb4j {
      *         return new Response&lt;&gt;("Hello World");
      *     }
      * }); }</pre>
+     *
      * @param callbackName name of query param with callback function name
-     * @param route your route.
+     * @param route        your route.
      */
     private static void jsonp(String callbackName, Route route) {
         simpleWeb4jHandler.addJsonpRoute(route, callbackName);
@@ -310,10 +330,11 @@ public final class SimpleWeb4j {
      * <pre>{@code
      * jsonp("CALLBACK", "/resource", (param, routeParams) -> new Response&lt;&gt;("Hello World"));
      * }</pre>
+     *
      * @param callbackName name of query param with callback function name
-     * @param routePath path of route.
-     * @param route your handle method.
-     * @param <R> type of the object to serialize in response body.
+     * @param routePath    path of route.
+     * @param route        your handle method.
+     * @param <R>          type of the object to serialize in response body.
      */
     public static <R> void jsonp(String callbackName, String routePath, FunctionnalRoute<Void, R> route) {
         jsonp(callbackName, FunctionnalRouteUtil.functionnalRouteToRoute(route, routePath, Void.class));
@@ -326,10 +347,11 @@ public final class SimpleWeb4j {
      * <pre>{@code
      * jsonp("CALLBACK", "/resource", () -> new Response&lt;&gt;("Hello World"));
      * }</pre>
+     *
      * @param callbackName name of query param with callback function name
-     * @param routePath path of route.
-     * @param route your handle method.
-     * @param <R> type of the object to serialize in response body.
+     * @param routePath    path of route.
+     * @param route        your handle method.
+     * @param <R>          type of the object to serialize in response body.
      */
     public static <R> void jsonp(String callbackName, String routePath, FunctionnalRouteWithNoParam<R> route) {
         jsonp(callbackName, FunctionnalRouteUtil.functionnalRouteToRoute(route, routePath));
@@ -346,6 +368,7 @@ public final class SimpleWeb4j {
      *         return new Response&lt;&gt;(param);
      *     }
      * }); }</pre>
+     *
      * @param route your route.
      */
     private static void post(Route route) {
@@ -359,11 +382,12 @@ public final class SimpleWeb4j {
      * <pre>{@code
      * post("/resource", String.class, (param, routeParams) -> new Response&lt;&gt;(param));
      * }</pre>
+     *
      * @param routePath routePath of the route.
      * @param paramType class of the object in request's body.
-     * @param route your handle method.
-     * @param <P> type of the object in request's body.
-     * @param <R> type of the object to serialize in response body.
+     * @param route     your handle method.
+     * @param <P>       type of the object in request's body.
+     * @param <R>       type of the object to serialize in response body.
      */
     public static <P, R> void post(String routePath, Class<P> paramType, FunctionnalRoute<P, R> route) {
         post(FunctionnalRouteUtil.functionnalRouteToRoute(route, routePath, paramType));
@@ -375,9 +399,10 @@ public final class SimpleWeb4j {
      * <pre>{@code
      * post("/resource", (param, routeParams) -> new Response&lt;&gt;("Hello World"));
      * }</pre>
+     *
      * @param routePath routePath of the route.
-     * @param route your handle method.
-     * @param <R> type of the object to serialize in response body.
+     * @param route     your handle method.
+     * @param <R>       type of the object to serialize in response body.
      */
     public static <R> void post(String routePath, FunctionnalRoute<Void, R> route) {
         post(FunctionnalRouteUtil.functionnalRouteToRoute(route, routePath, Void.class));
@@ -389,9 +414,10 @@ public final class SimpleWeb4j {
      * <pre>{@code
      * post("/resource", () -> new Response&lt;&gt;("Hello World"));
      * }</pre>
+     *
      * @param routePath routePath of the route.
-     * @param route your handle method.
-     * @param <R> type of the object to serialize in response body.
+     * @param route     your handle method.
+     * @param <R>       type of the object to serialize in response body.
      */
     public static <R> void post(String routePath, FunctionnalRouteWithNoParam<R> route) {
         post(FunctionnalRouteUtil.functionnalRouteToRoute(route, routePath));
@@ -407,6 +433,7 @@ public final class SimpleWeb4j {
      *         return new Response&lt;&gt;(param);
      *     }
      * }); }</pre>
+     *
      * @param route your route.
      */
     private static void put(Route route) {
@@ -421,11 +448,12 @@ public final class SimpleWeb4j {
      * <pre>{@code
      * put("/resource", String.class, (param, routeParams) -> new Response&lt;&gt;(param));
      * }</pre>
+     *
      * @param routePath routePath of the route.
      * @param paramType class of the object in request's body.
-     * @param route your handle method.
-     * @param <P> type of the object in request's body.
-     * @param <R> type of the object to serialize in response body.
+     * @param route     your handle method.
+     * @param <P>       type of the object in request's body.
+     * @param <R>       type of the object to serialize in response body.
      */
     public static <P, R> void put(String routePath, Class<P> paramType, FunctionnalRoute<P, R> route) {
         put(FunctionnalRouteUtil.functionnalRouteToRoute(route, routePath, paramType));
@@ -437,9 +465,10 @@ public final class SimpleWeb4j {
      * <pre>{@code
      * put("/resource", (param, routeParams) -> new Response&lt;&gt;("Hello world"));
      * }</pre>
+     *
      * @param routePath routePath of the route.
-     * @param route your handle method.
-     * @param <R> type of the object to serialize in response body.
+     * @param route     your handle method.
+     * @param <R>       type of the object to serialize in response body.
      */
     public static <R> void put(String routePath, FunctionnalRoute<Void, R> route) {
         put(FunctionnalRouteUtil.functionnalRouteToRoute(route, routePath, Void.class));
@@ -451,9 +480,10 @@ public final class SimpleWeb4j {
      * <pre>{@code
      * put("/resource", () -> new Response&lt;&gt;("Hello world"));
      * }</pre>
+     *
      * @param routePath routePath of the route.
-     * @param route your handle method.
-     * @param <R> type of the object to serialize in response body.
+     * @param route     your handle method.
+     * @param <R>       type of the object to serialize in response body.
      */
     public static <R> void put(String routePath, FunctionnalRouteWithNoParam<R> route) {
         put(FunctionnalRouteUtil.functionnalRouteToRoute(route, routePath));
@@ -470,6 +500,7 @@ public final class SimpleWeb4j {
      *         return new Response&lt;&gt;("deleted");
      *     }
      * }); }</pre>
+     *
      * @param route your route.
      */
     private static void delete(Route route) {
@@ -483,11 +514,12 @@ public final class SimpleWeb4j {
      * <pre>{@code
      * delete("/resource", String.class, (param, routeParams) -> new Response&lt;&gt;(param));
      * }</pre>
+     *
      * @param routePath routePath of the route.
      * @param paramType class of the object in request's body.
-     * @param route your handle method.
-     * @param <P> type of the object in request's body.
-     * @param <R> type of the object to serialize in response body.
+     * @param route     your handle method.
+     * @param <P>       type of the object in request's body.
+     * @param <R>       type of the object to serialize in response body.
      */
     public static <P, R> void delete(String routePath, Class<P> paramType, FunctionnalRoute<P, R> route) {
         delete(FunctionnalRouteUtil.functionnalRouteToRoute(route, routePath, paramType));
@@ -499,25 +531,42 @@ public final class SimpleWeb4j {
      * <pre>{@code
      * delete("/resource", (param, routeParams) -> new Response&lt;&gt;("DELETED"));
      * }</pre>
+     *
      * @param routePath routePath of the route.
-     * @param route your handle method.
-     * @param <R> type of the object to serialize in response body.
+     * @param route     your handle method.
+     * @param <R>       type of the object to serialize in response body.
      */
     public static <R> void delete(String routePath, FunctionnalRoute<Void, R> route) {
         delete(FunctionnalRouteUtil.functionnalRouteToRoute(route, routePath, Void.class));
     }
+
     /**
      * Add a new route for DELETE method.
      * Use :
      * <pre>{@code
      * delete("/resource", () -> new Response&lt;&gt;("DELETED"));
      * }</pre>
+     *
      * @param routePath routePath of the route.
-     * @param route your handle method.
-     * @param <R> type of the object to serialize in response body.
+     * @param route     your handle method.
+     * @param <R>       type of the object to serialize in response body.
      */
     public static <R> void delete(String routePath, FunctionnalRouteWithNoParam<R> route) {
         delete(FunctionnalRouteUtil.functionnalRouteToRoute(route, routePath));
+    }
+
+    /**
+     * Add a route for a WebSocket.
+     *
+     * @param routePath routePath of the route.
+     * @param adapter   the WebSocketAdapter, SimpleWeb4j will call
+     *                  {@link fr.ybonnel.simpleweb4j.handlers.websocket.WebSocketAdapter#createListenner(
+     *fr.ybonnel.simpleweb4j.handlers.RouteParameters)} for each new WebSocket.
+     * @param <I>       type of the object sent by client to server.
+     * @param <O>       type of the object sent by server to client.
+     */
+    public static <I, O> void websocket(String routePath, WebSocketAdapter<I, O> adapter) {
+        webSocketHandler.addRoute(new WebSocketRoute<>(routePath, adapter));
     }
 
     /**
@@ -529,20 +578,20 @@ public final class SimpleWeb4j {
      *     public String getById(String id) throws HttpErrorException {
      *         return "myResource";
      *     }
-     *
+     * <p>
      *     {@literal @Override}
      *     public List&lt;String&gt; getAll() throws HttpErrorException {
      *         return new ArrayList&lt;String&gt;();
      *     }
-     *
+     * <p>
      *     {@literal @Override}
      *     public void update(String id, String resource) throws HttpErrorException {
      *     }
-     *
+     * <p>
      *     {@literal @Override}
      *     public void create(String resource) throws HttpErrorException {
      *     }
-     *
+     * <p>
      *     {@literal @Override}
      *     public void delete(String id) throws HttpErrorException {
      *     }
