@@ -77,7 +77,7 @@ public class WebjarHandler extends AbstractHandler {
             return;
         }
 
-        try (InputStream in = classpathUrl.openStream();
+        try (InputStream in = getInputStream(classpathUrl);
              OutputStream out = response.getOutputStream()) {
             response.setContentType(ContentTypes.get(Paths.get(baseRequest.getPathInfo())));
             response.addHeader("cache-control", "public, max-age=31536000");
@@ -90,5 +90,15 @@ public class WebjarHandler extends AbstractHandler {
                 out.write(buffer, 0, count);
             }
         }
+    }
+
+    /**
+     * Open an input stream from an URL.
+     * @param url url to open.
+     * @return input stream opened.
+     * @throws IOException in cas of IO error.
+     */
+    protected InputStream getInputStream(URL url) throws IOException {
+        return url.openStream();
     }
 }

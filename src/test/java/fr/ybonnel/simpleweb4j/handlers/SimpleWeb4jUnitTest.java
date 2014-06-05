@@ -23,7 +23,6 @@ import fr.ybonnel.simpleweb4j.entities.SimpleEntity;
 import fr.ybonnel.simpleweb4j.exception.FatalSimpleWeb4jException;
 import fr.ybonnel.simpleweb4j.exception.HttpErrorException;
 import fr.ybonnel.simpleweb4j.model.SimpleEntityManager;
-import fr.ybonnel.simpleweb4j.samples.computers.Company;
 import org.eclipse.jetty.server.Request;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,6 +47,31 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SimpleWeb4jUnitTest {
+
+    static class Company {
+        String name;
+
+        Company(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Company company = (Company) o;
+
+            if (name != null ? !name.equals(company.name) : company.name != null) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            return name != null ? name.hashCode() : 0;
+        }
+    }
 
     @Spy
     private SimpleWeb4jHandler handler;
