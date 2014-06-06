@@ -77,18 +77,27 @@ public class WebjarHandler extends AbstractHandler {
             return;
         }
 
-        try (InputStream in = getInputStream(classpathUrl);
-             OutputStream out = response.getOutputStream()) {
-            response.setContentType(ContentTypes.get(Paths.get(baseRequest.getPathInfo())));
-            response.addHeader("cache-control", "public, max-age=31536000");
-            response.addHeader("last-modified", startTime.format(DateTimeFormatter.RFC_1123_DATE_TIME));
-            response.addHeader("expires", ZonedDateTime.now().plusWeeks(1).format(DateTimeFormatter.RFC_1123_DATE_TIME));
+        // FIXME Use try with resources when jacoco can handle this correctly
+        InputStream in = getInputStream(classpathUrl);
+        try {
+            OutputStream out = response.getOutputStream();
+            try {
+                response.setContentType(ContentTypes.get(Paths.get(baseRequest.getPathInfo())));
+                response.addHeader("cache-control", "public, max-age=31536000");
+                response.addHeader("last-modified", startTime.format(DateTimeFormatter.RFC_1123_DATE_TIME));
+                response.addHeader("expires",
+                        ZonedDateTime.now().plusWeeks(1).format(DateTimeFormatter.RFC_1123_DATE_TIME));
 
-            int count;
-            byte[] buffer = new byte[BUFFER_SIZE];
-            while ((count = in.read(buffer)) > 0) {
-                out.write(buffer, 0, count);
+                int count;
+                byte[] buffer = new byte[BUFFER_SIZE];
+                while ((count = in.read(buffer)) > 0) {
+                    out.write(buffer, 0, count);
+                }
+            } finally {
+                out.close();
             }
+        } finally {
+            in.close();
         }
     }
 

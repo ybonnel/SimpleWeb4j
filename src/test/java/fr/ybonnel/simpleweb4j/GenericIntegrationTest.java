@@ -47,6 +47,9 @@ public class GenericIntegrationTest {
 
         jsonp("CALLBACK", "/jsonp", () -> new Response<>("Hello World"));
 
+        jsonp("CALLBACK", "/jsonp/:name",
+                (param, routeParameters) -> new Response<>("Hello " + routeParameters.getParam("name")));
+
         get("/resource", () -> new Response<>("Hello World"));
 
         get("/resource/:name", (param, routeParams) -> {
@@ -56,6 +59,9 @@ public class GenericIntegrationTest {
             return new Response<>("Hello " + routeParams.getParam("name"));
         });
 
+
+        post("/resource/:name", (param, routeParams) -> new Response<>("Hello " + routeParams.getParam("name")));
+
         post("/resource", String.class, (param, routeParams) -> new Response<>("Hello " + param));
 
         post("/resource-ss-params", () -> new Response<>("resource-ss-params"));
@@ -64,9 +70,13 @@ public class GenericIntegrationTest {
 
         put("/resource/put", String.class, (param, routeParams) -> new Response<>("Hello " + param));
 
+        put("/resource/put/:name", (param, routeParams) -> new Response<>("Hello " + routeParams.getParam("name")));
+
         put("/put-ss-param", () -> new Response<>("put-ss-param"));
 
         delete("/resource/delete", () -> new Response<>("deleted"));
+
+        delete("/resource/deleteparam/:name", (param, routeParams) -> new Response<>("deleted " + routeParams.getParam("name")));
 
         delete("/resource/delete/param", String.class, (param, routeParams) -> new Response<>("deleted " + param));
 
@@ -124,6 +134,14 @@ public class GenericIntegrationTest {
     }
 
     @Test
+    public void can_post_with_param() throws Exception {
+        SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("POST", "/resource/me");
+        assertEquals(201, response.status);
+        assertEquals(CONTENT_TYPE, response.contentType);
+        assertEquals("\"Hello me\"", response.body);
+    }
+
+    @Test
     public void can_answer_specific_http_code() throws Exception {
         SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("GET", "/othercode");
         assertEquals(418, response.status);
@@ -137,6 +155,14 @@ public class GenericIntegrationTest {
         assertEquals(200, response.status);
         assertEquals(CONTENT_TYPE, response.contentType);
         assertEquals("\"Hello myName\"", response.body);
+    }
+
+    @Test
+    public void can_answer_to_put_method_with_param() throws Exception {
+        SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("PUT", "/resource/put/me");
+        assertEquals(200, response.status);
+        assertEquals(CONTENT_TYPE, response.contentType);
+        assertEquals("\"Hello me\"", response.body);
     }
 
     @Test
@@ -156,6 +182,14 @@ public class GenericIntegrationTest {
     }
 
     @Test
+    public void can_answer_to_delete_method_with_param_in_path() throws Exception {
+        SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("DELETE", "/resource/deleteparam/me");
+        assertEquals(200, response.status);
+        assertEquals(CONTENT_TYPE, response.contentType);
+        assertEquals("\"deleted me\"", response.body);
+    }
+
+    @Test
     public void can_answer_to_delete_method_with_param() throws Exception {
         SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("DELETE", "/resource/delete/param", "\"myName\"");
         assertEquals(200, response.status);
@@ -169,6 +203,14 @@ public class GenericIntegrationTest {
         assertEquals(200, response.status);
         assertEquals(CONTENT_TYPE, response.contentType);
         assertEquals("foo(\"Hello World\");", response.body);
+    }
+
+    @Test
+    public void should_answer_to_simple_get_with_jsonp_and_param() throws Exception {
+        SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("GET", "/jsonp/me?CALLBACK=foo");
+        assertEquals(200, response.status);
+        assertEquals(CONTENT_TYPE, response.contentType);
+        assertEquals("foo(\"Hello me\");", response.body);
     }
 
     @Test

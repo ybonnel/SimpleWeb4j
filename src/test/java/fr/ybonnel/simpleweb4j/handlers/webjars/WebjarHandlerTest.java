@@ -74,6 +74,24 @@ public class WebjarHandlerTest {
 
         HttpServletResponse response = mock(HttpServletResponse.class);
 
+        when(requestJetty.isHandled()).thenReturn(false);
+
+        when(requestJetty.getPathInfo()).thenReturn("/webjars/jquery/2.0.3/jquery.js");
+
+        when(response.getOutputStream()).thenThrow(new IOException());
+
+        handler.handle(null, requestJetty, requestJetty, response);
+    }
+
+    @Test(expected = IOException.class)
+    public void testIOExceptionOnWrite() throws IOException {
+
+        WebjarHandler handler = new WebjarHandler();
+
+        Request requestJetty = mock(Request.class);
+
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
         ServletOutputStream outputStream = mock(ServletOutputStream.class);
 
         when(requestJetty.isHandled()).thenReturn(false);
@@ -83,6 +101,34 @@ public class WebjarHandlerTest {
         when(response.getOutputStream()).thenReturn(outputStream);
 
         doThrow(new IOException()).when(outputStream).write(any(), anyInt(), anyInt());
+
+        handler.handle(null, requestJetty, requestJetty, response);
+    }
+
+    @Test(expected = IOException.class)
+    public void testIOExceptionOnRead() throws IOException {
+
+        InputStream inputStream = mock(InputStream.class);
+
+        WebjarHandler handler = new WebjarHandler() {
+            @Override protected InputStream getInputStream(URL url) throws IOException {
+                return inputStream;
+            }
+        };
+
+        Request requestJetty = mock(Request.class);
+
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        ServletOutputStream outputStream = mock(ServletOutputStream.class);
+
+        when(requestJetty.isHandled()).thenReturn(false);
+
+        when(requestJetty.getPathInfo()).thenReturn("/webjars/jquery/2.0.3/jquery.js");
+
+        when(response.getOutputStream()).thenReturn(outputStream);
+
+        doThrow(new IOException()).when(inputStream).read(any());
 
         handler.handle(null, requestJetty, requestJetty, response);
     }
