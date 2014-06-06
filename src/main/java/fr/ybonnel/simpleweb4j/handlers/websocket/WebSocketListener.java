@@ -58,4 +58,15 @@ public interface WebSocketListener<I, O> {
      */
     Class<I> getInputType();
 
+    /**
+     * Create a builder on WebSocketListenner.
+     * @param inputType type of input message (client -&gt; server).
+     * @param <I> type of input message (client -&gt; server).
+     * @param <O> type of output message (server -&gt; client).
+     * @return the builder.
+     */
+    static <I, O> WebSocketListenerBuilder<I, O> newBuilder(Class<I> inputType) {
+        return new WebSocketListenerBuilder<>(inputType);
+    }
+
 }

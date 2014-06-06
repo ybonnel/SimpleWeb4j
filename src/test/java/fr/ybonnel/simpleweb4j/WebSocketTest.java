@@ -1,7 +1,6 @@
 package fr.ybonnel.simpleweb4j;
 
-import fr.ybonnel.simpleweb4j.handlers.websocket.SimpleWebSocketListener;
-import fr.ybonnel.simpleweb4j.handlers.websocket.WebSocketSession;
+import fr.ybonnel.simpleweb4j.handlers.websocket.WebSocketListener;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
 import org.junit.After;
@@ -15,7 +14,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import static fr.ybonnel.simpleweb4j.SimpleWeb4j.*;
+import static fr.ybonnel.simpleweb4j.SimpleWeb4j.resetDefaultValues;
+import static fr.ybonnel.simpleweb4j.SimpleWeb4j.setPort;
+import static fr.ybonnel.simpleweb4j.SimpleWeb4j.start;
+import static fr.ybonnel.simpleweb4j.SimpleWeb4j.websocket;
 import static org.junit.Assert.assertEquals;
 
 public class WebSocketTest {
@@ -32,26 +34,29 @@ public class WebSocketTest {
         port = Integer.getInteger("test.http.port", random.nextInt(10000) + 10000);
         messagesReceived = new ArrayList<>();
 
-        websocket("/websocket/:name", (routeParams) -> new SimpleWebSocketListener<String, String>(String.class){
-            @Override
-            public void onConnect(WebSocketSession<String> session) {
-                super.onConnect(session);
-                try {
-                    session.sendMessage("Hello " + routeParams.getParam("name") + routeParams.getParam("suffixe"));
-                } catch (IOException ignore) {
+        websocket("/websocket/:name", (routeParams) ->
+                WebSocketListener.<String, String>newBuilder(String.class)
+                        .onConnect((session) -> {
+                            try {
+                                session.sendMessage(
+                                        "Hello " + routeParams.getParam("name") + routeParams.getParam("suffixe"));
+                            } catch (IOException ignore) {
 
-                }
-            }
-
-            @Override public void onMessage(String message) {
-                super.onMessage(message);
-
-                messagesReceived.add(message);
-                try {
-                    getCurrentSession().getSession().disconnect();
-                } catch (IOException ignore) {}
-            }
-        });
+                            }
+                        })
+                        .onMessage((session, message) -> {
+                            messagesReceived.add(message);
+                            try {
+                                session.getSession().disconnect();
+                            } catch (IOException ignore) {
+                            }
+                        })
+                        .onClose((session, cause) -> {
+                            System.out.println(cause.getStatusCode() + " : " + cause.getReason());
+                        })
+                        .onError((session, throwable) -> {
+                        })
+                        .build());
 
         setPort(port);
 
