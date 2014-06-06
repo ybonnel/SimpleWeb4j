@@ -17,6 +17,7 @@
 package fr.ybonnel.simpleweb4j.types;
 
 import java.nio.file.Path;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Content type getter from a path.
@@ -44,49 +45,32 @@ public final class ContentTypes {
     }
 
     /**
+     * Map of content types.
+     */
+    private static ConcurrentHashMap<String, String> contentTypesMap = new ConcurrentHashMap<String, String>() { {
+        put(".html", "text/html;charset=UTF-8");
+        put(".xml", "application/xml;charset=UTF-8");
+        put(".css", "text/css;charset=UTF-8");
+        put(".js", "application/javascript;charset=UTF-8");
+        put(".zip", "application/zip");
+        put(".gz", "application/gzip");
+        put(".pdf", "application/pdf");
+        put(".gif", "image/gif");
+        put(".jpeg", "image/jpeg");
+        put(".jpg", "image/jpeg");
+        put(".png", "image/png");
+        put(".svg", "image/svg+xml");
+        put(".eot", "application/vnd.ms-fontobject");
+        put(".ttf", "application/x-font-ttf");
+        put(".woff", "application/x-font-woff");
+    } };
+
+    /**
      * Get content-type from an URI.
      * @param path uri.
      * @return extension.
      */
     public static String get(Path path) {
-        switch (extension(path)) {
-            case ".html":
-            case ".md":
-            case ".markdown":
-            case ".asciidoc":
-                return "text/html;charset=UTF-8";
-            case ".xml":
-                return "application/xml;charset=UTF-8";
-            case ".css":
-            case ".less":
-                return "text/css;charset=UTF-8";
-            case ".js":
-            case ".coffee":
-            case ".litcoffee":
-                return "application/javascript;charset=UTF-8";
-            case ".zip":
-                return "application/zip";
-            case ".gz":
-                return "application/gzip";
-            case ".pdf":
-                return "application/pdf";
-            case ".gif":
-                return "image/gif";
-            case ".jpeg":
-            case ".jpg":
-                return "image/jpeg";
-            case ".png":
-                return "image/png";
-            case ".svg":
-                return "image/svg+xml";
-            case ".eot":
-                return "application/vnd.ms-fontobject";
-            case ".ttf":
-                return "application/x-font-ttf";
-            case ".woff":
-                return "application/x-font-woff";
-            default:
-                return "text/plain;charset=UTF-8";
-        }
+        return contentTypesMap.getOrDefault(extension(path), "text/plain;charset=UTF-8");
     }
 }

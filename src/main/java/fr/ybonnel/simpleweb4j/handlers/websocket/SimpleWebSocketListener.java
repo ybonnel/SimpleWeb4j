@@ -33,6 +33,11 @@ public class SimpleWebSocketListener<I, O> implements WebSocketListener<I, O> {
     private final Class<I> inputType;
 
     /**
+     * The current session.
+     */
+    private WebSocketSession<O> currentSession;
+
+    /**
      * @param inputType type of input message (client -&gt; server).
      */
     public SimpleWebSocketListener(Class<I> inputType) {
@@ -61,10 +66,11 @@ public class SimpleWebSocketListener<I, O> implements WebSocketListener<I, O> {
     /**
      * Method call on connect event.
      *
-     * @param session the WebSocket session.
+     * @param session the WebSocket currentSession.
      */
     @Override
     public void onConnect(WebSocketSession<O> session) {
+        this.currentSession = session;
     }
 
     /**
@@ -82,5 +88,13 @@ public class SimpleWebSocketListener<I, O> implements WebSocketListener<I, O> {
     @Override
     public Class<I> getInputType() {
         return inputType;
+    }
+
+    /**
+     *
+     * @return current session.
+     */
+    public WebSocketSession<O> getCurrentSession() {
+        return currentSession;
     }
 }

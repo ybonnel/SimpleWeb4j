@@ -45,7 +45,11 @@ public class WebSocketTest {
 
             @Override public void onMessage(String message) {
                 super.onMessage(message);
+
                 messagesReceived.add(message);
+                try {
+                    getCurrentSession().getSession().disconnect();
+                } catch (IOException ignore) {}
             }
         });
 

@@ -21,6 +21,7 @@ import org.junit.Test;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 public class FunctionnalRouteUtilTest {
@@ -28,9 +29,10 @@ public class FunctionnalRouteUtilTest {
 
     @Test
     public void stupidTestForCoverage() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        Constructor<FunctionnalRouteUtilTest> privateConstructor = FunctionnalRouteUtilTest.class.getDeclaredConstructor();
+        Constructor<FunctionnalRouteUtil> privateConstructor = FunctionnalRouteUtil.class.getDeclaredConstructor();
+        assertFalse(privateConstructor.isAccessible());
         privateConstructor.setAccessible(true);
-        FunctionnalRouteUtilTest instance = privateConstructor.newInstance();
+        FunctionnalRouteUtil instance = privateConstructor.newInstance();
         assertNotNull(instance);
     }
 

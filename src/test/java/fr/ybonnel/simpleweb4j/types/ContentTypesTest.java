@@ -16,19 +16,15 @@
  */
 package fr.ybonnel.simpleweb4j.types;
 
-import fr.ybonnel.simpleweb4j.handlers.ContentType;
-import fr.ybonnel.simpleweb4j.types.ContentTypes;
 import org.junit.Before;
 import org.junit.Test;
-
-import javax.swing.text.AbstractDocument;
-
-import static fr.ybonnel.simpleweb4j.types.ContentTypes.get;
-import static org.junit.Assert.*;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Paths;
+
+import static fr.ybonnel.simpleweb4j.types.ContentTypes.get;
+import static org.junit.Assert.assertEquals;
 
 public class ContentTypesTest {
 
@@ -43,16 +39,10 @@ public class ContentTypesTest {
     @Test
     public void find_content_type_from_extension() {
         assertEquals(get(Paths.get("index.html")), "text/html;charset=UTF-8");
-        assertEquals(get(Paths.get("text.md")), "text/html;charset=UTF-8");
-        assertEquals(get(Paths.get("text.markdown")), "text/html;charset=UTF-8");
-        assertEquals(get(Paths.get("text.asciidoc")), "text/html;charset=UTF-8");
         assertEquals(get(Paths.get("data.xml")), "application/xml;charset=UTF-8");
         assertEquals(get(Paths.get("style.css")), "text/css;charset=UTF-8");
-        assertEquals(get(Paths.get("style.less")), "text/css;charset=UTF-8");
         assertEquals(get(Paths.get("style.css.map")), "text/plain;charset=UTF-8");
         assertEquals(get(Paths.get("script.js")), "application/javascript;charset=UTF-8");
-        assertEquals(get(Paths.get("script.coffee")), "application/javascript;charset=UTF-8");
-        assertEquals(get(Paths.get("script.litcoffee")), "application/javascript;charset=UTF-8");
         assertEquals(get(Paths.get("text.zip")), "application/zip");
         assertEquals(get(Paths.get("text.gz")), "application/gzip");
         assertEquals(get(Paths.get("text.pdf")), "application/pdf");

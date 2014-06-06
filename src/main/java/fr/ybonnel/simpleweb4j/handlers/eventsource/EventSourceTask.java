@@ -20,8 +20,6 @@ import fr.ybonnel.simpleweb4j.handlers.ContentType;
 import fr.ybonnel.simpleweb4j.handlers.Response;
 import org.eclipse.jetty.continuation.Continuation;
 
-import java.io.IOException;
-
 /**
  * Task for write of event-source Data.
  */
@@ -68,7 +66,7 @@ public class EventSourceTask implements Runnable {
                 continuation.getServletResponse().getWriter().print("\n\n");
                 continuation.getServletResponse().getWriter().flush();
                 continuation.getServletResponse().flushBuffer();
-            } catch (IOException ioException) {
+            } catch (Exception ioException) {
                 continuation.complete();
                 throw new RuntimeException("Clone event-source", ioException);
             }

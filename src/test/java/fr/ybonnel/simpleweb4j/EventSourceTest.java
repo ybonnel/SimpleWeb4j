@@ -28,6 +28,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static fr.ybonnel.simpleweb4j.SimpleWeb4j.get;
 import static fr.ybonnel.simpleweb4j.SimpleWeb4j.resetDefaultValues;
@@ -73,6 +74,21 @@ public class EventSourceTest {
                 })
          );
 
+        AtomicInteger counter = new AtomicInteger(0);
+
+        get("/eventsourcelambda", () -> new Response<>(
+                Stream.<String>newStream(() -> {
+                    int index = counter.getAndIncrement();
+                    if(index == 5) {
+                        return null;
+                    }
+                    if (index == 10) {
+                        throw new RuntimeException();
+                    }
+                    return Integer.toString(index);
+                }, 1)
+        ));
+
         get("/reactive", (param, routeParams) ->
                 new Response<>((ReactiveStream<String>) reactiveHandler -> {
                     for (int index = 0; index < 10; index++) {
@@ -95,6 +111,21 @@ public class EventSourceTest {
     @Test
     public void should_serve_event_source() throws Exception {
         SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("GET", "/eventsource");
+        assertEquals("text/event-stream;charset=" + Charset.defaultCharset().displayName(), response.contentType);
+        StringBuilder expectedResponse = new StringBuilder();
+        for (int index = 0; index < 10; index++) {
+            if (index != 5) {
+                expectedResponse.append("data: \"");
+                expectedResponse.append(index);
+                expectedResponse.append("\"\n\n");
+            }
+        }
+        assertEquals(expectedResponse.toString(), response.body);
+    }
+
+    @Test
+    public void should_serve_event_source_with_lambda() throws Exception {
+        SimpleWebTestUtil.UrlResponse response = testUtil.doMethod("GET", "/eventsourcelambda");
         assertEquals("text/event-stream;charset=" + Charset.defaultCharset().displayName(), response.contentType);
         StringBuilder expectedResponse = new StringBuilder();
         for (int index = 0; index < 10; index++) {
