@@ -20,6 +20,10 @@ class WebSocketListennerWithLambda<I, O> implements WebSocketListener<I, O> {
      */
     private final BiConsumer<WebSocketSession<O>, CloseCause> onClose;
     /**
+     * onClose listener.
+     */
+    private final Consumer<WebSocketSession<O>> onCloseWithoutCause;
+    /**
      * onError listener.
      */
     private final BiConsumer<WebSocketSession<O>, Throwable> onError;
@@ -31,6 +35,10 @@ class WebSocketListennerWithLambda<I, O> implements WebSocketListener<I, O> {
      * onMessage listener.
      */
     private final BiConsumer<WebSocketSession<O>, I> onMessage;
+    /**
+     * onMessage listener.
+     */
+    private final Consumer<I> onMessageWithoutSession;
 
     /**
      * Current session.
@@ -41,20 +49,26 @@ class WebSocketListennerWithLambda<I, O> implements WebSocketListener<I, O> {
      * Constructor.
      * @param inputType Type of input (client -&gt; server).
      * @param onClose onClose listener.
+     * @param onCloseWithoutCause onClose listener.
      * @param onError onError listener.
      * @param onConnect onConnect listener.
      * @param onMessage onMessage listener.
+     * @param onMessageWithoutSession onMessage listener.
      */
     WebSocketListennerWithLambda(Class<I> inputType,
             BiConsumer<WebSocketSession<O>, CloseCause> onClose,
+            Consumer<WebSocketSession<O>> onCloseWithoutCause,
             BiConsumer<WebSocketSession<O>, Throwable> onError,
             Consumer<WebSocketSession<O>> onConnect,
-            BiConsumer<WebSocketSession<O>, I> onMessage) {
+            BiConsumer<WebSocketSession<O>, I> onMessage,
+            Consumer<I> onMessageWithoutSession) {
         this.inputType = inputType;
         this.onClose = onClose;
+        this.onCloseWithoutCause = onCloseWithoutCause;
         this.onError = onError;
         this.onConnect = onConnect;
         this.onMessage = onMessage;
+        this.onMessageWithoutSession = onMessageWithoutSession;
     }
 
     /**
@@ -67,6 +81,8 @@ class WebSocketListennerWithLambda<I, O> implements WebSocketListener<I, O> {
     public void onClose(int statusCode, String reason) {
         if (onClose != null) {
             onClose.accept(currentSession, new CloseCause(statusCode, reason));
+        } else if (onCloseWithoutCause != null) {
+            onCloseWithoutCause.accept(currentSession);
         }
     }
 
@@ -104,6 +120,8 @@ class WebSocketListennerWithLambda<I, O> implements WebSocketListener<I, O> {
     public void onMessage(I message) {
         if (onMessage != null) {
             onMessage.accept(currentSession, message);
+        } else if (onMessageWithoutSession != null) {
+            onMessageWithoutSession.accept(message);
         }
     }
 

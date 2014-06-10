@@ -29,6 +29,16 @@ public class WebSocketListenerBuilder<I, O> {
     }
 
     /**
+     * Add onClose listener.
+     * @param onClose onClose listenner.
+     * @return builder.
+     */
+    public WebSocketListenerBuilder<I, O> onClose(Consumer<WebSocketSession<O>> onClose) {
+        this.onCloseHandlerWithoutCause = onClose;
+        return this;
+    }
+
+    /**
      * Add onError listener.
      * @param onError onClose listenner.
      * @return builder.
@@ -59,12 +69,22 @@ public class WebSocketListenerBuilder<I, O> {
     }
 
     /**
+     * Add onMessage listener.
+     * @param onMessage onClose listenner.
+     * @return builder.
+     */
+    public WebSocketListenerBuilder<I, O> onMessage(Consumer<I> onMessage) {
+        this.onMessageHandlerWithoutSession = onMessage;
+        return this;
+    }
+
+    /**
      * Builder the WebSocketListener.
      * @return the listener.
      */
     public WebSocketListener<I, O> build() {
-        return new WebSocketListennerWithLambda<>(inputType, onCloseHandler, onErrorHandler, onConnectHandler,
-                onMessageHandler);
+        return new WebSocketListennerWithLambda<>(inputType, onCloseHandler, onCloseHandlerWithoutCause, onErrorHandler, onConnectHandler,
+                onMessageHandler, onMessageHandlerWithoutSession);
     }
 
     /**
@@ -75,6 +95,10 @@ public class WebSocketListenerBuilder<I, O> {
      * onClose listener.
      */
     private BiConsumer<WebSocketSession<O>, CloseCause> onCloseHandler = null;
+    /**
+     * onClose listener.
+     */
+    private Consumer<WebSocketSession<O>> onCloseHandlerWithoutCause = null;
     /**
      * onError listener.
      */
@@ -87,4 +111,8 @@ public class WebSocketListenerBuilder<I, O> {
      * onMessage listener.
      */
     private BiConsumer<WebSocketSession<O>, I> onMessageHandler = null;
+    /**
+     * onMessage listener.
+     */
+    private Consumer<I> onMessageHandlerWithoutSession = null;
 }
